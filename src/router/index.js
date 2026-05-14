@@ -9,11 +9,6 @@ import VerifyCodeComponent from "../iam/login/components/verify-code.component.v
 
 // Componentes de Contextos de Dominio
 import MeetManagementComponent from "../meeting-management/pages/meet-management.component.vue";
-import ReservationManagementComponent from "../reservation-management/pages/reservation-management.component.vue";
-import ClassroomManagementComponent from "../breakdown-report-management/pages/classroom-management.component.vue";
-import ResourceManagementComponent from "../breakdown-report-management/pages/resource-management.component.vue";
-import ReportResourceComponent from "../breakdown-report-management/pages/report-resource.component.vue";
-import ReportsManagementComponent from "../breakdown-report-management/pages/reports-management.component.vue";
 
 // Componentes del Dashboard de Administrador
 import HomeAdminComponent from "../dashboard-admin/pages/home-admin.component.vue";
@@ -35,12 +30,6 @@ import EditSharedSpaceComponent
 import ResourceComponent from "../classroom-space-resource-management/pages/resources/resource.component.vue";
 import AddResourceComponent from "../classroom-space-resource-management/pages/resources/add-resource.component.vue";
 import EditResourceComponent from "../classroom-space-resource-management/pages/resources/edit-resource.component.vue";
-
-// Componentes del Dashboard de Profesor
-import HomeTeacherComponent from "../dashboard-teacher/pages/home-teacher.component.vue";
-import ReservationsComponent from "../dashboard-teacher/pages/reservations.component.vue";
-import BreakdownReportsComponent from "../dashboard-teacher/pages/breakdown-reports.component.vue";
-import SpaceAvailabilityComponent from "../dashboard-teacher/pages/space-availability.component.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -144,65 +133,6 @@ const router = createRouter({
             component: EditResourceComponent,
             meta: {title: 'Edit Resource', requiresAuth: true, role: 'RoleAdmin'}
         },
-
-        // --- Rutas del Profesor ---
-        { path: '/dashboard-teacher', redirect: '/dashboard-teacher/home-teacher' },
-        {
-            path: '/dashboard-teacher/home-teacher',
-            name: 'home-teacher',
-            component: HomeTeacherComponent,
-            meta: {title: 'Home Teacher', requiresAuth: true, role: 'RoleTeacher'}
-        },
-        {
-            path: '/dashboard-teacher/reservations',
-            name: 'reservations',
-            component: ReservationsComponent,
-            meta: {title: 'Reservations', requiresAuth: true, role: 'RoleTeacher'}
-        },
-        {
-            path: '/dashboard-teacher/reservations/reservation-management',
-            name: 'reservation-management',
-            component: ReservationManagementComponent,
-            meta: {title: 'Reservation of spaces', requiresAuth: true, role: 'RoleTeacher'}
-        },
-        {
-            path: '/dashboard-teacher/reservations/space-availability',
-            name: 'space-availability',
-            component: SpaceAvailabilityComponent,
-            meta: {title: 'My Reservations', requiresAuth: true, role: 'RoleTeacher'}
-        },
-        {
-            path: '/dashboard-teacher/breakdown-reports',
-            name: 'breakdown-reports',
-            component: BreakdownReportsComponent,
-            meta: {title: 'Breakdown Reports', requiresAuth: true, role: 'RoleTeacher'}
-        },
-        {
-            path: '/dashboard-teacher/breakdown-reports/classrooms',
-            name: 'teacher-classrooms',
-            component: ClassroomManagementComponent,
-            meta: {title: 'My Classrooms', requiresAuth: true, role: 'RoleTeacher'}
-        },
-        {
-            path: '/dashboard-teacher/breakdown-reports/classrooms/:classroomId/resources',
-            name: 'teacher-resource-management',
-            component: ResourceManagementComponent,
-            meta: {title: 'Classroom Resources', requiresAuth: true, role: 'RoleTeacher'},
-            props: true
-        },
-        {
-            path: '/dashboard-teacher/breakdown-reports/classrooms/:classroomId/resources/:resourceId/report',
-            name: 'report-resource',
-            component: ReportResourceComponent,
-            meta: {title: 'Report Resource', requiresAuth: true, role: 'RoleTeacher'},
-            props: true
-        },
-        {
-            path: '/dashboard-teacher/breakdown-reports/reports',
-            name: 'teacher-reports',
-            component: ReportsManagementComponent,
-            meta: {title: 'My Reports', requiresAuth: true, role: 'RoleTeacher'}
-        },
     ]
 });
 
@@ -215,9 +145,8 @@ router.beforeEach((to, from, next) => {
     if (isAuthenticated && (to.name === 'login' || to.name === 'register')) {
         if (userRole === 'RoleAdmin') {
             return next({ name: 'home-admin' });
-        } else if (userRole === 'RoleTeacher') {
-            return next({ name: 'home-teacher' });
         }
+        return next({ name: 'login' });
     }
 
     const requiredAuth = to.matched.some(record => record.meta.requiresAuth);
@@ -230,8 +159,6 @@ router.beforeEach((to, from, next) => {
     if (isAuthenticated && requiredRole && userRole !== requiredRole) {
         if (userRole === 'RoleAdmin') {
             return next({ name: 'home-admin' });
-        } else if (userRole === 'RoleTeacher') {
-            return next({ name: 'home-teacher' });
         }
         return next({ name: 'login' });
     }

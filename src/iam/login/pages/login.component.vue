@@ -32,12 +32,6 @@ export default {
         await this.signIn(this.signInRequest);
 
         this.$router.push({name: "verify-code", query: { email: email }});
-
-        // if (this.userRole === "RoleAdmin") {
-        //   this.$router.push("/dashboard-admin/home-admin");
-        // } else if (this.userRole === "RoleTeacher") {
-        //   this.$router.push("/dashboard-teacher/home-teacher");
-        // }
       } catch {
         this.$toast.add({
           severity: 'error',

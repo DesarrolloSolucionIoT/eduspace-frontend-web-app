@@ -113,7 +113,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions("user", ["verifyCodeAndLogin", "signIn"]),
+    ...mapActions("user", ["verifyCodeAndLogin", "signIn", "signOut"]),
 
     startCountdown() {
       this.canResend = false;
@@ -217,13 +217,15 @@ export default {
 
         this.isSuccess = true;
 
-        setTimeout(() => {
+        setTimeout(async () => {
           if (this.userRole === "RoleAdmin") {
             this.$router.push("/dashboard-admin/home-admin");
-          } else if (this.userRole === "RoleTeacher") {
-            this.$router.push("/dashboard-teacher/home-teacher");
           } else {
-            this.$router.push({name: 'home'});
+            await this.signOut();
+            this.isSuccess = false;
+            this.hasError = true;
+            this.errorMessage = 'Esta cuenta es solo para la app mobile. Inicia sesión desde EduSpace Mobile.';
+            this.code = new Array(6).fill('');
           }
         }, 800);
 

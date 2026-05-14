@@ -2,15 +2,7 @@
   <pv-toast />
   <div class="app-container">
     <header v-if="userRole" class="sidenav-wrapper">
-      <div
-        :class="[
-          'sidenav',
-          {
-            'admin-sidenav': userRole === 'RoleAdmin',
-            'teacher-sidenav': userRole === 'RoleTeacher',
-          },
-        ]"
-      >
+      <div class="sidenav admin-sidenav">
         <div class="user-info">
           <pv-avatar
             :image="DefaultAvatar"
@@ -19,14 +11,7 @@
             shape="circle"
           ></pv-avatar>
           <div class="info">
-            <p
-              class="info"
-              :style="{
-                color: userRole === 'RoleAdmin' ? '#064C58' : '#584F06',
-              }"
-            >
-              {{ userRole === "RoleAdmin" ? "Administrator" : "Teacher" }}
-            </p>
+            <p class="info" style="color: #064C58">Administrator</p>
             <p class="info">{{ currentUsername }}</p>
           </div>
         </div>
@@ -40,15 +25,7 @@
               active-class="router-link-active"
               exact-active-class="router-link-exact-active"
             >
-              <pv-button
-                :class="[
-                  'p-button-text',
-                  {
-                    'admin-hover-active': userRole === 'RoleAdmin',
-                    'teacher-hover-active': userRole === 'RoleTeacher',
-                  },
-                ]"
-              >
+              <pv-button class="p-button-text admin-hover-active">
                 <img
                   v-if="item.svg"
                   :src="item.svg"
@@ -126,8 +103,6 @@ import ClassroomIcon from "./assets/admin/Clasroom.svg";
 import EnvironmentIcon from "./assets/admin/Environment.svg";
 import PersonalDIcon from "./assets/admin/Personal_Data.svg";
 import PersonalManagementIcon from "./assets/admin/Personal_Management.svg";
-import BreakdownIcon from "./assets/teacher/Breakdown_Reports.svg";
-import NotificationIcon from "./assets/teacher/Notification.svg";
 import DefaultAvatar from "./assets/default-avatar.png";
 import LogoSidebar from "./assets/Logo sidebar.png";
 import LibroReclamacionesIcon from "./assets/libro-de-reclamaciones.png";
@@ -175,24 +150,6 @@ export default {
             label: "My Profile",
             to: "/dashboard-admin/personal-data",
             svg: PersonalDIcon,
-          },
-        ];
-      } else if (this.userRole === "RoleTeacher") {
-        this.items = [
-          {
-            label: "Home",
-            to: "/dashboard-teacher/home-teacher",
-            svg: HomeIcon,
-          },
-          {
-            label: "Reservations",
-            to: "/dashboard-teacher/reservations",
-            svg: NotificationIcon,
-          },
-          {
-            label: "Breakdown Reports",
-            to: "/dashboard-teacher/breakdown-reports",
-            svg: BreakdownIcon,
           },
         ];
       } else {
@@ -257,19 +214,6 @@ export default {
     rgba(255, 255, 255, 1) 71%,
     rgba(255, 255, 255, 1) 85%,
     rgba(147, 227, 241, 1) 100%
-  );
-}
-
-.teacher-sidenav {
-  background: linear-gradient(
-    160deg,
-    rgba(147, 227, 241, 1) 0%,
-    rgba(255, 255, 255, 1) 24%,
-    rgba(246, 246, 246, 1) 34%,
-    rgba(255, 255, 255, 1) 52%,
-    rgba(255, 255, 255, 1) 71%,
-    rgba(255, 255, 255, 1) 85%,
-    rgba(255, 231, 120, 1) 100%
   );
 }
 
