@@ -1,35 +1,28 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import store from "../store/index.js";
 
-// Componentes de Autenticación y Públicos
-import HomeComponent from '../public/pages/home.component.vue';
-import LoginComponent from '../iam/login/pages/login.component.vue';
-import RegisterComponent from '../iam/register/pages/register.component.vue';
-import VerifyCodeComponent from "../iam/login/components/verify-code.component.vue";
+const HomeComponent = () => import('../public/pages/home.component.vue');
+const LoginComponent = () => import('../iam/login/pages/login.component.vue');
+const RegisterComponent = () => import('../iam/register/pages/register.component.vue');
+const VerifyCodeComponent = () => import('../iam/login/components/verify-code.component.vue');
 
-// Componentes de Contextos de Dominio
-import MeetManagementComponent from "../meeting-management/pages/meet-management.component.vue";
+const MeetManagementComponent = () => import('../meeting-management/pages/meet-management.component.vue');
 
-// Componentes del Dashboard de Administrador
-import HomeAdminComponent from "../dashboard-admin/pages/home-admin.component.vue";
-import PersonalDataComponent from "../dashboard-admin/pages/personal-data.component.vue";
-import TeachersManagementComponent from "../dashboard-admin/pages/teachers-management.component.vue";
-import ClassroomChangesMeetingsComponent from "../dashboard-admin/pages/classroom-changes-meetings.component.vue";
-import ClassroomsSharedSpacesComponent from "../dashboard-admin/pages/classrooms-shared-spaces.component.vue";
-import AddClassroomsComponent
-    from "../classroom-space-resource-management/pages/classrooms/add-classrooms.component.vue";
-import ClassroomsComponent from "../classroom-space-resource-management/pages/classrooms/classrooms.component.vue";
-import EditClassroomComponent
-    from "../classroom-space-resource-management/pages/classrooms/edit-classroom.component.vue";
-import AddSharedSpaceComponent
-    from "../classroom-space-resource-management/pages/shared-spaces/add-shared-space.component.vue";
-import SharedSpaceComponent
-    from "../classroom-space-resource-management/pages/shared-spaces/shared-space.component.vue";
-import EditSharedSpaceComponent
-    from "../classroom-space-resource-management/pages/shared-spaces/edit-shared-space.component.vue";
-import ResourceComponent from "../classroom-space-resource-management/pages/resources/resource.component.vue";
-import AddResourceComponent from "../classroom-space-resource-management/pages/resources/add-resource.component.vue";
-import EditResourceComponent from "../classroom-space-resource-management/pages/resources/edit-resource.component.vue";
+const HomeAdminComponent = () => import('../dashboard-admin/pages/home-admin.component.vue');
+const PersonalDataComponent = () => import('../dashboard-admin/pages/personal-data.component.vue');
+const TeachersManagementComponent = () => import('../dashboard-admin/pages/teachers-management.component.vue');
+const ClassroomChangesMeetingsComponent = () => import('../dashboard-admin/pages/classroom-changes-meetings.component.vue');
+const ClassroomsSharedSpacesComponent = () => import('../dashboard-admin/pages/classrooms-shared-spaces.component.vue');
+
+const AddClassroomsComponent = () => import('../classroom-space-resource-management/pages/classrooms/add-classrooms.component.vue');
+const ClassroomsComponent = () => import('../classroom-space-resource-management/pages/classrooms/classrooms.component.vue');
+const EditClassroomComponent = () => import('../classroom-space-resource-management/pages/classrooms/edit-classroom.component.vue');
+const AddSharedSpaceComponent = () => import('../classroom-space-resource-management/pages/shared-spaces/add-shared-space.component.vue');
+const SharedSpaceComponent = () => import('../classroom-space-resource-management/pages/shared-spaces/shared-space.component.vue');
+const EditSharedSpaceComponent = () => import('../classroom-space-resource-management/pages/shared-spaces/edit-shared-space.component.vue');
+const ResourceComponent = () => import('../classroom-space-resource-management/pages/resources/resource.component.vue');
+const AddResourceComponent = () => import('../classroom-space-resource-management/pages/resources/add-resource.component.vue');
+const EditResourceComponent = () => import('../classroom-space-resource-management/pages/resources/edit-resource.component.vue');
 
 const router = createRouter({
     history: createWebHistory(),
