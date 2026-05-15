@@ -1,5 +1,7 @@
 <script>
 import { IotMonitoringService } from '../services/iot-monitoring.service.js';
+import { IotSpace } from '../model/iot-space.entity.js';
+import SpaceSensorCard from '../components/space-sensor-card.component.vue';
 
 const SENSOR_META = {
     occupancy: {
@@ -82,6 +84,10 @@ const RANGE_OPTIONS = [
 
 export default {
     name: 'IotMonitoringPage',
+
+    components: {
+        SpaceSensorCard,
+    },
 
     data() {
         return {
@@ -218,7 +224,7 @@ export default {
         async loadSpaces() {
             try {
                 const response = await this.service.getSpaces();
-                this.spaces = response.data;
+                this.spaces = response.data.map(raw => new IotSpace(raw));
                 if (this.spaces.length) {
                     this.selectedSpace = this.spaces.find(s => s.id === 'A-203') || this.spaces[0];
                 }
@@ -230,30 +236,6 @@ export default {
         selectSpace(space) {
             this.selectedSpace = space;
             this.activeTab = 'occupancy';
-        },
-
-        markerPct(key, sensorData) {
-            const meta = SENSOR_META[key];
-            if (!meta || sensorData.value === null) return 0;
-            return Math.min(100, Math.max(0, meta.getMarkerPct(sensorData)));
-        },
-
-        maxLabel(key, sensorData) {
-            const meta = SENSOR_META[key];
-            if (!meta) return '';
-            return typeof meta.maxLabel === 'function' ? meta.maxLabel(sensorData) : meta.maxLabel;
-        },
-
-        formatSensorValue(key, sensorData) {
-            const meta = SENSOR_META[key];
-            if (!meta) return '—';
-            return meta.formatValue(sensorData);
-        },
-
-        formatSensorUnit(key, sensorData) {
-            const meta = SENSOR_META[key];
-            if (!meta) return '';
-            return meta.formatUnit(sensorData);
         },
 
         statusLabel(status) {
@@ -363,54 +345,13 @@ export default {
 
           <!-- Grid de sensores (3x2) -->
           <div class="sensor-grid">
-            <div
+            <space-sensor-card
               v-for="sensor in sensorList"
               :key="sensor.key"
-              class="sensor-cell"
-              :class="{ 'sensor-warn': sensor.data.deltaStatus === 'warn', 'sensor-danger': sensor.data.deltaStatus === 'danger' }"
-            >
-              <div class="sensor-label">
-                <i :class="sensor.meta.icon" class="sensor-icon"></i>
-                {{ sensor.meta.label }}
-              </div>
-
-              <div v-if="sensor.data.value !== null" class="sensor-value">
-                {{ formatSensorValue(sensor.key, sensor.data) }}
-                <span class="sensor-unit">{{ formatSensorUnit(sensor.key, sensor.data) }}</span>
-              </div>
-              <div v-else class="sensor-value sensor-offline">—</div>
-
-              <div
-                class="sensor-delta"
-                :class="{
-                  'delta-warn':   sensor.data.deltaStatus === 'warn',
-                  'delta-danger': sensor.data.deltaStatus === 'danger',
-                  'delta-ok':     sensor.data.deltaStatus === 'ok',
-                }"
-              >{{ sensor.data.delta }}</div>
-
-              <!-- Barra de umbral -->
-              <div v-if="sensor.data.value !== null" class="threshold-bar">
-                <div class="bar-track">
-                  <div
-                    v-for="zone in sensor.meta.zones"
-                    :key="zone.color + zone.from"
-                    class="bar-zone"
-                    :class="`zone-${zone.color}`"
-                    :style="{ left: zone.from + '%', width: (zone.to - zone.from) + '%' }"
-                  ></div>
-                  <div
-                    class="bar-marker"
-                    :style="{ left: markerPct(sensor.key, sensor.data) + '%' }"
-                  ></div>
-                </div>
-                <div class="bar-range">
-                  <span>{{ sensor.meta.minLabel }}</span>
-                  <span>{{ maxLabel(sensor.key, sensor.data) }}</span>
-                </div>
-              </div>
-              <div v-else class="threshold-bar-empty">sin datos · dispositivo offline</div>
-            </div>
+              :sensor-key="sensor.key"
+              :sensor-data="sensor.data"
+              :meta="sensor.meta"
+            />
           </div>
 
           <!-- Tabs de gráfico -->
@@ -713,109 +654,8 @@ export default {
   border-bottom: 1px solid #f3f4f6;
 }
 
-.sensor-cell {
-  padding: 16px 20px;
-  border-right: 1px solid #f3f4f6;
-  border-bottom: 1px solid #f3f4f6;
-  transition: background 0.1s;
-}
-
-.sensor-cell:nth-child(3n) { border-right: none; }
-.sensor-cell:nth-last-child(-n+3) { border-bottom: none; }
-
-.sensor-warn   { background: #fffdf5; }
-.sensor-danger { background: #fff8f8; }
-
-.sensor-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #9ca3af;
-  margin-bottom: 6px;
-}
-
-.sensor-icon { font-size: 11px; }
-
-.sensor-value {
-  font-family: monospace;
-  font-size: 24px;
-  font-weight: 700;
-  color: #111827;
-  letter-spacing: -0.02em;
-  line-height: 1;
-}
-
-.sensor-offline { color: #d1d5db; }
-
-.sensor-unit {
-  font-size: 12px;
-  font-weight: 400;
-  color: #9ca3af;
-  margin-left: 3px;
-}
-
-.sensor-delta {
-  margin-top: 4px;
-  font-size: 11px;
-  font-family: monospace;
-  color: #9ca3af;
-}
-
-.delta-ok     { color: #16a34a; }
-.delta-warn   { color: #d97706; }
-.delta-danger { color: #dc2626; font-weight: 600; }
-
-/* Barra de umbral */
-.threshold-bar { margin-top: 10px; }
-
-.bar-track {
-  position: relative;
-  height: 5px;
-  background: #f3f4f6;
-  border-radius: 3px;
-  overflow: visible;
-}
-
-.bar-zone {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  border-radius: 3px;
-}
-
-.zone-ok     { background: #86efac; }
-.zone-warn   { background: #fcd34d; }
-.zone-danger { background: #fca5a5; }
-
-.bar-marker {
-  position: absolute;
-  width: 2px;
-  top: -3px;
-  bottom: -3px;
-  background: #111827;
-  border-radius: 1px;
-  transform: translateX(-50%);
-}
-
-.bar-range {
-  display: flex;
-  justify-content: space-between;
-  font-family: monospace;
-  font-size: 10px;
-  color: #d1d5db;
-  margin-top: 5px;
-}
-
-.threshold-bar-empty {
-  margin-top: 10px;
-  font-size: 10px;
-  font-family: monospace;
-  color: #f59e0b;
-}
+.sensor-grid > *:nth-child(3n)      { border-right: none; }
+.sensor-grid > *:nth-last-child(-n+3) { border-bottom: none; }
 
 /* Tabs de gráfico */
 .chart-tabs {
