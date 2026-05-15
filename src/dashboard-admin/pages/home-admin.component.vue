@@ -365,6 +365,7 @@ export default {
 </script>
 
 <template>
+  <div>
   <div class="dashboard-layout">
 
     <!-- ── Perfil del administrador ──────────────────────────────────────── -->
@@ -711,6 +712,7 @@ export default {
     @update:visible="(value) => (createAndEditDialogIsVisible = value)"
     @save-requested="onSaveRequested"
   />
+  </div>
 </template>
 
 <style scoped>
