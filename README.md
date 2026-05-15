@@ -3,15 +3,17 @@
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.x-4FC08D?logo=vue.js)](https://vuejs.org/)
 [![PrimeVue](https://img.shields.io/badge/PrimeVue-4.x-41B883)](https://primevue.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?logo=vite)](https://vitejs.dev/)
+[![Chart.js](https://img.shields.io/badge/Chart.js-4.x-FF6384?logo=chartdotjs)](https://www.chartjs.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Admin web dashboard for **EduSpace**, the school management platform. Built with Vue 3 (Options API) and PrimeVue 4. Used by administrators to manage classrooms, shared spaces, resources, meetings, teachers, and incident reports.
+Admin web dashboard for **EduSpace**, the school management platform. Built with Vue 3 (Options API) and PrimeVue 4. Used by administrators to manage classrooms, shared spaces, resources, meetings, teachers, incident reports, and real-time IoT sensor monitoring.
 
 > Web access is **admin-only**. Teachers and other roles use the mobile app.
 
 ## Features
 
-- **Admin Dashboard** — institutional overview
+- **Admin Dashboard** — institutional overview with IoT KPIs, floor map, alerts feed and telemetry charts
+- **IoT Monitoring** — real-time sensor detail per space: occupancy, temperature, humidity, luminosity, CO₂ and energy consumption with threshold bars and interactive Chart.js graphs
 - **Classrooms, Shared Spaces & Resources** — CRUD and assignment
 - **Meetings** — schedule and coordinate meetings with teachers
 - **Teachers (Personal Data)** — register, edit, delete teacher profiles with constraint validation and PII masking
@@ -64,16 +66,35 @@ DDD-aligned folders mirror the backend bounded contexts.
 ```
 src/
 ├── iam/                                    # Sign-in + 2FA verify-code
+│   ├── model/
 │   ├── pages/
 │   └── services/
-├── dashboard-admin/                        # Admin home
+├── dashboard-admin/                        # Admin home dashboard
 │   └── pages/
 ├── classroom-space-resource-management/    # Classrooms, spaces, resources
-│   ├── model/  pages/  components/  services/
+│   ├── components/
+│   ├── model/
+│   ├── pages/
+│   └── services/
 ├── meeting-management/                     # Meetings
-│   ├── model/  pages/  components/  services/
+│   ├── components/
+│   ├── model/
+│   ├── pages/
+│   └── services/
 ├── personal-data/                          # Teachers (admin-managed)
-│   ├── model/  pages/  services/
+│   ├── components/
+│   ├── model/
+│   └── services/
+├── iot-monitoring/                         # IoT sensor monitoring
+│   ├── components/
+│   │   └── space-sensor-card.component.vue
+│   ├── model/
+│   │   └── iot-space.entity.js
+│   ├── pages/
+│   │   └── iot-monitoring.component.vue
+│   └── services/
+│       ├── iot-monitoring.service.js
+│       └── db.json                         # Mock sensor data (Sprint 1)
 ├── profiles/                               # (stub — service only)
 ├── shared/                                 # Cross-cutting code
 │   ├── components/
@@ -93,9 +114,11 @@ src/
 - **Options API only** — no `<script setup>` / Composition API.
 - All user-facing strings are **Spanish** (no i18n library installed).
 - Component files use the `.component.vue` suffix.
-- PrimeVue is globally registered with the `pv-` prefix (`<pv-button>`, `<pv-data-table>`, `<pv-dialog>`).
+- PrimeVue is globally registered with the `pv-` prefix (`<pv-button>`, `<pv-chart>`, `<pv-data-table>`, `<pv-dialog>`).
 - Routes are **lazy-loaded** via dynamic `import()` for code splitting.
 - JWT + user blob persist in `localStorage` (academic project — known XSS tradeoff).
+- Each bounded context follows the structure: `components/`, `model/`, `pages/`, `services/`.
+- Template root must be a **single element** — Vue's `<Transition mode="out-in">` in `app.vue` cannot animate fragment components.
 
 ### Auth flow
 
@@ -123,6 +146,18 @@ import { unwrapValueObjects } from '@/shared/utils/value-object-unwrapper.js';
 const items = unwrapValueObjects(response.data || []);
 ```
 
+### IoT Monitoring module
+
+The `iot-monitoring/` bounded context implements the sensor monitoring layer:
+
+- **`IotSpace` entity** — models a monitored space with sensors, events, device metadata and computed getters (`isOnline`, `hasAlert`, `buildingPrefix`).
+- **`IotMonitoringService`** — `getSpaces()`, `getSpaceById()`, `getAlerts()`. Currently backed by `db.json` (21 mock spaces with full sensor data). Swap to real HTTP calls in Sprint 2.
+- **`SpaceSensorCard` component** — renders a single sensor (value, delta, threshold bar) as a reusable business component.
+- **`IotMonitoringPage`** — full monitoring page: space list, 6-sensor detail grid, interactive Chart.js line chart with tab/range selectors, occupancy strip, device footer and event log.
+- **Dashboard widgets** — `home-admin` imports the same service and renders: KPI strip (sparklines), floor map, alerts feed, aggregated telemetry chart, building utilization bars, sensor health table and breakdowns table.
+
+Charts use **Chart.js 4** via PrimeVue's `<pv-chart>` wrapper. Requires `chart.js` to be installed (`npm install` handles this).
+
 ### State
 
 Single Vuex module (`store/modules/user.js`) holds `user`, `id`, `role`, `token`, and `isAuthenticated`. State is rehydrated from `localStorage` on boot.
@@ -132,10 +167,11 @@ Single Vuex module (`store/modules/user.js`) holds `user`, `id`, `role`, `token`
 - **Theme**: PrimeVue Aura preset, dark mode disabled.
 - **Services**: `this.$toast`, `this.$confirm`, `this.$dialog` are available globally.
 - **Calendar**: FullCalendar Vue 3 integration.
+- **Charts**: Chart.js 4 via `<pv-chart>` (line charts for telemetry, sparklines for KPIs).
 
 ## Library docs
 
-Before touching PrimeVue, Vue Router, Vuex, Axios, FullCalendar, or Vite APIs, use Context7 (`resolve-library-id` → `query-docs`). Training data is often stale relative to PrimeVue 4 / Vue Router 4 / Vite 6.
+Before touching PrimeVue, Vue Router, Vuex, Axios, FullCalendar, Chart.js, or Vite APIs, use Context7 (`resolve-library-id` → `query-docs`). Training data is often stale relative to PrimeVue 4 / Vue Router 4 / Vite 6.
 
 ## Known debt
 
@@ -143,11 +179,12 @@ Before touching PrimeVue, Vue Router, Vuex, Axios, FullCalendar, or Vite APIs, u
 - `src/profiles/` — service-only stub, no pages or routes.
 - No 404 / catch-all route — unknown paths render blank.
 - ESLint has no CI or pre-commit hook — run `npm run lint` manually before committing.
+- IoT data is mocked via `db.json` — real ESP32/Edge API integration deferred to Sprint 2.
 
 ## Contributing
 
 1. Branch from `main` (`git checkout -b feat/your-feature`).
-2. Use Conventional Commits in English, single line, no co-authored-by / AI attribution.
+2. Use Conventional Commits in English, single line.
 3. Run `npm run lint` before opening a PR.
 
 ## License
