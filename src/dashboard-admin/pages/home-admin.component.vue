@@ -14,8 +14,8 @@ import {IotMonitoringService} from "../../iot-monitoring/services/iot-monitoring
 const MOCK_BREAKDOWNS = [
   { id: '#1487', space: 'A-206',   type: 'Proyector',   tech: 'J. Vega (T-3)',  status: 'danger', statusLabel: 'abierto',       sla: '02:18' },
   { id: '#1486', space: 'LAB-22',  type: 'A/C',         tech: 'R. Salas (T-1)', status: 'warn',   statusLabel: 'en curso',       sla: '14:42' },
-  { id: '#1485', space: 'A-117',   type: 'Sensor IoT',  tech: 'ÔÇö',              status: 'info',   statusLabel: 'diagnosticando', sla: '08:11' },
-  { id: '#1484', space: 'Sala-J-2',type: 'Iluminaci+¦n', tech: 'L. Pino (T-2)', status: 'ok',     statusLabel: 'resuelto',       sla: '06:54' },
+  { id: '#1485', space: 'A-117',   type: 'Sensor IoT',  tech: 'â€”',              status: 'info',   statusLabel: 'diagnosticando', sla: '08:11' },
+  { id: '#1484', space: 'Sala-J-2',type: 'IluminaciÃ³n', tech: 'L. Pino (T-2)', status: 'ok',     statusLabel: 'resuelto',       sla: '06:54' },
   { id: '#1483', space: 'A-209',   type: 'Cerradura',   tech: 'J. Vega (T-3)', status: 'ok',     statusLabel: 'resuelto',       sla: '04:02' },
 ];
 
@@ -60,7 +60,7 @@ export default {
       return `${firstName[0] || ""}${lastName[0] || ""}`.toUpperCase();
     },
 
-    // ÔöÇÔöÇ IoT computed ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+    // â”€â”€ IoT computed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     iotOnlineCount() {
       return this.iotSpaces.filter(s => s.status !== 'off').length;
     },
@@ -71,7 +71,7 @@ export default {
       const online = this.iotSpaces.filter(
         s => s.status !== 'off' && s.sensors?.occupancy?.capacity && s.sensors.occupancy.value !== null
       );
-      if (!online.length) return 'ÔÇö';
+      if (!online.length) return 'â€”';
       const sum = online.reduce((acc, s) => {
         const { value, capacity } = s.sensors.occupancy;
         return acc + (value / capacity) * 100;
@@ -134,8 +134,8 @@ export default {
           device: s.deviceCode,
           space: s.id,
           type: 'amb + occ',
-          reading: s.status === 'off' ? 'ÔÇö' : `hace ${s.lastReadingAgo}`,
-          uptime: s.status === 'off' ? 'ÔÇö' : (s.rssi >= -65 ? '99.6%' : s.rssi >= -70 ? '96.1%' : '93.2%'),
+          reading: s.status === 'off' ? 'â€”' : `hace ${s.lastReadingAgo}`,
+          uptime: s.status === 'off' ? 'â€”' : (s.rssi >= -65 ? '99.6%' : s.rssi >= -70 ? '96.1%' : '93.2%'),
           status: s.status,
         }));
     },
@@ -164,9 +164,9 @@ export default {
       return {
         labels,
         datasets: [
-          { label: 'Ocupaci+¦n (%)', data: s1, borderColor: '#6366f1', backgroundColor: '#6366f122', fill: true, tension: 0.4, pointRadius: 0, borderWidth: 1.8 },
-          { label: 'Temperatura (-¦C)', data: s2, borderColor: '#38bdf8', backgroundColor: 'transparent', fill: false, tension: 0.4, pointRadius: 0, borderWidth: 1.8 },
-          { label: 'COÔéé (ppm)', data: s3, borderColor: '#f59e0b', backgroundColor: 'transparent', fill: false, tension: 0.4, pointRadius: 0, borderWidth: 1.8 },
+          { label: 'OcupaciÃ³n (%)', data: s1, borderColor: '#6366f1', backgroundColor: '#6366f122', fill: true, tension: 0.4, pointRadius: 0, borderWidth: 1.8 },
+          { label: 'Temperatura (Â°C)', data: s2, borderColor: '#38bdf8', backgroundColor: 'transparent', fill: false, tension: 0.4, pointRadius: 0, borderWidth: 1.8 },
+          { label: 'COâ‚‚ (ppm)', data: s3, borderColor: '#f59e0b', backgroundColor: 'transparent', fill: false, tension: 0.4, pointRadius: 0, borderWidth: 1.8 },
         ],
       };
     },
@@ -244,7 +244,7 @@ export default {
       console.error("Error loading admin dashboard", error);
     }
 
-    // IoT ÔÇö always loads from mock, independent of auth
+    // IoT â€” always loads from mock, independent of auth
     this.iotService = new IotMonitoringService();
     const { data } = await this.iotService.getSpaces();
     this.iotSpaces = data;
@@ -350,7 +350,7 @@ export default {
       return new Date(dateString).toLocaleDateString("es-ES", { year: "numeric", month: "2-digit", day: "2-digit" });
     },
     iotStatusLabel(status) {
-      return { ok: '+¦ptimo', warn: 'atenci+¦n', danger: 'cr+¡tico', off: 'offline' }[status] || status;
+      return { ok: 'Ã³ptimo', warn: 'atenciÃ³n', danger: 'crÃ­tico', off: 'offline' }[status] || status;
     },
     alertIcon(status) {
       return status === 'danger' ? 'pi pi-times-circle' : 'pi pi-exclamation-triangle';
@@ -365,10 +365,9 @@ export default {
 </script>
 
 <template>
-  <div>
   <div class="dashboard-layout">
 
-    <!-- ÔöÇÔöÇ Perfil del administrador ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ -->
+    <!-- â”€â”€ Perfil del administrador â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <div class="admin-info">
       <div class="admin-avatar">
         <pv-avatar
@@ -386,7 +385,7 @@ export default {
       </div>
     </div>
 
-    <!-- ÔöÇÔöÇ Profesores, Reuniones, Reportes ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ -->
+    <!-- â”€â”€ Profesores, Reuniones, Reportes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <pv-card class="teachers-card scrollable-card">
       <template #header>
         <div class="card-header-content">
@@ -467,34 +466,34 @@ export default {
       </template>
     </pv-card>
 
-    <!-- ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
          IoT SECTION
-         ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ -->
+         â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
     <div class="iot-section-header">
       <div class="iot-section-title">
         <i class="pi pi-wifi" style="font-size: 18px; color: #6366f1;"></i>
-        <span>Monitoreo IoT ÔÇö Campus</span>
-        <span class="iot-sub">datos simulados -À Sprint 1</span>
+        <span>Monitoreo IoT â€” Campus</span>
+        <span class="iot-sub">datos simulados Â· Sprint 1</span>
       </div>
       <router-link to="/dashboard-admin/iot-monitoring" class="iot-detail-link">
-        Vista detallada ÔåÆ
+        Vista detallada â†’
       </router-link>
     </div>
 
     <!-- KPI strip -->
     <div class="kpi-strip">
       <div class="kpi-card">
-        <div class="kpi-label">Ocupaci+¦n promedio</div>
+        <div class="kpi-label">OcupaciÃ³n promedio</div>
         <div class="kpi-value">{{ iotAvgOccupancy }}<span class="kpi-unit">%</span></div>
-        <div class="kpi-delta kpi-up">Ôû¦ 4.2 pp <span class="kpi-muted">vs semana ant.</span></div>
+        <div class="kpi-delta kpi-up">â–² 4.2 pp <span class="kpi-muted">vs semana ant.</span></div>
         <div class="kpi-spark">
           <pv-chart type="line" :data="kpiSparkData[0]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
         </div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Consumo el+®ctrico</div>
+        <div class="kpi-label">Consumo elÃ©ctrico</div>
         <div class="kpi-value">{{ iotTotalEnergy }}<span class="kpi-unit">kWh / h</span></div>
-        <div class="kpi-delta kpi-down">Ôû+ 24.1% <span class="kpi-muted">vs trim. ant.</span></div>
+        <div class="kpi-delta kpi-down">â–¼ 24.1% <span class="kpi-muted">vs trim. ant.</span></div>
         <div class="kpi-spark">
           <pv-chart type="line" :data="kpiSparkData[1]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
         </div>
@@ -502,7 +501,7 @@ export default {
       <div class="kpi-card">
         <div class="kpi-label">Alertas abiertas</div>
         <div class="kpi-value kpi-warn">{{ iotAlertCount }}<span class="kpi-unit">activas</span></div>
-        <div class="kpi-delta" style="color: #f59e0b;">Ôû¦ 2 <span class="kpi-muted">+¦ltimas 24 h</span></div>
+        <div class="kpi-delta" style="color: #f59e0b;">â–² 2 <span class="kpi-muted">Ãºltimas 24 h</span></div>
         <div class="kpi-spark">
           <pv-chart type="line" :data="kpiSparkData[2]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
         </div>
@@ -510,7 +509,7 @@ export default {
       <div class="kpi-card">
         <div class="kpi-label">Sensores online</div>
         <div class="kpi-value">{{ iotOnlineCount }}<span class="kpi-unit">/ {{ iotSpaces.length }}</span></div>
-        <div class="kpi-delta kpi-up">Ôû+ 3.1 min <span class="kpi-muted">MTTR aver+¡as</span></div>
+        <div class="kpi-delta kpi-up">â–¼ 3.1 min <span class="kpi-muted">MTTR averÃ­as</span></div>
         <div class="kpi-spark">
           <pv-chart type="line" :data="kpiSparkData[3]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
         </div>
@@ -531,7 +530,7 @@ export default {
             <button :class="{ 'seg-active': floorTypeFilter === 'all' }"       @click="floorTypeFilter = 'all'">Todos</button>
             <button :class="{ 'seg-active': floorTypeFilter === 'classrooms' }" @click="floorTypeFilter = 'classrooms'">Aulas</button>
             <button :class="{ 'seg-active': floorTypeFilter === 'labs' }"       @click="floorTypeFilter = 'labs'">Laboratorios</button>
-            <button :class="{ 'seg-active': floorTypeFilter === 'common' }"     @click="floorTypeFilter = 'common'">+üreas comunes</button>
+            <button :class="{ 'seg-active': floorTypeFilter === 'common' }"     @click="floorTypeFilter = 'common'">Ãreas comunes</button>
           </div>
           <span class="floor-count-tag">{{ filteredFloorSpaces.length }} espacios / {{ iotOnlineCount }} sensores online</span>
         </div>
@@ -548,14 +547,14 @@ export default {
               <span class="tile-id">{{ space.id }}</span>
               <span class="tile-led" :class="`led-${space.status}`"></span>
             </div>
-            <span class="tile-temp">{{ space.temperature !== null && space.temperature !== undefined ? space.temperature + '-¦' : 'ÔÇö' }}</span>
+            <span class="tile-temp">{{ space.temperature !== null && space.temperature !== undefined ? space.temperature + 'Â°' : 'â€”' }}</span>
           </div>
         </div>
 
         <div class="map-legend">
-          <span><span class="ld ld-ok"></span>+¦ptimo ({{ iotSpaces.filter(s => s.status === 'ok').length }})</span>
-          <span><span class="ld ld-warn"></span>atenci+¦n ({{ iotSpaces.filter(s => s.status === 'warn').length }})</span>
-          <span><span class="ld ld-danger"></span>cr+¡tico ({{ iotSpaces.filter(s => s.status === 'danger').length }})</span>
+          <span><span class="ld ld-ok"></span>Ã³ptimo ({{ iotSpaces.filter(s => s.status === 'ok').length }})</span>
+          <span><span class="ld ld-warn"></span>atenciÃ³n ({{ iotSpaces.filter(s => s.status === 'warn').length }})</span>
+          <span><span class="ld ld-danger"></span>crÃ­tico ({{ iotSpaces.filter(s => s.status === 'danger').length }})</span>
           <span><span class="ld ld-off"></span>sin uso ({{ iotSpaces.filter(s => s.status === 'off').length }})</span>
         </div>
       </div>
@@ -578,10 +577,10 @@ export default {
           >
             <span class="alert-led" :class="`led-${alert.status}`"></span>
             <div class="alert-body">
-              <div class="alert-who">{{ alert.name }} ÔÇö {{ alert.id }}</div>
+              <div class="alert-who">{{ alert.name }} â€” {{ alert.id }}</div>
               <div class="alert-meta">{{ alert.meta }}</div>
             </div>
-            <span class="alert-ts">{{ alert.event?.time || 'ÔÇö' }}</span>
+            <span class="alert-ts">{{ alert.event?.time || 'â€”' }}</span>
           </div>
           <div v-if="iotAlertsFeed.length === 0" class="alerts-empty">
             <i class="pi pi-check-circle" style="color: #22c55e;"></i>
@@ -591,15 +590,15 @@ export default {
       </div>
     </div>
 
-    <!-- Gr+ífica de telemetr+¡a agregada -->
+    <!-- GrÃ¡fica de telemetrÃ­a agregada -->
     <div class="iot-card telemetry-card">
       <div class="iot-card-head">
-        <span class="iot-card-title">Telemetr+¡a agregada ÔÇö +¦ltimas 24 h</span>
+        <span class="iot-card-title">TelemetrÃ­a agregada â€” Ãºltimas 24 h</span>
         <span class="iot-tag">// IoT</span>
         <div class="telemetry-legend">
-          <span class="tleg-item"><span class="tleg-dot" style="background:#6366f1"></span>Ocupaci+¦n</span>
+          <span class="tleg-item"><span class="tleg-dot" style="background:#6366f1"></span>OcupaciÃ³n</span>
           <span class="tleg-item"><span class="tleg-dot" style="background:#38bdf8"></span>Temperatura</span>
-          <span class="tleg-item"><span class="tleg-dot" style="background:#f59e0b"></span>COÔéé</span>
+          <span class="tleg-item"><span class="tleg-dot" style="background:#f59e0b"></span>COâ‚‚</span>
         </div>
       </div>
       <div class="telemetry-chart">
@@ -613,7 +612,7 @@ export default {
       <!-- Uso por edificio -->
       <div class="iot-card util-card">
         <div class="iot-card-head">
-          <span class="iot-card-title">Uso por edificio -À +¦ltimos 7 d+¡as</span>
+          <span class="iot-card-title">Uso por edificio Â· Ãºltimos 7 dÃ­as</span>
           <span class="iot-tag">// Reporting</span>
         </div>
         <div class="util-list">
@@ -634,7 +633,7 @@ export default {
           <span class="iot-tag">// Devices</span>
           <span class="alert-badge badge-ok" style="margin-left: auto;">
             <span class="led-sm led-ok"></span>
-            {{ iotOnlineCount }} online -À {{ iotSpaces.length - iotOnlineCount }} offline
+            {{ iotOnlineCount }} online Â· {{ iotSpaces.length - iotOnlineCount }} offline
           </span>
         </div>
         <div class="iot-table-wrap">
@@ -666,10 +665,10 @@ export default {
       </div>
     </div>
 
-    <!-- Aver+¡as recientes -->
+    <!-- AverÃ­as recientes -->
     <div class="iot-card breakdowns-card">
       <div class="iot-card-head">
-        <span class="iot-card-title">Aver+¡as recientes</span>
+        <span class="iot-card-title">AverÃ­as recientes</span>
         <span class="iot-tag">// Breakdown Mgmt</span>
       </div>
       <div class="iot-table-wrap">
@@ -679,7 +678,7 @@ export default {
               <th>#</th>
               <th>Espacio</th>
               <th>Tipo</th>
-              <th>T+®cnico</th>
+              <th>TÃ©cnico</th>
               <th>Estado</th>
               <th class="num">SLA</th>
             </tr>
@@ -712,11 +711,10 @@ export default {
     @update:visible="(value) => (createAndEditDialogIsVisible = value)"
     @save-requested="onSaveRequested"
   />
-  </div>
 </template>
 
 <style scoped>
-/* ÔöÇÔöÇ Layout principal ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */
+/* â”€â”€ Layout principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .dashboard-layout {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -724,7 +722,7 @@ export default {
   padding: 20px;
 }
 
-/* ÔöÇÔöÇ Admin info ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */
+/* â”€â”€ Admin info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .admin-info {
   grid-column: span 3;
   background: linear-gradient(135deg, rgba(255, 210, 0, 0.4) 0%, rgba(255, 223, 77, 0.3) 100%);
@@ -745,7 +743,7 @@ export default {
 }
 .admin-details p { margin: 0; font-size: 14px; color: #333; }
 
-/* ÔöÇÔöÇ Tarjetas existentes ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */
+/* â”€â”€ Tarjetas existentes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .scrollable-card {
   height: 450px;
   overflow-y: auto;
@@ -779,11 +777,11 @@ export default {
 .scrollable-card::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 10px; }
 .scrollable-card::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
 
-/* ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    IoT SECTION
-   ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* Cabecera de secci+¦n */
+/* Cabecera de secciÃ³n */
 .iot-section-header {
   grid-column: span 3;
   display: flex;
