@@ -139,9 +139,13 @@ export default {
           status: s.status,
         }));
     },
-    iotTelemetrySvg() {
-      const W = 1100, H = 180, P = 28;
+    iotTelemetryData() {
       const N = 96;
+      const labels = Array.from({ length: N }, (_, i) => {
+        const h = Math.floor(i / 4);
+        const m = (i % 4) * 15;
+        return i % 16 === 0 ? `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}` : '';
+      });
       const s1 = Array.from({ length: N }, (_, i) => {
         const t = i / N;
         let v = 0;
@@ -149,44 +153,71 @@ export default {
         if (t >= 0.54 && t < 0.71) v += 100 * Math.sin((t - 0.54) / 0.17 * Math.PI);
         if (t >= 0.75 && t < 0.875) v += 68 * Math.sin((t - 0.75) / 0.125 * Math.PI);
         v += 1.5 * Math.sin(i / 2.8);
-        return Math.max(0, v);
+        return Math.max(0, Math.round(v));
       });
-      const s2 = Array.from({ length: N }, (_, i) => 19 + 6 * Math.sin(i / 10) + (i > 40 && i < 70 ? 4 : 0));
-      const s3 = Array.from({ length: N }, (_, i) => 500 + 600 * Math.max(0, Math.sin((i - 22) / 14)));
-      const norm = arr => { const lo = Math.min(...arr), hi = Math.max(...arr); return arr.map(v => (v - lo) / ((hi - lo) || 1)); };
-      const makePath = (arr, col) => {
-        const n = norm(arr);
-        const pts = n.map((v, i) => `${(P + (i / (N - 1)) * (W - 2 * P)).toFixed(1)},${(H - P - v * (H - 2 * P)).toFixed(1)}`).join(' L ');
-        return `<path d="M ${pts}" fill="none" stroke="${col}" stroke-width="1.6" stroke-linejoin="round"/>`;
+      const s2 = Array.from({ length: N }, (_, i) =>
+        +(19 + 6 * Math.sin(i / 10) + (i > 40 && i < 70 ? 4 : 0)).toFixed(1)
+      );
+      const s3 = Array.from({ length: N }, (_, i) =>
+        Math.round(500 + 600 * Math.max(0, Math.sin((i - 22) / 14)))
+      );
+      return {
+        labels,
+        datasets: [
+          { label: 'Ocupación (%)', data: s1, borderColor: '#6366f1', backgroundColor: '#6366f122', fill: true, tension: 0.4, pointRadius: 0, borderWidth: 1.8 },
+          { label: 'Temperatura (°C)', data: s2, borderColor: '#38bdf8', backgroundColor: 'transparent', fill: false, tension: 0.4, pointRadius: 0, borderWidth: 1.8 },
+          { label: 'CO₂ (ppm)', data: s3, borderColor: '#f59e0b', backgroundColor: 'transparent', fill: false, tension: 0.4, pointRadius: 0, borderWidth: 1.8 },
+        ],
       };
-      const grid = [0, 0.25, 0.5, 0.75, 1].map(pct => {
-        const y = (P + pct * (H - 2 * P)).toFixed(1);
-        return `<line x1="${P}" y1="${y}" x2="${W - P}" y2="${y}" stroke="#e5e7eb" stroke-dasharray="2 4"/>`;
-      }).join('');
-      const ticks = ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'].map((t, i, a) => {
-        const x = (P + (i / (a.length - 1)) * (W - 2 * P)).toFixed(1);
-        return `<text x="${x}" y="${H - 6}" text-anchor="middle" font-family="monospace" font-size="10" fill="#9ca3af">${t}</text>`;
-      }).join('');
-      return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" width="100%" height="100%">
-        ${grid}${ticks}
-        ${makePath(s1, '#6366f1')}
-        ${makePath(s2, '#38bdf8')}
-        ${makePath(s3, '#f59e0b')}
-      </svg>`;
     },
-    kpiSparklines() {
-      const spark = (data, color) => {
-        const W = 200, H = 32;
-        const lo = Math.min(...data), hi = Math.max(...data);
-        const r = hi - lo || 1;
-        const pts = data.map((v, i) => `${((i / (data.length - 1)) * W).toFixed(1)},${(H - ((v - lo) / r) * H).toFixed(1)}`).join(' L ');
-        return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="32" preserveAspectRatio="none"><path d="M ${pts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+    iotTelemetryOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 0 },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: { font: { family: 'monospace', size: 11 }, color: '#6b7280', boxWidth: 12 },
+          },
+          tooltip: { mode: 'index', intersect: false },
+        },
+        scales: {
+          x: {
+            grid: { color: '#f3f4f6' },
+            ticks: { font: { family: 'monospace', size: 10 }, color: '#9ca3af', maxTicksLimit: 7, maxRotation: 0 },
+          },
+          y: {
+            grid: { color: '#f3f4f6' },
+            ticks: { font: { family: 'monospace', size: 10 }, color: '#9ca3af' },
+          },
+        },
       };
+    },
+    kpiSparkOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 0 },
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: {
+          x: { display: false },
+          y: { display: false },
+        },
+        elements: { point: { radius: 0 } },
+      };
+    },
+    kpiSparkData() {
+      const makeDs = (values, color) => ({
+        labels: values.map((_, i) => i),
+        datasets: [{ data: values, borderColor: color, backgroundColor: 'transparent', tension: 0.4, borderWidth: 1.5 }],
+      });
       return [
-        spark(makeSpark(28, 50, 80, 4), '#6366f1'),
-        spark(makeSpark(28, 280, 380, 5).map((v, i) => v - i * 1.4), '#38bdf8'),
-        spark(makeSpark(28, 2, 9, 3), '#f59e0b'),
-        spark(makeSpark(28, 8, 18, 4).map((v, i) => v - i * 0.05), '#22c55e'),
+        makeDs(makeSpark(28, 50, 80, 4), '#6366f1'),
+        makeDs(makeSpark(28, 280, 380, 5).map((v, i) => v - i * 1.4), '#38bdf8'),
+        makeDs(makeSpark(28, 2, 9, 3), '#f59e0b'),
+        makeDs(makeSpark(28, 8, 18, 4).map((v, i) => v - i * 0.05), '#22c55e'),
       ];
     },
   },
@@ -455,25 +486,33 @@ export default {
         <div class="kpi-label">Ocupación promedio</div>
         <div class="kpi-value">{{ iotAvgOccupancy }}<span class="kpi-unit">%</span></div>
         <div class="kpi-delta kpi-up">▲ 4.2 pp <span class="kpi-muted">vs semana ant.</span></div>
-        <div class="kpi-spark" v-html="kpiSparklines[0]"></div>
+        <div class="kpi-spark">
+          <pv-chart type="line" :data="kpiSparkData[0]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
+        </div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Consumo eléctrico</div>
         <div class="kpi-value">{{ iotTotalEnergy }}<span class="kpi-unit">kWh / h</span></div>
         <div class="kpi-delta kpi-down">▼ 24.1% <span class="kpi-muted">vs trim. ant.</span></div>
-        <div class="kpi-spark" v-html="kpiSparklines[1]"></div>
+        <div class="kpi-spark">
+          <pv-chart type="line" :data="kpiSparkData[1]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
+        </div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Alertas abiertas</div>
         <div class="kpi-value kpi-warn">{{ iotAlertCount }}<span class="kpi-unit">activas</span></div>
         <div class="kpi-delta" style="color: #f59e0b;">▲ 2 <span class="kpi-muted">últimas 24 h</span></div>
-        <div class="kpi-spark" v-html="kpiSparklines[2]"></div>
+        <div class="kpi-spark">
+          <pv-chart type="line" :data="kpiSparkData[2]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
+        </div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Sensores online</div>
         <div class="kpi-value">{{ iotOnlineCount }}<span class="kpi-unit">/ {{ iotSpaces.length }}</span></div>
         <div class="kpi-delta kpi-up">▼ 3.1 min <span class="kpi-muted">MTTR averías</span></div>
-        <div class="kpi-spark" v-html="kpiSparklines[3]"></div>
+        <div class="kpi-spark">
+          <pv-chart type="line" :data="kpiSparkData[3]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
+        </div>
       </div>
     </div>
 
@@ -497,19 +536,19 @@ export default {
         </div>
 
         <div class="floor-grid">
-          <router-link
+          <div
             v-for="space in filteredFloorSpaces"
             :key="space.id"
-            to="/dashboard-admin/iot-monitoring"
             class="room-tile"
             :class="`tile-${space.status}`"
+            @click="$router.push('/dashboard-admin/iot-monitoring')"
           >
             <div class="tile-top">
               <span class="tile-id">{{ space.id }}</span>
               <span class="tile-led" :class="`led-${space.status}`"></span>
             </div>
-            <span class="tile-temp">{{ space.temperature !== null ? space.temperature + '°' : '—' }}</span>
-          </router-link>
+            <span class="tile-temp">{{ space.temperature !== null && space.temperature !== undefined ? space.temperature + '°' : '—' }}</span>
+          </div>
         </div>
 
         <div class="map-legend">
@@ -562,7 +601,9 @@ export default {
           <span class="tleg-item"><span class="tleg-dot" style="background:#f59e0b"></span>CO₂</span>
         </div>
       </div>
-      <div class="telemetry-chart" v-html="iotTelemetrySvg"></div>
+      <div class="telemetry-chart">
+        <pv-chart type="line" :data="iotTelemetryData" :options="iotTelemetryOptions" style="width:100%;height:100%;" />
+      </div>
     </div>
 
     <!-- Uso por edificio + Salud de sensores -->

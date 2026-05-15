@@ -82,12 +82,47 @@ const RANGE_OPTIONS = [
     { label: '7d', value: '7d' },
 ];
 
+function generateSeries(tab, space, N) {
+    const cap = space.sensors?.occupancy?.capacity || 32;
+    return Array.from({ length: N }, (_, i) => {
+        const t = i / (N - 1);
+        if (tab === 'occupancy') {
+            let v = 0;
+            if (t >= 0.28 && t < 0.46) v += cap * 0.9 * Math.sin((t - 0.28) / 0.18 * Math.PI);
+            if (t >= 0.54 && t < 0.72) v += cap * 1.0 * Math.sin((t - 0.54) / 0.18 * Math.PI);
+            if (t >= 0.75 && t < 0.88) v += cap * 0.70 * Math.sin((t - 0.75) / 0.13 * Math.PI);
+            v += 0.8 * Math.sin(i / 2.5);
+            return Math.max(0, Math.min(cap, Math.round(v)));
+        }
+        if (tab === 'temperature') {
+            const base = space.sensors?.temperature?.value || 22;
+            return +(base - 3 + 5 * Math.sin(t * Math.PI * 2.4 + 0.3) + 1.2 * Math.sin(i / 4)).toFixed(1);
+        }
+        if (tab === 'co2') {
+            const base = space.sensors?.co2?.value || 700;
+            return Math.round(420 + (base - 420) * Math.max(0, Math.sin(t * Math.PI * 1.8 - 0.2)) + 40 * Math.sin(i / 6));
+        }
+        if (tab === 'humidity') {
+            const base = space.sensors?.humidity?.value || 55;
+            return +(base - 8 + 12 * Math.sin(t * Math.PI * 1.5 + 0.8) + 2 * Math.sin(i / 5)).toFixed(1);
+        }
+        return 0;
+    });
+}
+
+function makeTimeLabels(range) {
+    if (range === '7d') return ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+    if (range === '1h') return Array.from({ length: 12 }, (_, i) => `${i * 5}m`);
+    const hours = range === '24h'
+        ? ['00h', '03h', '06h', '09h', '12h', '15h', '18h', '21h', '24h']
+        : ['00h', '01h', '02h', '03h', '04h', '05h', '06h', '07h', '08h'];
+    return hours;
+}
+
 export default {
     name: 'IotMonitoringPage',
 
-    components: {
-        SpaceSensorCard,
-    },
+    components: { SpaceSensorCard },
 
     data() {
         return {
@@ -97,8 +132,6 @@ export default {
             filterText: '',
             activeTab: 'occupancy',
             activeRange: '8h',
-            sensorMeta: SENSOR_META,
-            sensorOrder: SENSOR_ORDER,
             chartTabs: CHART_TABS,
             rangeOptions: RANGE_OPTIONS,
         };
@@ -108,7 +141,9 @@ export default {
         filteredSpaces() {
             if (!this.filterText.trim()) return this.spaces;
             const q = this.filterText.toLowerCase();
-            return this.spaces.filter(s => s.id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
+            return this.spaces.filter(s =>
+                s.id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
+            );
         },
 
         onlineCount() {
@@ -121,97 +156,85 @@ export default {
 
         sensorList() {
             if (!this.selectedSpace) return [];
-            return SENSOR_ORDER.map(key => ({
-                key,
-                meta: SENSOR_META[key],
-                data: this.selectedSpace.sensors[key],
-            }));
+            return SENSOR_ORDER.map(key => {
+                const raw = this.selectedSpace.sensors?.[key];
+                const data = raw || { value: null, capacity: null, delta: '—', deltaStatus: 'neutral' };
+                return { key, meta: SENSOR_META[key], data };
+            });
         },
 
-        chartSvg() {
-            if (!this.selectedSpace) return '';
-            const W = 780, H = 200, PX = 38, PY = 18;
-            const N = this.activeRange === '1h' ? 12 : 96;
-            const space = this.selectedSpace;
+        chartData() {
+            if (!this.selectedSpace) return { labels: [], datasets: [] };
+            const N = this.activeRange === '1h' ? 12 : this.activeRange === '7d' ? 7 : 96;
             const tab = this.activeTab;
+            const tabObj = CHART_TABS.find(t => t.key === tab) || CHART_TABS[0];
+            const values = generateSeries(tab, this.selectedSpace, N);
+            const labels = makeTimeLabels(this.activeRange);
 
-            const cap = space.sensors.occupancy?.capacity || 32;
-
-            const data = Array.from({ length: N }, (_, i) => {
-                const t = i / (N - 1);
-                if (tab === 'occupancy') {
-                    let v = 0;
-                    if (t >= 0.28 && t < 0.46) v += cap * 0.9  * Math.sin((t - 0.28) / 0.18 * Math.PI);
-                    if (t >= 0.54 && t < 0.72) v += cap * 1.0  * Math.sin((t - 0.54) / 0.18 * Math.PI);
-                    if (t >= 0.75 && t < 0.88) v += cap * 0.70 * Math.sin((t - 0.75) / 0.13 * Math.PI);
-                    v += 0.8 * Math.sin(i / 2.5);
-                    return Math.max(0, Math.min(cap, v));
-                }
-                if (tab === 'temperature') {
-                    const base = space.sensors.temperature?.value || 22;
-                    return base - 3 + 5 * Math.sin(t * Math.PI * 2.4 + 0.3) + 1.2 * Math.sin(i / 4);
-                }
-                if (tab === 'co2') {
-                    const base = space.sensors.co2?.value || 700;
-                    return 420 + (base - 420) * Math.max(0, Math.sin(t * Math.PI * 1.8 - 0.2)) + 40 * Math.sin(i / 6);
-                }
-                if (tab === 'humidity') {
-                    const base = space.sensors.humidity?.value || 55;
-                    return base - 8 + 12 * Math.sin(t * Math.PI * 1.5 + 0.8) + 2 * Math.sin(i / 5);
-                }
-                return 0;
+            const labelStep = Math.max(1, Math.floor(N / (labels.length - 1)));
+            const fullLabels = Array.from({ length: N }, (_, i) => {
+                const idx = Math.round(i / labelStep);
+                return idx < labels.length ? labels[idx] : '';
             });
 
-            const max = Math.max(...data) * 1.15 || 1;
-            const toX = i => PX + (i / (N - 1)) * (W - PX - 8);
-            const toY = v => H - PY - (Math.max(0, v) / max) * (H - 2 * PY);
+            return {
+                labels: fullLabels,
+                datasets: [{
+                    label: tabObj.label,
+                    data: values,
+                    borderColor: tabObj.color,
+                    backgroundColor: tabObj.color + '22',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    borderWidth: 2,
+                }],
+            };
+        },
 
-            const activeTabObj = CHART_TABS.find(t => t.key === tab) || CHART_TABS[0];
-            const color = activeTabObj.color;
-
-            const pts = data.map((v, i) => `${toX(i).toFixed(1)},${toY(v).toFixed(1)}`).join(' L ');
-            const areaPath = `M ${toX(0)},${toY(0)} L ${pts} L ${toX(N - 1)},${H - PY} L ${toX(0)},${H - PY} Z`;
-            const linePath = `M ${pts}`;
-
-            const gridLines = [0, 0.25, 0.5, 0.75, 1].map(pct => {
-                const y = PY + pct * (H - 2 * PY);
-                const val = ((1 - pct) * max).toFixed(tab === 'energy' ? 1 : 0);
-                return `<line x1="${PX}" y1="${y.toFixed(1)}" x2="${W - 8}" y2="${y.toFixed(1)}" stroke="#e5e7eb" stroke-dasharray="2 4"/>
-                         <text x="${PX - 4}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-size="9" fill="#9ca3af" font-family="monospace">${val}</text>`;
-            }).join('');
-
-            const labels = this.activeRange === '7d'
-                ? ['L', 'M', 'X', 'J', 'V', 'S', 'D']
-                : ['00h', '03h', '06h', '09h', '12h', '15h', '18h', '21h', '24h'];
-
-            const ticks = labels.map((lbl, i, a) => {
-                const x = PX + (i / (a.length - 1)) * (W - PX - 8);
-                return `<text x="${x.toFixed(1)}" y="${H - 3}" text-anchor="middle" font-size="9" fill="#9ca3af" font-family="monospace">${lbl}</text>`;
-            }).join('');
-
-            const markerI = Math.round(N * 0.605);
-            const cx = toX(markerI).toFixed(1);
-            const cy = toY(data[markerI]).toFixed(1);
-
-            return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="${color}" stop-opacity="0.18"/>
-                    <stop offset="100%" stop-color="${color}" stop-opacity="0.01"/>
-                  </linearGradient>
-                </defs>
-                ${gridLines}
-                ${ticks}
-                <path d="${areaPath}" fill="url(#areaGrad)"/>
-                <path d="${linePath}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round"/>
-                <line x1="${cx}" y1="${PY}" x2="${cx}" y2="${H - PY}" stroke="#6b7280" stroke-dasharray="2 3" stroke-width="1"/>
-                <circle cx="${cx}" cy="${cy}" r="3.5" fill="white" stroke="${color}" stroke-width="2"/>
-            </svg>`;
+        chartOptions() {
+            const tab = this.activeTab;
+            const tabObj = CHART_TABS.find(t => t.key === tab) || CHART_TABS[0];
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 300 },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            title: (items) => items[0]?.label || '',
+                            label: (item) => ` ${tabObj.label}: ${item.raw}`,
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        grid: { color: '#f3f4f6' },
+                        ticks: {
+                            font: { family: 'monospace', size: 10 },
+                            color: '#9ca3af',
+                            maxTicksLimit: 9,
+                            maxRotation: 0,
+                        },
+                    },
+                    y: {
+                        grid: { color: '#f3f4f6' },
+                        ticks: {
+                            font: { family: 'monospace', size: 10 },
+                            color: '#9ca3af',
+                        },
+                    },
+                },
+            };
         },
 
         occStrip() {
             if (!this.selectedSpace) return [];
-            const cap = this.selectedSpace.sensors.occupancy?.capacity || 32;
+            const cap = this.selectedSpace.sensors?.occupancy?.capacity || 32;
             return Array.from({ length: 48 }, (_, i) => {
                 const t = i / 47;
                 const v = cap * 0.9 * Math.max(0, Math.sin((t - 0.3) / 0.4 * Math.PI));
@@ -224,7 +247,7 @@ export default {
         async loadSpaces() {
             try {
                 const response = await this.service.getSpaces();
-                this.spaces = response.data.map(raw => new IotSpace(raw));
+                this.spaces = (response.data || []).map(raw => new IotSpace(raw));
                 if (this.spaces.length) {
                     this.selectedSpace = this.spaces.find(s => s.id === 'A-203') || this.spaces[0];
                 }
@@ -243,7 +266,7 @@ export default {
         },
 
         rssiQuality(rssi) {
-            if (rssi === null) return 'sin señal';
+            if (rssi === null || rssi === undefined) return 'sin señal';
             if (rssi >= -60) return 'excelente';
             if (rssi >= -70) return 'buena';
             return 'débil';
@@ -300,7 +323,7 @@ export default {
               v-for="space in filteredSpaces"
               :key="space.id"
               class="room-row"
-              :class="[`row-${space.status}`, { 'row-active': selectedSpace?.id === space.id }]"
+              :class="[`row-${space.status}`, { 'row-active': selectedSpace && selectedSpace.id === space.id }]"
               @click="selectSpace(space)"
             >
               <span class="led" :class="`led-${space.status}`"></span>
@@ -309,7 +332,7 @@ export default {
                 <div class="room-meta">{{ space.meta }}</div>
               </div>
               <span class="room-temp">
-                {{ space.temperature !== null ? space.temperature + ' °C' : '—' }}
+                {{ space.temperature !== null && space.temperature !== undefined ? space.temperature + ' °C' : '—' }}
               </span>
             </div>
             <div v-if="filteredSpaces.length === 0" class="rooms-empty">
@@ -377,8 +400,15 @@ export default {
             </div>
           </div>
 
-          <!-- Gráfico SVG -->
-          <div class="chart-area" v-html="chartSvg"></div>
+          <!-- Gráfico interactivo (Chart.js via pv-chart) -->
+          <div class="chart-area">
+            <pv-chart
+              type="line"
+              :data="chartData"
+              :options="chartOptions"
+              style="width:100%; height:100%;"
+            />
+          </div>
 
           <!-- Strip de ocupación (últimas lecturas binarias) -->
           <div class="occ-strip">
@@ -434,7 +464,7 @@ export default {
         </template>
       </pv-card>
 
-      <!-- Estado vacío si no hay espacio seleccionado -->
+      <!-- Estado vacío -->
       <pv-card v-else class="detail-card detail-empty">
         <template #content>
           <div class="empty-state">
@@ -449,7 +479,6 @@ export default {
 </template>
 
 <style scoped>
-/* Layout general */
 .iot-page {
   padding: 24px;
   max-width: 1400px;
@@ -457,7 +486,6 @@ export default {
   width: 100%;
 }
 
-/* Cabecera */
 .page-head {
   display: flex;
   justify-content: space-between;
@@ -517,7 +545,6 @@ export default {
   50%       { opacity: 0.4; }
 }
 
-/* Monitor layout */
 .monitor-layout {
   display: grid;
   grid-template-columns: 300px 1fr;
@@ -529,9 +556,9 @@ export default {
   .monitor-layout { grid-template-columns: 1fr; }
 }
 
-/* Panel de lista de espacios */
-.rooms-card :deep(.p-card-body) { padding: 0; }
-.rooms-card :deep(.p-card-content) { padding: 0; }
+/* Rooms card */
+.rooms-card :deep(.p-card-body)   { padding: 0; }
+.rooms-card :deep(.p-card-content){ padding: 0; }
 
 .rooms-header {
   display: flex;
@@ -577,28 +604,16 @@ export default {
 .room-meta { font-size: 11px; color: #9ca3af; font-family: monospace; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .room-temp { font-family: monospace; font-size: 12px; color: #6b7280; white-space: nowrap; }
 
-.rooms-empty {
-  padding: 24px;
-  text-align: center;
-  color: #9ca3af;
-  font-size: 12px;
-}
+.rooms-empty { padding: 24px; text-align: center; color: #9ca3af; font-size: 12px; }
 
-/* LED dots */
-.led {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
+/* LEDs */
+.led { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .led-ok     { background: #22c55e; }
 .led-warn   { background: #f59e0b; }
 .led-danger { background: #ef4444; }
 .led-off    { background: #d1d5db; }
 
-/* Panel de detalle */
+/* Detail card */
 .detail-card :deep(.p-card-body)   { padding: 0; }
 .detail-card :deep(.p-card-content){ padding: 0; }
 
@@ -609,6 +624,7 @@ export default {
   padding: 18px 20px;
   border-bottom: 1px solid #f3f4f6;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .detail-tile {
@@ -623,12 +639,10 @@ export default {
   font-weight: 700;
   font-size: 13px;
   color: #6b7280;
-  flex-shrink: 0;
 }
 
 .detail-name { font-size: 20px; font-weight: 700; margin: 0 0 4px; color: #111827; }
 .detail-sub  { font-size: 12px; color: #6b7280; }
-
 .detail-status { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
 .status-pill {
@@ -647,17 +661,17 @@ export default {
 .pill-danger { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
 .pill-off    { background: #f9fafb; border: 1px solid #e5e7eb; color: #6b7280; }
 
-/* Grid de sensores */
+/* Sensor grid */
 .sensor-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border-bottom: 1px solid #f3f4f6;
 }
 
-.sensor-grid > *:nth-child(3n)      { border-right: none; }
+.sensor-grid > *:nth-child(3n)        { border-right: none; }
 .sensor-grid > *:nth-last-child(-n+3) { border-bottom: none; }
 
-/* Tabs de gráfico */
+/* Chart tabs */
 .chart-tabs {
   display: flex;
   align-items: center;
@@ -684,19 +698,9 @@ export default {
 }
 
 .chart-tab:hover { color: #374151; }
+.tab-active { color: #111827; font-weight: 500; border-bottom-color: #6366f1; }
 
-.tab-active {
-  color: #111827;
-  font-weight: 500;
-  border-bottom-color: #6366f1;
-}
-
-.tab-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
+.tab-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
 .range-selector {
   margin-left: auto;
@@ -721,21 +725,15 @@ export default {
 
 .range-btn:last-child { border-right: none; }
 .range-btn:hover      { background: #f9fafb; }
+.range-active { background: #f3f4f6 !important; color: #111827 !important; font-weight: 600; }
 
-.range-active {
-  background: #f3f4f6 !important;
-  color: #111827 !important;
-  font-weight: 600;
-}
-
-/* Gráfico */
+/* Chart area — altura fija para pv-chart */
 .chart-area {
-  height: 200px;
-  padding: 12px 16px 4px;
-  overflow: hidden;
+  height: 220px;
+  padding: 12px 16px 8px;
 }
 
-/* Tira de ocupación */
+/* Occupancy strip */
 .occ-strip {
   display: flex;
   gap: 2px;
@@ -743,15 +741,10 @@ export default {
   height: 20px;
 }
 
-.occ-bit {
-  flex: 1;
-  background: #f3f4f6;
-  border-radius: 2px;
-}
+.occ-bit { flex: 1; background: #f3f4f6; border-radius: 2px; }
+.occ-on  { background: #818cf8; }
 
-.occ-on { background: #818cf8; }
-
-/* Footer del dispositivo */
+/* Device footer */
 .device-footer {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -759,7 +752,6 @@ export default {
   padding: 12px 20px;
   background: #fafafa;
   border-top: 1px solid #f3f4f6;
-  font-size: 12px;
 }
 
 .device-key {
@@ -771,16 +763,10 @@ export default {
   margin-bottom: 3px;
 }
 
-.device-val {
-  font-family: monospace;
-  font-weight: 500;
-  color: #374151;
-  font-size: 11px;
-}
-
+.device-val { font-family: monospace; font-weight: 500; color: #374151; font-size: 11px; }
 .val-ok { color: #16a34a; }
 
-/* Eventos */
+/* Events */
 .events-header {
   display: flex;
   align-items: center;
@@ -822,19 +808,14 @@ export default {
 .tag-danger { background: #fef2f2; color: #b91c1c; }
 .tag-info   { background: #eff6ff; color: #1d4ed8; }
 
-.ev-msg  { font-family: inherit; font-size: 12px; color: #4b5563; font-family: system-ui, sans-serif; }
-.ev-val  { color: #111827; font-weight: 500; white-space: nowrap; }
+.ev-msg { font-size: 12px; color: #4b5563; font-family: system-ui, sans-serif; }
+.ev-val { color: #111827; font-weight: 500; white-space: nowrap; }
 
-.events-empty {
-  padding: 24px;
-  text-align: center;
-  color: #9ca3af;
-  font-size: 12px;
-}
+.events-empty { padding: 24px; text-align: center; color: #9ca3af; font-size: 12px; }
 
-/* Estado vacío */
-.detail-empty :deep(.p-card-body) { padding: 0; }
-.detail-empty :deep(.p-card-content) { padding: 0; }
+/* Empty state */
+.detail-empty :deep(.p-card-body)   { padding: 0; }
+.detail-empty :deep(.p-card-content){ padding: 0; }
 
 .empty-state {
   display: flex;
