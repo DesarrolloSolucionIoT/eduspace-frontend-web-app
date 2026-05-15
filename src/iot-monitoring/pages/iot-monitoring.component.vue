@@ -5,13 +5,13 @@ import SpaceSensorCard from '../components/space-sensor-card.component.vue';
 
 const SENSOR_META = {
     occupancy: {
-        label: 'Ocupaci+¦n',
+        label: 'OcupaciÃ³n',
         icon: 'pi pi-users',
         getMarkerPct(s) { return s.capacity ? (s.value / s.capacity) * 100 : 0; },
         zones: [{ color: 'ok', from: 0, to: 75 }, { color: 'warn', from: 75, to: 90 }, { color: 'danger', from: 90, to: 100 }],
         minLabel: '0',
         maxLabel: (s) => `aforo ${s.capacity}`,
-        formatValue: (s) => s.value !== null ? `${s.value}` : 'ÔÇö',
+        formatValue: (s) => s.value !== null ? `${s.value}` : 'â€”',
         formatUnit: (s) => s.capacity ? `/ ${s.capacity}` : '',
     },
     temperature: {
@@ -19,10 +19,10 @@ const SENSOR_META = {
         icon: 'pi pi-sun',
         getMarkerPct(s) { return ((s.value - 16) / (30 - 16)) * 100; },
         zones: [{ color: 'warn', from: 0, to: 14 }, { color: 'ok', from: 14, to: 64 }, { color: 'warn', from: 64, to: 86 }, { color: 'danger', from: 86, to: 100 }],
-        minLabel: '16 -¦C',
-        maxLabel: () => '30 -¦C',
-        formatValue: (s) => s.value !== null ? `${s.value}` : 'ÔÇö',
-        formatUnit: () => '-¦C',
+        minLabel: '16 Â°C',
+        maxLabel: () => '30 Â°C',
+        formatValue: (s) => s.value !== null ? `${s.value}` : 'â€”',
+        formatUnit: () => 'Â°C',
     },
     humidity: {
         label: 'Humedad',
@@ -31,7 +31,7 @@ const SENSOR_META = {
         zones: [{ color: 'warn', from: 0, to: 5 }, { color: 'ok', from: 5, to: 82 }, { color: 'warn', from: 82, to: 95 }, { color: 'danger', from: 95, to: 100 }],
         minLabel: '20%',
         maxLabel: () => '90%',
-        formatValue: (s) => s.value !== null ? `${s.value}` : 'ÔÇö',
+        formatValue: (s) => s.value !== null ? `${s.value}` : 'â€”',
         formatUnit: () => '%',
     },
     luminosity: {
@@ -41,17 +41,17 @@ const SENSOR_META = {
         zones: [{ color: 'warn', from: 0, to: 13 }, { color: 'ok', from: 13, to: 87 }, { color: 'warn', from: 87, to: 100 }],
         minLabel: '0 lx',
         maxLabel: () => '1500 lx',
-        formatValue: (s) => s.value !== null ? `${s.value}` : 'ÔÇö',
+        formatValue: (s) => s.value !== null ? `${s.value}` : 'â€”',
         formatUnit: () => 'lx',
     },
     co2: {
-        label: 'COÔéé',
+        label: 'COâ‚‚',
         icon: 'pi pi-chart-line',
         getMarkerPct(s) { return ((s.value - 400) / (2000 - 400)) * 100; },
         zones: [{ color: 'ok', from: 0, to: 38 }, { color: 'warn', from: 38, to: 69 }, { color: 'danger', from: 69, to: 100 }],
         minLabel: '400',
         maxLabel: () => '2000 ppm',
-        formatValue: (s) => s.value !== null ? s.value.toLocaleString('es-PE') : 'ÔÇö',
+        formatValue: (s) => s.value !== null ? s.value.toLocaleString('es-PE') : 'â€”',
         formatUnit: () => 'ppm',
     },
     energy: {
@@ -61,7 +61,7 @@ const SENSOR_META = {
         zones: [{ color: 'ok', from: 0, to: 60 }, { color: 'warn', from: 60, to: 80 }, { color: 'danger', from: 80, to: 100 }],
         minLabel: '0',
         maxLabel: () => '4 kWh/h',
-        formatValue: (s) => s.value !== null ? s.value.toFixed(2) : 'ÔÇö',
+        formatValue: (s) => s.value !== null ? s.value.toFixed(2) : 'â€”',
         formatUnit: () => 'kWh / h',
     },
 };
@@ -69,9 +69,9 @@ const SENSOR_META = {
 const SENSOR_ORDER = ['occupancy', 'temperature', 'humidity', 'luminosity', 'co2', 'energy'];
 
 const CHART_TABS = [
-    { key: 'occupancy',   label: 'Ocupaci+¦n',   color: '#6366f1' },
+    { key: 'occupancy',   label: 'OcupaciÃ³n',   color: '#6366f1' },
     { key: 'temperature', label: 'Temperatura', color: '#38bdf8' },
-    { key: 'co2',         label: 'COÔéé',         color: '#f59e0b' },
+    { key: 'co2',         label: 'COâ‚‚',         color: '#f59e0b' },
     { key: 'humidity',    label: 'Humedad',     color: '#a78bfa' },
 ];
 
@@ -82,47 +82,12 @@ const RANGE_OPTIONS = [
     { label: '7d', value: '7d' },
 ];
 
-function generateSeries(tab, space, N) {
-    const cap = space.sensors?.occupancy?.capacity || 32;
-    return Array.from({ length: N }, (_, i) => {
-        const t = i / (N - 1);
-        if (tab === 'occupancy') {
-            let v = 0;
-            if (t >= 0.28 && t < 0.46) v += cap * 0.9 * Math.sin((t - 0.28) / 0.18 * Math.PI);
-            if (t >= 0.54 && t < 0.72) v += cap * 1.0 * Math.sin((t - 0.54) / 0.18 * Math.PI);
-            if (t >= 0.75 && t < 0.88) v += cap * 0.70 * Math.sin((t - 0.75) / 0.13 * Math.PI);
-            v += 0.8 * Math.sin(i / 2.5);
-            return Math.max(0, Math.min(cap, Math.round(v)));
-        }
-        if (tab === 'temperature') {
-            const base = space.sensors?.temperature?.value || 22;
-            return +(base - 3 + 5 * Math.sin(t * Math.PI * 2.4 + 0.3) + 1.2 * Math.sin(i / 4)).toFixed(1);
-        }
-        if (tab === 'co2') {
-            const base = space.sensors?.co2?.value || 700;
-            return Math.round(420 + (base - 420) * Math.max(0, Math.sin(t * Math.PI * 1.8 - 0.2)) + 40 * Math.sin(i / 6));
-        }
-        if (tab === 'humidity') {
-            const base = space.sensors?.humidity?.value || 55;
-            return +(base - 8 + 12 * Math.sin(t * Math.PI * 1.5 + 0.8) + 2 * Math.sin(i / 5)).toFixed(1);
-        }
-        return 0;
-    });
-}
-
-function makeTimeLabels(range) {
-    if (range === '7d') return ['Lun', 'Mar', 'Mi+®', 'Jue', 'Vie', 'S+íb', 'Dom'];
-    if (range === '1h') return Array.from({ length: 12 }, (_, i) => `${i * 5}m`);
-    const hours = range === '24h'
-        ? ['00h', '03h', '06h', '09h', '12h', '15h', '18h', '21h', '24h']
-        : ['00h', '01h', '02h', '03h', '04h', '05h', '06h', '07h', '08h'];
-    return hours;
-}
-
 export default {
     name: 'IotMonitoringPage',
 
-    components: { SpaceSensorCard },
+    components: {
+        SpaceSensorCard,
+    },
 
     data() {
         return {
@@ -132,6 +97,8 @@ export default {
             filterText: '',
             activeTab: 'occupancy',
             activeRange: '8h',
+            sensorMeta: SENSOR_META,
+            sensorOrder: SENSOR_ORDER,
             chartTabs: CHART_TABS,
             rangeOptions: RANGE_OPTIONS,
         };
@@ -141,9 +108,7 @@ export default {
         filteredSpaces() {
             if (!this.filterText.trim()) return this.spaces;
             const q = this.filterText.toLowerCase();
-            return this.spaces.filter(s =>
-                s.id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
-            );
+            return this.spaces.filter(s => s.id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
         },
 
         onlineCount() {
@@ -156,85 +121,97 @@ export default {
 
         sensorList() {
             if (!this.selectedSpace) return [];
-            return SENSOR_ORDER.map(key => {
-                const raw = this.selectedSpace.sensors?.[key];
-                const data = raw || { value: null, capacity: null, delta: 'ÔÇö', deltaStatus: 'neutral' };
-                return { key, meta: SENSOR_META[key], data };
-            });
+            return SENSOR_ORDER.map(key => ({
+                key,
+                meta: SENSOR_META[key],
+                data: this.selectedSpace.sensors[key],
+            }));
         },
 
-        chartData() {
-            if (!this.selectedSpace) return { labels: [], datasets: [] };
-            const N = this.activeRange === '1h' ? 12 : this.activeRange === '7d' ? 7 : 96;
+        chartSvg() {
+            if (!this.selectedSpace) return '';
+            const W = 780, H = 200, PX = 38, PY = 18;
+            const N = this.activeRange === '1h' ? 12 : 96;
+            const space = this.selectedSpace;
             const tab = this.activeTab;
-            const tabObj = CHART_TABS.find(t => t.key === tab) || CHART_TABS[0];
-            const values = generateSeries(tab, this.selectedSpace, N);
-            const labels = makeTimeLabels(this.activeRange);
 
-            const labelStep = Math.max(1, Math.floor(N / (labels.length - 1)));
-            const fullLabels = Array.from({ length: N }, (_, i) => {
-                const idx = Math.round(i / labelStep);
-                return idx < labels.length ? labels[idx] : '';
+            const cap = space.sensors.occupancy?.capacity || 32;
+
+            const data = Array.from({ length: N }, (_, i) => {
+                const t = i / (N - 1);
+                if (tab === 'occupancy') {
+                    let v = 0;
+                    if (t >= 0.28 && t < 0.46) v += cap * 0.9  * Math.sin((t - 0.28) / 0.18 * Math.PI);
+                    if (t >= 0.54 && t < 0.72) v += cap * 1.0  * Math.sin((t - 0.54) / 0.18 * Math.PI);
+                    if (t >= 0.75 && t < 0.88) v += cap * 0.70 * Math.sin((t - 0.75) / 0.13 * Math.PI);
+                    v += 0.8 * Math.sin(i / 2.5);
+                    return Math.max(0, Math.min(cap, v));
+                }
+                if (tab === 'temperature') {
+                    const base = space.sensors.temperature?.value || 22;
+                    return base - 3 + 5 * Math.sin(t * Math.PI * 2.4 + 0.3) + 1.2 * Math.sin(i / 4);
+                }
+                if (tab === 'co2') {
+                    const base = space.sensors.co2?.value || 700;
+                    return 420 + (base - 420) * Math.max(0, Math.sin(t * Math.PI * 1.8 - 0.2)) + 40 * Math.sin(i / 6);
+                }
+                if (tab === 'humidity') {
+                    const base = space.sensors.humidity?.value || 55;
+                    return base - 8 + 12 * Math.sin(t * Math.PI * 1.5 + 0.8) + 2 * Math.sin(i / 5);
+                }
+                return 0;
             });
 
-            return {
-                labels: fullLabels,
-                datasets: [{
-                    label: tabObj.label,
-                    data: values,
-                    borderColor: tabObj.color,
-                    backgroundColor: tabObj.color + '22',
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    pointHoverRadius: 4,
-                    borderWidth: 2,
-                }],
-            };
-        },
+            const max = Math.max(...data) * 1.15 || 1;
+            const toX = i => PX + (i / (N - 1)) * (W - PX - 8);
+            const toY = v => H - PY - (Math.max(0, v) / max) * (H - 2 * PY);
 
-        chartOptions() {
-            const tab = this.activeTab;
-            const tabObj = CHART_TABS.find(t => t.key === tab) || CHART_TABS[0];
-            return {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: { duration: 300 },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            title: (items) => items[0]?.label || '',
-                            label: (item) => ` ${tabObj.label}: ${item.raw}`,
-                        },
-                    },
-                },
-                scales: {
-                    x: {
-                        grid: { color: '#f3f4f6' },
-                        ticks: {
-                            font: { family: 'monospace', size: 10 },
-                            color: '#9ca3af',
-                            maxTicksLimit: 9,
-                            maxRotation: 0,
-                        },
-                    },
-                    y: {
-                        grid: { color: '#f3f4f6' },
-                        ticks: {
-                            font: { family: 'monospace', size: 10 },
-                            color: '#9ca3af',
-                        },
-                    },
-                },
-            };
+            const activeTabObj = CHART_TABS.find(t => t.key === tab) || CHART_TABS[0];
+            const color = activeTabObj.color;
+
+            const pts = data.map((v, i) => `${toX(i).toFixed(1)},${toY(v).toFixed(1)}`).join(' L ');
+            const areaPath = `M ${toX(0)},${toY(0)} L ${pts} L ${toX(N - 1)},${H - PY} L ${toX(0)},${H - PY} Z`;
+            const linePath = `M ${pts}`;
+
+            const gridLines = [0, 0.25, 0.5, 0.75, 1].map(pct => {
+                const y = PY + pct * (H - 2 * PY);
+                const val = ((1 - pct) * max).toFixed(tab === 'energy' ? 1 : 0);
+                return `<line x1="${PX}" y1="${y.toFixed(1)}" x2="${W - 8}" y2="${y.toFixed(1)}" stroke="#e5e7eb" stroke-dasharray="2 4"/>
+                         <text x="${PX - 4}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-size="9" fill="#9ca3af" font-family="monospace">${val}</text>`;
+            }).join('');
+
+            const labels = this.activeRange === '7d'
+                ? ['L', 'M', 'X', 'J', 'V', 'S', 'D']
+                : ['00h', '03h', '06h', '09h', '12h', '15h', '18h', '21h', '24h'];
+
+            const ticks = labels.map((lbl, i, a) => {
+                const x = PX + (i / (a.length - 1)) * (W - PX - 8);
+                return `<text x="${x.toFixed(1)}" y="${H - 3}" text-anchor="middle" font-size="9" fill="#9ca3af" font-family="monospace">${lbl}</text>`;
+            }).join('');
+
+            const markerI = Math.round(N * 0.605);
+            const cx = toX(markerI).toFixed(1);
+            const cy = toY(data[markerI]).toFixed(1);
+
+            return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="${color}" stop-opacity="0.18"/>
+                    <stop offset="100%" stop-color="${color}" stop-opacity="0.01"/>
+                  </linearGradient>
+                </defs>
+                ${gridLines}
+                ${ticks}
+                <path d="${areaPath}" fill="url(#areaGrad)"/>
+                <path d="${linePath}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round"/>
+                <line x1="${cx}" y1="${PY}" x2="${cx}" y2="${H - PY}" stroke="#6b7280" stroke-dasharray="2 3" stroke-width="1"/>
+                <circle cx="${cx}" cy="${cy}" r="3.5" fill="white" stroke="${color}" stroke-width="2"/>
+            </svg>`;
         },
 
         occStrip() {
             if (!this.selectedSpace) return [];
-            const cap = this.selectedSpace.sensors?.occupancy?.capacity || 32;
+            const cap = this.selectedSpace.sensors.occupancy?.capacity || 32;
             return Array.from({ length: 48 }, (_, i) => {
                 const t = i / 47;
                 const v = cap * 0.9 * Math.max(0, Math.sin((t - 0.3) / 0.4 * Math.PI));
@@ -247,7 +224,7 @@ export default {
         async loadSpaces() {
             try {
                 const response = await this.service.getSpaces();
-                this.spaces = (response.data || []).map(raw => new IotSpace(raw));
+                this.spaces = response.data.map(raw => new IotSpace(raw));
                 if (this.spaces.length) {
                     this.selectedSpace = this.spaces.find(s => s.id === 'A-203') || this.spaces[0];
                 }
@@ -262,14 +239,14 @@ export default {
         },
 
         statusLabel(status) {
-            return { ok: '+¦ptimo', warn: 'atenci+¦n', danger: 'cr+¡tico', off: 'offline' }[status] || status;
+            return { ok: 'Ã³ptimo', warn: 'atenciÃ³n', danger: 'crÃ­tico', off: 'offline' }[status] || status;
         },
 
         rssiQuality(rssi) {
-            if (rssi === null || rssi === undefined) return 'sin se+¦al';
+            if (rssi === null) return 'sin seÃ±al';
             if (rssi >= -60) return 'excelente';
             if (rssi >= -70) return 'buena';
-            return 'd+®bil';
+            return 'dÃ©bil';
         },
     },
 
@@ -288,13 +265,13 @@ export default {
       <div>
         <h1 class="page-title">Monitoreo IoT</h1>
         <div class="page-sub">
-          {{ onlineCount }} dispositivos online -À
+          {{ onlineCount }} dispositivos online Â·
           <span :class="alertCount > 0 ? 'text-warn' : 'text-ok'">{{ alertCount }} alertas activas</span>
-          -À datos simulados (Sprint 1)
+          Â· datos simulados (Sprint 1)
         </div>
       </div>
       <div class="head-actions">
-        <span class="live-pill"><span class="live-dot"></span> live -À mock</span>
+        <span class="live-pill"><span class="live-dot"></span> live Â· mock</span>
         <pv-button label="Configurar umbrales" size="small" outlined />
         <pv-button label="+ Vincular dispositivo" size="small" />
       </div>
@@ -313,7 +290,7 @@ export default {
           <div class="rooms-filter">
             <pv-input-text
               v-model="filterText"
-              placeholder="Filtrar A-203, LAB-22ÔÇª"
+              placeholder="Filtrar A-203, LAB-22â€¦"
               class="filter-input"
               size="small"
             />
@@ -323,7 +300,7 @@ export default {
               v-for="space in filteredSpaces"
               :key="space.id"
               class="room-row"
-              :class="[`row-${space.status}`, { 'row-active': selectedSpace && selectedSpace.id === space.id }]"
+              :class="[`row-${space.status}`, { 'row-active': selectedSpace?.id === space.id }]"
               @click="selectSpace(space)"
             >
               <span class="led" :class="`led-${space.status}`"></span>
@@ -332,7 +309,7 @@ export default {
                 <div class="room-meta">{{ space.meta }}</div>
               </div>
               <span class="room-temp">
-                {{ space.temperature !== null && space.temperature !== undefined ? space.temperature + ' -¦C' : 'ÔÇö' }}
+                {{ space.temperature !== null ? space.temperature + ' Â°C' : 'â€”' }}
               </span>
             </div>
             <div v-if="filteredSpaces.length === 0" class="rooms-empty">
@@ -353,16 +330,16 @@ export default {
               <h2 class="detail-name">{{ selectedSpace.name }}</h2>
               <div class="detail-sub">
                 {{ selectedSpace.location }}
-                <span v-if="selectedSpace.session"> -À {{ selectedSpace.session }}</span>
+                <span v-if="selectedSpace.session"> Â· {{ selectedSpace.session }}</span>
               </div>
             </div>
             <div class="detail-status">
               <span class="status-pill" :class="`pill-${selectedSpace.status}`">
                 <span class="led" :class="`led-${selectedSpace.status}`"></span>
                 {{ statusLabel(selectedSpace.status) }}
-                <span v-if="selectedSpace.status === 'warn'"> -À {{ selectedSpace.meta }}</span>
+                <span v-if="selectedSpace.status === 'warn'"> Â· {{ selectedSpace.meta }}</span>
               </span>
-              <pv-button label="Hist+¦rico" size="small" outlined class="ml-2" />
+              <pv-button label="HistÃ³rico" size="small" outlined class="ml-2" />
             </div>
           </div>
 
@@ -377,7 +354,7 @@ export default {
             />
           </div>
 
-          <!-- Tabs de gr+ífico -->
+          <!-- Tabs de grÃ¡fico -->
           <div class="chart-tabs">
             <div
               v-for="tab in chartTabs"
@@ -400,17 +377,10 @@ export default {
             </div>
           </div>
 
-          <!-- Gr+ífico interactivo (Chart.js via pv-chart) -->
-          <div class="chart-area">
-            <pv-chart
-              type="line"
-              :data="chartData"
-              :options="chartOptions"
-              style="width:100%; height:100%;"
-            />
-          </div>
+          <!-- GrÃ¡fico SVG -->
+          <div class="chart-area" v-html="chartSvg"></div>
 
-          <!-- Strip de ocupaci+¦n (+¦ltimas lecturas binarias) -->
+          <!-- Strip de ocupaciÃ³n (Ãºltimas lecturas binarias) -->
           <div class="occ-strip">
             <span
               v-for="(on, i) in occStrip"
@@ -433,13 +403,13 @@ export default {
             <div class="device-item">
               <div class="device-key">RSSI</div>
               <div class="device-val" :class="{ 'val-ok': selectedSpace.rssi >= -65 }">
-                {{ selectedSpace.rssi }} dBm -À {{ rssiQuality(selectedSpace.rssi) }}
+                {{ selectedSpace.rssi }} dBm Â· {{ rssiQuality(selectedSpace.rssi) }}
               </div>
             </div>
             <div class="device-item">
-              <div class="device-key">+Ültima lectura</div>
+              <div class="device-key">Ãšltima lectura</div>
               <div class="device-val" :class="{ 'val-ok': selectedSpace.status !== 'off' }">
-                {{ selectedSpace.lastReadingTime }} -À hace {{ selectedSpace.lastReadingAgo }}
+                {{ selectedSpace.lastReadingTime }} Â· hace {{ selectedSpace.lastReadingAgo }}
               </div>
             </div>
           </div>
@@ -447,7 +417,7 @@ export default {
           <!-- Log de eventos -->
           <div class="events-header">
             <span class="events-title">Eventos recientes</span>
-            <span class="events-count">+¦ltimas 6 h</span>
+            <span class="events-count">Ãºltimas 6 h</span>
           </div>
           <div class="events-list">
             <div v-for="(ev, i) in selectedSpace.events" :key="i" class="event-row">
@@ -464,7 +434,7 @@ export default {
         </template>
       </pv-card>
 
-      <!-- Estado vac+¡o -->
+      <!-- Estado vacÃ­o si no hay espacio seleccionado -->
       <pv-card v-else class="detail-card detail-empty">
         <template #content>
           <div class="empty-state">
@@ -479,6 +449,7 @@ export default {
 </template>
 
 <style scoped>
+/* Layout general */
 .iot-page {
   padding: 24px;
   max-width: 1400px;
@@ -486,6 +457,7 @@ export default {
   width: 100%;
 }
 
+/* Cabecera */
 .page-head {
   display: flex;
   justify-content: space-between;
@@ -545,6 +517,7 @@ export default {
   50%       { opacity: 0.4; }
 }
 
+/* Monitor layout */
 .monitor-layout {
   display: grid;
   grid-template-columns: 300px 1fr;
@@ -556,9 +529,9 @@ export default {
   .monitor-layout { grid-template-columns: 1fr; }
 }
 
-/* Rooms card */
-.rooms-card :deep(.p-card-body)   { padding: 0; }
-.rooms-card :deep(.p-card-content){ padding: 0; }
+/* Panel de lista de espacios */
+.rooms-card :deep(.p-card-body) { padding: 0; }
+.rooms-card :deep(.p-card-content) { padding: 0; }
 
 .rooms-header {
   display: flex;
@@ -604,16 +577,28 @@ export default {
 .room-meta { font-size: 11px; color: #9ca3af; font-family: monospace; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .room-temp { font-family: monospace; font-size: 12px; color: #6b7280; white-space: nowrap; }
 
-.rooms-empty { padding: 24px; text-align: center; color: #9ca3af; font-size: 12px; }
+.rooms-empty {
+  padding: 24px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 12px;
+}
 
-/* LEDs */
-.led { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+/* LED dots */
+.led {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
 .led-ok     { background: #22c55e; }
 .led-warn   { background: #f59e0b; }
 .led-danger { background: #ef4444; }
 .led-off    { background: #d1d5db; }
 
-/* Detail card */
+/* Panel de detalle */
 .detail-card :deep(.p-card-body)   { padding: 0; }
 .detail-card :deep(.p-card-content){ padding: 0; }
 
@@ -624,7 +609,6 @@ export default {
   padding: 18px 20px;
   border-bottom: 1px solid #f3f4f6;
   align-items: center;
-  flex-wrap: wrap;
 }
 
 .detail-tile {
@@ -639,10 +623,12 @@ export default {
   font-weight: 700;
   font-size: 13px;
   color: #6b7280;
+  flex-shrink: 0;
 }
 
 .detail-name { font-size: 20px; font-weight: 700; margin: 0 0 4px; color: #111827; }
 .detail-sub  { font-size: 12px; color: #6b7280; }
+
 .detail-status { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
 .status-pill {
@@ -661,17 +647,17 @@ export default {
 .pill-danger { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
 .pill-off    { background: #f9fafb; border: 1px solid #e5e7eb; color: #6b7280; }
 
-/* Sensor grid */
+/* Grid de sensores */
 .sensor-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border-bottom: 1px solid #f3f4f6;
 }
 
-.sensor-grid > *:nth-child(3n)        { border-right: none; }
+.sensor-grid > *:nth-child(3n)      { border-right: none; }
 .sensor-grid > *:nth-last-child(-n+3) { border-bottom: none; }
 
-/* Chart tabs */
+/* Tabs de grÃ¡fico */
 .chart-tabs {
   display: flex;
   align-items: center;
@@ -698,9 +684,19 @@ export default {
 }
 
 .chart-tab:hover { color: #374151; }
-.tab-active { color: #111827; font-weight: 500; border-bottom-color: #6366f1; }
 
-.tab-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.tab-active {
+  color: #111827;
+  font-weight: 500;
+  border-bottom-color: #6366f1;
+}
+
+.tab-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
 
 .range-selector {
   margin-left: auto;
@@ -725,15 +721,21 @@ export default {
 
 .range-btn:last-child { border-right: none; }
 .range-btn:hover      { background: #f9fafb; }
-.range-active { background: #f3f4f6 !important; color: #111827 !important; font-weight: 600; }
 
-/* Chart area ÔÇö altura fija para pv-chart */
-.chart-area {
-  height: 220px;
-  padding: 12px 16px 8px;
+.range-active {
+  background: #f3f4f6 !important;
+  color: #111827 !important;
+  font-weight: 600;
 }
 
-/* Occupancy strip */
+/* GrÃ¡fico */
+.chart-area {
+  height: 200px;
+  padding: 12px 16px 4px;
+  overflow: hidden;
+}
+
+/* Tira de ocupaciÃ³n */
 .occ-strip {
   display: flex;
   gap: 2px;
@@ -741,10 +743,15 @@ export default {
   height: 20px;
 }
 
-.occ-bit { flex: 1; background: #f3f4f6; border-radius: 2px; }
-.occ-on  { background: #818cf8; }
+.occ-bit {
+  flex: 1;
+  background: #f3f4f6;
+  border-radius: 2px;
+}
 
-/* Device footer */
+.occ-on { background: #818cf8; }
+
+/* Footer del dispositivo */
 .device-footer {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -752,6 +759,7 @@ export default {
   padding: 12px 20px;
   background: #fafafa;
   border-top: 1px solid #f3f4f6;
+  font-size: 12px;
 }
 
 .device-key {
@@ -763,10 +771,16 @@ export default {
   margin-bottom: 3px;
 }
 
-.device-val { font-family: monospace; font-weight: 500; color: #374151; font-size: 11px; }
+.device-val {
+  font-family: monospace;
+  font-weight: 500;
+  color: #374151;
+  font-size: 11px;
+}
+
 .val-ok { color: #16a34a; }
 
-/* Events */
+/* Eventos */
 .events-header {
   display: flex;
   align-items: center;
@@ -808,14 +822,19 @@ export default {
 .tag-danger { background: #fef2f2; color: #b91c1c; }
 .tag-info   { background: #eff6ff; color: #1d4ed8; }
 
-.ev-msg { font-size: 12px; color: #4b5563; font-family: system-ui, sans-serif; }
-.ev-val { color: #111827; font-weight: 500; white-space: nowrap; }
+.ev-msg  { font-family: inherit; font-size: 12px; color: #4b5563; font-family: system-ui, sans-serif; }
+.ev-val  { color: #111827; font-weight: 500; white-space: nowrap; }
 
-.events-empty { padding: 24px; text-align: center; color: #9ca3af; font-size: 12px; }
+.events-empty {
+  padding: 24px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 12px;
+}
 
-/* Empty state */
-.detail-empty :deep(.p-card-body)   { padding: 0; }
-.detail-empty :deep(.p-card-content){ padding: 0; }
+/* Estado vacÃ­o */
+.detail-empty :deep(.p-card-body) { padding: 0; }
+.detail-empty :deep(.p-card-content) { padding: 0; }
 
 .empty-state {
   display: flex;
