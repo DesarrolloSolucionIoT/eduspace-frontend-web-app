@@ -13,6 +13,7 @@ const PersonalDataComponent = () => import('../dashboard-admin/pages/personal-da
 const TeachersManagementComponent = () => import('../dashboard-admin/pages/teachers-management.component.vue');
 const ClassroomChangesMeetingsComponent = () => import('../dashboard-admin/pages/classroom-changes-meetings.component.vue');
 const ClassroomsSharedSpacesComponent = () => import('../dashboard-admin/pages/classrooms-shared-spaces.component.vue');
+const IotMonitoringComponent = () => import('../iot-monitoring/pages/iot-monitoring.component.vue');
 
 const AddClassroomsComponent = () => import('../classroom-space-resource-management/pages/classrooms/add-classrooms.component.vue');
 const ClassroomsComponent = () => import('../classroom-space-resource-management/pages/classrooms/classrooms.component.vue');
@@ -59,6 +60,12 @@ const router = createRouter({
             name: 'classroom-changes-meetings',
             component: ClassroomChangesMeetingsComponent,
             meta: {title: 'Meeting Management', requiresAuth: true, role: 'RoleAdmin'}
+        },
+        {
+            path: '/dashboard-admin/iot-monitoring',
+            name: 'iot-monitoring',
+            component: IotMonitoringComponent,
+            meta: {title: 'IoT Monitoring', requiresAuth: true, role: 'RoleAdmin'}
         },
         {
             path: '/dashboard-admin/classroom-changes-meetings/meeting-management',

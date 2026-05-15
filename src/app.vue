@@ -101,6 +101,7 @@ import {mapActions, mapGetters} from "vuex";
 import HomeIcon from "./assets/admin/Home.svg";
 import ClassroomIcon from "./assets/admin/Clasroom.svg";
 import EnvironmentIcon from "./assets/admin/Environment.svg";
+import WifiIcon from "./assets/admin/Wifi.svg";
 import PersonalDIcon from "./assets/admin/Personal_Data.svg";
 import PersonalManagementIcon from "./assets/admin/Personal_Management.svg";
 import DefaultAvatar from "./assets/default-avatar.png";
@@ -140,6 +141,11 @@ export default {
             label: "Meeting Management",
             to: "/dashboard-admin/classroom-changes-meetings",
             svg: ClassroomIcon,
+          },
+          {
+            label: "IoT Monitoring",
+            to: "/dashboard-admin/iot-monitoring",
+            svg: WifiIcon,
           },
           {
             label: "Teachers Management",
