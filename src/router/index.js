@@ -8,6 +8,8 @@ const VerifyCodeComponent = () => import('../iam/login/components/verify-code.co
 
 const MeetManagementComponent = () => import('../meeting-management/pages/meet-management.component.vue');
 
+const IotMonitoringComponent = () => import('../iot-monitoring/pages/iot-monitoring.component.vue');
+
 const HomeAdminComponent = () => import('../dashboard-admin/pages/home-admin.component.vue');
 const PersonalDataComponent = () => import('../dashboard-admin/pages/personal-data.component.vue');
 const TeachersManagementComponent = () => import('../dashboard-admin/pages/teachers-management.component.vue');
@@ -33,6 +35,14 @@ const router = createRouter({
         { path: '/verify-code', name: 'verify-code', component: VerifyCodeComponent, meta: { title: 'Verify Code' } },
         { path: '/register', name: 'register', component: RegisterComponent, meta: { title: 'Register' } },
         { path: '/home', name: 'home', component: HomeComponent, meta: { title: 'Home' } },
+
+        // --- IoT Monitoring ---
+        {
+            path: '/dashboard-admin/iot-monitoring',
+            name: 'iot-monitoring',
+            component: IotMonitoringComponent,
+            meta: { title: 'IoT Monitoring', requiresAuth: true, role: 'RoleAdmin' },
+        },
 
         // --- Rutas del Administrador ---
         { path: '/dashboard-admin', redirect: '/dashboard-admin/home-admin' },

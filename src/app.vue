@@ -32,6 +32,11 @@
                   alt="icon"
                   style="width: 20px; height: 20px; margin-right: 8px"
                 />
+                <i
+                  v-else-if="item.icon"
+                  :class="item.icon"
+                  style="font-size: 18px; margin-right: 8px;"
+                ></i>
                 {{ item.label }}
               </pv-button>
             </router-link>
@@ -145,6 +150,11 @@ export default {
             label: "Teachers Management",
             to: "/dashboard-admin/teachers",
             svg: PersonalManagementIcon,
+          },
+          {
+            label: "IoT Monitoring",
+            to: "/dashboard-admin/iot-monitoring",
+            icon: "pi pi-wifi",
           },
           {
             label: "My Profile",

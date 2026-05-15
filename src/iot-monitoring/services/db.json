@@ -1,0 +1,429 @@
+{
+  "spaces": [
+    {
+      "id": "A-201", "name": "Aula A-201", "status": "ok",
+      "temperature": 22.1, "meta": "24/30 · 3 sens",
+      "location": "Edif. A · Piso 2 · capacidad 30",
+      "session": "CA-1101 Cálculo I",
+      "deviceCode": "esp32-1f:8e:6b", "firmware": "v1.4.1", "rssi": -58,
+      "lastReadingTime": "14:31:44", "lastReadingAgo": "18s",
+      "sensors": {
+        "occupancy":   { "value": 24, "capacity": 30, "delta": "+1 vs hace 15 min", "deltaStatus": "neutral" },
+        "temperature": { "value": 22.1, "unit": "°C",      "delta": "en rango",                     "deltaStatus": "ok" },
+        "humidity":    { "value": 58,   "unit": "%",        "delta": "en rango",                     "deltaStatus": "ok" },
+        "luminosity":  { "value": 380,  "unit": "lx",       "delta": "óptimo lectura",               "deltaStatus": "ok" },
+        "co2":         { "value": 720,  "unit": "ppm",      "delta": "en rango",                     "deltaStatus": "ok" },
+        "energy":      { "value": 1.52, "unit": "kWh / h",  "delta": "−8% vs promedio",              "deltaStatus": "ok" }
+      },
+      "events": [
+        { "time": "14:02:11", "type": "info", "msg": "Sesión CA-1101 iniciada — Prof. García",   "value": "24 / 30" },
+        { "time": "14:00:00", "type": "ok",   "msg": "Ocupación detectada — sesión pre-iniciada","value": "12 / 30" },
+        { "time": "12:00:00", "type": "ok",   "msg": "Aula liberada por sesión anterior",        "value": "0 / 30"  }
+      ]
+    },
+    {
+      "id": "A-202", "name": "Aula A-202", "status": "ok",
+      "temperature": 22.4, "meta": "18/28 · 3 sens",
+      "location": "Edif. A · Piso 2 · capacidad 28",
+      "session": "FI-1102 Física II",
+      "deviceCode": "esp32-4a:c1:7e", "firmware": "v1.4.1", "rssi": -61,
+      "lastReadingTime": "14:31:52", "lastReadingAgo": "10s",
+      "sensors": {
+        "occupancy":   { "value": 18, "capacity": 28, "delta": "estable",       "deltaStatus": "neutral" },
+        "temperature": { "value": 22.4, "unit": "°C",     "delta": "en rango", "deltaStatus": "ok" },
+        "humidity":    { "value": 55,   "unit": "%",       "delta": "en rango", "deltaStatus": "ok" },
+        "luminosity":  { "value": 410,  "unit": "lx",      "delta": "óptimo",  "deltaStatus": "ok" },
+        "co2":         { "value": 680,  "unit": "ppm",     "delta": "en rango", "deltaStatus": "ok" },
+        "energy":      { "value": 1.38, "unit": "kWh / h", "delta": "−5% vs promedio", "deltaStatus": "ok" }
+      },
+      "events": [
+        { "time": "13:50:00", "type": "info", "msg": "Sesión FI-1102 iniciada — Prof. Mendoza", "value": "18 / 28" },
+        { "time": "12:00:00", "type": "ok",   "msg": "Aula liberada",                           "value": "0 / 28"  }
+      ]
+    },
+    {
+      "id": "A-203", "name": "Aula A-203", "status": "warn",
+      "temperature": 26.4, "meta": "28/32 · CO₂ alto",
+      "location": "Edif. A · Piso 2 · capacidad 32",
+      "session": "CS-2103 Algoritmos II",
+      "deviceCode": "esp32-9c:5d:2a", "firmware": "v1.4.2", "rssi": -54,
+      "lastReadingTime": "14:32:18", "lastReadingAgo": "6s",
+      "sensors": {
+        "occupancy":   { "value": 28, "capacity": 32, "delta": "+2 vs hace 15 min",             "deltaStatus": "warn" },
+        "temperature": { "value": 26.4, "unit": "°C",     "delta": "▲ +3.4 sobre rango",        "deltaStatus": "warn" },
+        "humidity":    { "value": 62,   "unit": "%",       "delta": "en rango",                  "deltaStatus": "ok"   },
+        "luminosity":  { "value": 412,  "unit": "lx",      "delta": "óptimo lectura",            "deltaStatus": "ok"   },
+        "co2":         { "value": 1180, "unit": "ppm",     "delta": "▲ sobre 1000 ppm · ventilation", "deltaStatus": "warn" },
+        "energy":      { "value": 1.84, "unit": "kWh / h", "delta": "−12% vs promedio",          "deltaStatus": "ok"   }
+      },
+      "events": [
+        { "time": "14:32:08", "type": "warn", "msg": "CO₂ supera umbral 1000 ppm — policy classroom.comfort", "value": "1,180 ppm" },
+        { "time": "14:28:11", "type": "info", "msg": "Sesión CS-2103 iniciada — Prof. Romero",                "value": "28 / 32"   },
+        { "time": "14:01:42", "type": "ok",   "msg": "Ocupación detectada — sesión pre-iniciada",             "value": "14 / 32"   },
+        { "time": "13:54:08", "type": "warn", "msg": "Temperatura sobre 25°C por 7 min — sugerir A/C",       "value": "25.8 °C"   },
+        { "time": "12:00:00", "type": "ok",   "msg": "Aula liberada por sesión anterior — sin ocupación",     "value": "0 / 32"    },
+        { "time": "10:00:00", "type": "info", "msg": "Sesión MA-1102 finalizada — Prof. Mendoza",             "value": "28 / 32"   }
+      ]
+    },
+    {
+      "id": "A-204", "name": "Aula A-204", "status": "ok",
+      "temperature": 21.8, "meta": "22/30 · 3 sens",
+      "location": "Edif. A · Piso 2 · capacidad 30",
+      "session": "MA-2201 Álgebra Lineal",
+      "deviceCode": "esp32-7b:d3:4c", "firmware": "v1.4.1", "rssi": -63,
+      "lastReadingTime": "14:31:30", "lastReadingAgo": "32s",
+      "sensors": {
+        "occupancy":   { "value": 22, "capacity": 30, "delta": "estable",        "deltaStatus": "neutral" },
+        "temperature": { "value": 21.8, "unit": "°C",     "delta": "en rango",  "deltaStatus": "ok" },
+        "humidity":    { "value": 54,   "unit": "%",       "delta": "en rango",  "deltaStatus": "ok" },
+        "luminosity":  { "value": 395,  "unit": "lx",      "delta": "óptimo",   "deltaStatus": "ok" },
+        "co2":         { "value": 690,  "unit": "ppm",     "delta": "en rango",  "deltaStatus": "ok" },
+        "energy":      { "value": 1.45, "unit": "kWh / h", "delta": "promedio",  "deltaStatus": "ok" }
+      },
+      "events": [
+        { "time": "14:00:00", "type": "info", "msg": "Sesión MA-2201 iniciada — Prof. Silva",  "value": "22 / 30" },
+        { "time": "12:00:00", "type": "ok",   "msg": "Aula liberada",                          "value": "0 / 30"  }
+      ]
+    },
+    {
+      "id": "A-205", "name": "Aula A-205", "status": "off",
+      "temperature": null, "meta": "sin actividad",
+      "location": "Edif. A · Piso 2 · capacidad 28",
+      "session": null,
+      "deviceCode": "esp32-2c:a4:9f", "firmware": "v1.4.0", "rssi": -72,
+      "lastReadingTime": "08:00:00", "lastReadingAgo": "6h 32m",
+      "sensors": {
+        "occupancy":   { "value": 0,    "capacity": 28, "delta": "sin actividad",  "deltaStatus": "neutral" },
+        "temperature": { "value": 20.2, "unit": "°C",     "delta": "sin sesión",  "deltaStatus": "neutral" },
+        "humidity":    { "value": 50,   "unit": "%",       "delta": "en rango",    "deltaStatus": "ok"      },
+        "luminosity":  { "value": 120,  "unit": "lx",      "delta": "iluminación mínima", "deltaStatus": "neutral" },
+        "co2":         { "value": 480,  "unit": "ppm",     "delta": "ambiente",    "deltaStatus": "ok"      },
+        "energy":      { "value": 0.18, "unit": "kWh / h", "delta": "standby",    "deltaStatus": "ok"      }
+      },
+      "events": [
+        { "time": "08:00:00", "type": "ok", "msg": "Última sesión finalizada — aula sin uso", "value": "0 / 28" }
+      ]
+    },
+    {
+      "id": "A-206", "name": "Aula A-206", "status": "danger",
+      "temperature": 24.1, "meta": "14/28 · proyector falla",
+      "location": "Edif. A · Piso 2 · capacidad 28",
+      "session": "IS-3102 Redes",
+      "deviceCode": "esp32-5e:b8:3d", "firmware": "v1.4.2", "rssi": -67,
+      "lastReadingTime": "14:32:02", "lastReadingAgo": "20s",
+      "sensors": {
+        "occupancy":   { "value": 14, "capacity": 28, "delta": "−8 vs inicio de sesión", "deltaStatus": "warn" },
+        "temperature": { "value": 24.1, "unit": "°C",     "delta": "en rango",            "deltaStatus": "ok"  },
+        "humidity":    { "value": 60,   "unit": "%",       "delta": "en rango",            "deltaStatus": "ok"  },
+        "luminosity":  { "value": 350,  "unit": "lx",      "delta": "óptimo",             "deltaStatus": "ok"  },
+        "co2":         { "value": 820,  "unit": "ppm",     "delta": "en rango",            "deltaStatus": "ok"  },
+        "energy":      { "value": 2.10, "unit": "kWh / h", "delta": "+14% vs promedio",   "deltaStatus": "warn" }
+      },
+      "events": [
+        { "time": "14:30:00", "type": "danger", "msg": "Proyector inoperativo — incidencia #1487 abierta",    "value": "BREAKDOWN" },
+        { "time": "14:28:00", "type": "warn",   "msg": "Ocupación baja detectada durante sesión activa",      "value": "14 / 28"   },
+        { "time": "14:00:00", "type": "info",   "msg": "Sesión IS-3102 iniciada — Prof. Cárdenas",           "value": "22 / 28"   }
+      ]
+    },
+    {
+      "id": "A-207", "name": "Aula A-207", "status": "ok",
+      "temperature": 22.0, "meta": "26/30 · 3 sens",
+      "location": "Edif. A · Piso 2 · capacidad 30",
+      "session": "DB-3201 Base de Datos",
+      "deviceCode": "esp32-8f:1a:2b", "firmware": "v1.4.1", "rssi": -55,
+      "lastReadingTime": "14:32:10", "lastReadingAgo": "12s",
+      "sensors": {
+        "occupancy":   { "value": 26, "capacity": 30, "delta": "estable",       "deltaStatus": "neutral" },
+        "temperature": { "value": 22.0, "unit": "°C",     "delta": "en rango", "deltaStatus": "ok" },
+        "humidity":    { "value": 57,   "unit": "%",       "delta": "en rango", "deltaStatus": "ok" },
+        "luminosity":  { "value": 400,  "unit": "lx",      "delta": "óptimo",  "deltaStatus": "ok" },
+        "co2":         { "value": 750,  "unit": "ppm",     "delta": "en rango", "deltaStatus": "ok" },
+        "energy":      { "value": 1.60, "unit": "kWh / h", "delta": "promedio", "deltaStatus": "ok" }
+      },
+      "events": [
+        { "time": "14:00:00", "type": "info", "msg": "Sesión DB-3201 iniciada — Prof. Torres",  "value": "26 / 30" },
+        { "time": "12:00:00", "type": "ok",   "msg": "Aula liberada",                           "value": "0 / 30"  }
+      ]
+    },
+    {
+      "id": "A-208", "name": "Aula A-208", "status": "warn",
+      "temperature": 23.2, "meta": "0/30 · reservada vacía",
+      "location": "Edif. A · Piso 2 · capacidad 30",
+      "session": "SO-4101 Sistemas Op. (reservada)",
+      "deviceCode": "esp32-3d:c7:5a", "firmware": "v1.4.2", "rssi": -60,
+      "lastReadingTime": "14:32:00", "lastReadingAgo": "22s",
+      "sensors": {
+        "occupancy":   { "value": 0,    "capacity": 30, "delta": "reservada sin ocupar · 18 min", "deltaStatus": "warn" },
+        "temperature": { "value": 23.2, "unit": "°C",     "delta": "en rango",                   "deltaStatus": "ok"   },
+        "humidity":    { "value": 52,   "unit": "%",       "delta": "en rango",                   "deltaStatus": "ok"   },
+        "luminosity":  { "value": 360,  "unit": "lx",      "delta": "luces encendidas sin uso",   "deltaStatus": "warn" },
+        "co2":         { "value": 490,  "unit": "ppm",     "delta": "ambiente · sin ocupación",   "deltaStatus": "ok"   },
+        "energy":      { "value": 1.20, "unit": "kWh / h", "delta": "+40% vs standby",            "deltaStatus": "warn" }
+      },
+      "events": [
+        { "time": "14:10:00", "type": "warn", "msg": "Aula reservada sin ocupación — sugerir liberar", "value": "0 / 30" },
+        { "time": "14:00:00", "type": "info", "msg": "Inicio de reserva SO-4101 — sin asistencia",     "value": "0 / 30" },
+        { "time": "12:00:00", "type": "ok",   "msg": "Aula liberada por sesión anterior",              "value": "0 / 30" }
+      ]
+    },
+    {
+      "id": "A-209", "name": "Aula A-209", "status": "ok",
+      "temperature": 21.9, "meta": "31/32 · 3 sens",
+      "location": "Edif. A · Piso 2 · capacidad 32",
+      "session": "SW-2201 Ingeniería de Software",
+      "deviceCode": "esp32-7a:c4:1f", "firmware": "v1.4.2", "rssi": -49,
+      "lastReadingTime": "14:32:16", "lastReadingAgo": "6s",
+      "sensors": {
+        "occupancy":   { "value": 31, "capacity": 32, "delta": "+1 vs hace 15 min",   "deltaStatus": "neutral" },
+        "temperature": { "value": 21.9, "unit": "°C",     "delta": "en rango",        "deltaStatus": "ok"      },
+        "humidity":    { "value": 61,   "unit": "%",       "delta": "en rango",        "deltaStatus": "ok"      },
+        "luminosity":  { "value": 420,  "unit": "lx",      "delta": "óptimo",         "deltaStatus": "ok"      },
+        "co2":         { "value": 830,  "unit": "ppm",     "delta": "en rango",        "deltaStatus": "ok"      },
+        "energy":      { "value": 1.75, "unit": "kWh / h", "delta": "promedio",       "deltaStatus": "ok"      }
+      },
+      "events": [
+        { "time": "14:00:00", "type": "info", "msg": "Sesión SW-2201 iniciada — Prof. Alva",  "value": "31 / 32" },
+        { "time": "12:00:00", "type": "ok",   "msg": "Aula liberada",                         "value": "0 / 32"  }
+      ]
+    },
+    {
+      "id": "LAB-21", "name": "Laboratorio LAB-21", "status": "ok",
+      "temperature": 23.1, "meta": "16/20 · 4 sens",
+      "location": "Edif. B · Piso 1 · capacidad 20",
+      "session": "HW-3301 Redes Hardware",
+      "deviceCode": "esp32-4d:7a:90", "firmware": "v1.4.1", "rssi": -57,
+      "lastReadingTime": "14:32:08", "lastReadingAgo": "14s",
+      "sensors": {
+        "occupancy":   { "value": 16, "capacity": 20, "delta": "estable",       "deltaStatus": "neutral" },
+        "temperature": { "value": 23.1, "unit": "°C",     "delta": "en rango", "deltaStatus": "ok" },
+        "humidity":    { "value": 56,   "unit": "%",       "delta": "en rango", "deltaStatus": "ok" },
+        "luminosity":  { "value": 480,  "unit": "lx",      "delta": "óptimo",  "deltaStatus": "ok" },
+        "co2":         { "value": 760,  "unit": "ppm",     "delta": "en rango", "deltaStatus": "ok" },
+        "energy":      { "value": 2.20, "unit": "kWh / h", "delta": "equipo de cómputo activo", "deltaStatus": "neutral" }
+      },
+      "events": [
+        { "time": "14:00:00", "type": "info", "msg": "Sesión HW-3301 iniciada — Prof. Vega",  "value": "16 / 20" },
+        { "time": "12:00:00", "type": "ok",   "msg": "Laboratorio liberado",                  "value": "0 / 20"  }
+      ]
+    },
+    {
+      "id": "LAB-22", "name": "Laboratorio LAB-22", "status": "danger",
+      "temperature": 28.6, "meta": "0/20 · A/C falla",
+      "location": "Edif. B · Piso 1 · capacidad 20",
+      "session": null,
+      "deviceCode": "esp32-2b:11:f9", "firmware": "v1.4.2", "rssi": -66,
+      "lastReadingTime": "14:32:04", "lastReadingAgo": "18s",
+      "sensors": {
+        "occupancy":   { "value": 0,    "capacity": 20, "delta": "sin actividad",        "deltaStatus": "neutral" },
+        "temperature": { "value": 28.6, "unit": "°C",     "delta": "▲ A/C inoperativo — en reparación", "deltaStatus": "danger" },
+        "humidity":    { "value": 72,   "unit": "%",       "delta": "▲ elevada — relacionada al A/C",    "deltaStatus": "warn"   },
+        "luminosity":  { "value": 180,  "unit": "lx",      "delta": "en rango",                          "deltaStatus": "ok"     },
+        "co2":         { "value": 510,  "unit": "ppm",     "delta": "ambiente · sin ocupación",           "deltaStatus": "ok"     },
+        "energy":      { "value": 0.92, "unit": "kWh / h", "delta": "A/C apagado",                       "deltaStatus": "ok"     }
+      },
+      "events": [
+        { "time": "14:08:00", "type": "danger", "msg": "Temperatura supera 28°C — A/C inoperativo · incidencia #1486", "value": "28.6 °C" },
+        { "time": "14:00:00", "type": "warn",   "msg": "A/C reportado como falla — técnico R. Salas asignado",        "value": "BREAKDOWN" },
+        { "time": "12:00:00", "type": "ok",     "msg": "Laboratorio liberado — sin sesión",                           "value": "0 / 20"   }
+      ]
+    },
+    {
+      "id": "LAB-23", "name": "Laboratorio LAB-23", "status": "ok",
+      "temperature": 22.7, "meta": "18/20 · 4 sens",
+      "location": "Edif. B · Piso 1 · capacidad 20",
+      "session": "RO-4401 Robótica",
+      "deviceCode": "esp32-6a:e2:c8", "firmware": "v1.4.1", "rssi": -59,
+      "lastReadingTime": "14:32:12", "lastReadingAgo": "10s",
+      "sensors": {
+        "occupancy":   { "value": 18, "capacity": 20, "delta": "estable",       "deltaStatus": "neutral" },
+        "temperature": { "value": 22.7, "unit": "°C",     "delta": "en rango", "deltaStatus": "ok" },
+        "humidity":    { "value": 59,   "unit": "%",       "delta": "en rango", "deltaStatus": "ok" },
+        "luminosity":  { "value": 460,  "unit": "lx",      "delta": "óptimo",  "deltaStatus": "ok" },
+        "co2":         { "value": 780,  "unit": "ppm",     "delta": "en rango", "deltaStatus": "ok" },
+        "energy":      { "value": 2.45, "unit": "kWh / h", "delta": "equipos activos", "deltaStatus": "neutral" }
+      },
+      "events": [
+        { "time": "14:00:00", "type": "info", "msg": "Sesión RO-4401 iniciada — Aux. Vega",  "value": "18 / 20" },
+        { "time": "12:00:00", "type": "ok",   "msg": "Laboratorio liberado",                 "value": "0 / 20"  }
+      ]
+    },
+    {
+      "id": "A-117", "name": "Aula A-117", "status": "warn",
+      "temperature": null, "meta": "sensor offline 12m",
+      "location": "Edif. A · Piso 1 · capacidad 28",
+      "session": null,
+      "deviceCode": "esp32-3a:b9:4d", "firmware": "v1.3.9", "rssi": -78,
+      "lastReadingTime": "14:20:08", "lastReadingAgo": "12 min",
+      "sensors": {
+        "occupancy":   { "value": null, "capacity": 28, "delta": "sin datos",   "deltaStatus": "warn" },
+        "temperature": { "value": null, "unit": "°C",     "delta": "sin datos", "deltaStatus": "warn" },
+        "humidity":    { "value": null, "unit": "%",       "delta": "sin datos", "deltaStatus": "warn" },
+        "luminosity":  { "value": null, "unit": "lx",      "delta": "sin datos", "deltaStatus": "warn" },
+        "co2":         { "value": null, "unit": "ppm",     "delta": "sin datos", "deltaStatus": "warn" },
+        "energy":      { "value": null, "unit": "kWh / h", "delta": "sin datos", "deltaStatus": "warn" }
+      },
+      "events": [
+        { "time": "14:20:08", "type": "warn", "msg": "Dispositivo esp32-3a:b9:4d sin respuesta — incidencia #1485",  "value": "OFFLINE" },
+        { "time": "14:08:00", "type": "warn", "msg": "Última lectura registrada antes de desconexión",               "value": "offline" }
+      ]
+    },
+    {
+      "id": "Bib-P3", "name": "Biblioteca Piso 3", "status": "ok",
+      "temperature": 21.4, "meta": "42/80 · 2 sens",
+      "location": "Edif. Central · Piso 3 · capacidad 80",
+      "session": "Sala de lectura",
+      "deviceCode": "esp32-0b:4f:8c", "firmware": "v1.4.0", "rssi": -65,
+      "lastReadingTime": "14:32:00", "lastReadingAgo": "22s",
+      "sensors": {
+        "occupancy":   { "value": 42, "capacity": 80, "delta": "+5 vs hace 30 min", "deltaStatus": "neutral" },
+        "temperature": { "value": 21.4, "unit": "°C",     "delta": "en rango",      "deltaStatus": "ok"      },
+        "humidity":    { "value": 53,   "unit": "%",       "delta": "en rango",      "deltaStatus": "ok"      },
+        "luminosity":  { "value": 440,  "unit": "lx",      "delta": "óptimo lectura","deltaStatus": "ok"      },
+        "co2":         { "value": 620,  "unit": "ppm",     "delta": "en rango",      "deltaStatus": "ok"      },
+        "energy":      { "value": 2.80, "unit": "kWh / h", "delta": "iluminación general", "deltaStatus": "neutral" }
+      },
+      "events": [
+        { "time": "12:00:00", "type": "ok", "msg": "Biblioteca abierta — horario normal", "value": "42 / 80" }
+      ]
+    },
+    {
+      "id": "Sala-J-1", "name": "Sala de Juntas 1", "status": "ok",
+      "temperature": 22.0, "meta": "8/12 · 2 sens",
+      "location": "Edif. Admin · Piso 1 · capacidad 12",
+      "session": "Comité Académico",
+      "deviceCode": "esp32-5c:a0:2d", "firmware": "v1.4.1", "rssi": -52,
+      "lastReadingTime": "14:32:14", "lastReadingAgo": "8s",
+      "sensors": {
+        "occupancy":   { "value": 8,    "capacity": 12, "delta": "estable",      "deltaStatus": "neutral" },
+        "temperature": { "value": 22.0, "unit": "°C",     "delta": "en rango",  "deltaStatus": "ok"      },
+        "humidity":    { "value": 50,   "unit": "%",       "delta": "en rango",  "deltaStatus": "ok"      },
+        "luminosity":  { "value": 430,  "unit": "lx",      "delta": "óptimo",   "deltaStatus": "ok"      },
+        "co2":         { "value": 640,  "unit": "ppm",     "delta": "en rango",  "deltaStatus": "ok"      },
+        "energy":      { "value": 0.95, "unit": "kWh / h", "delta": "promedio", "deltaStatus": "ok"      }
+      },
+      "events": [
+        { "time": "14:30:00", "type": "info", "msg": "Reunión Comité Académico — M. Quispe", "value": "8 / 12" },
+        { "time": "12:00:00", "type": "ok",   "msg": "Sala liberada",                        "value": "0 / 12" }
+      ]
+    },
+    {
+      "id": "Sala-J-2", "name": "Sala de Juntas 2", "status": "ok",
+      "temperature": 21.7, "meta": "4/8 · 2 sens",
+      "location": "Edif. Admin · Piso 1 · capacidad 8",
+      "session": "Reunión de área",
+      "deviceCode": "esp32-1e:9b:3f", "firmware": "v1.4.1", "rssi": -54,
+      "lastReadingTime": "14:32:08", "lastReadingAgo": "14s",
+      "sensors": {
+        "occupancy":   { "value": 4,    "capacity": 8, "delta": "estable",       "deltaStatus": "neutral" },
+        "temperature": { "value": 21.7, "unit": "°C",     "delta": "en rango",  "deltaStatus": "ok"      },
+        "humidity":    { "value": 51,   "unit": "%",       "delta": "en rango",  "deltaStatus": "ok"      },
+        "luminosity":  { "value": 415,  "unit": "lx",      "delta": "óptimo",   "deltaStatus": "ok"      },
+        "co2":         { "value": 580,  "unit": "ppm",     "delta": "en rango",  "deltaStatus": "ok"      },
+        "energy":      { "value": 0.70, "unit": "kWh / h", "delta": "−15% vs promedio", "deltaStatus": "ok" }
+      },
+      "events": [
+        { "time": "14:00:00", "type": "info", "msg": "Reunión de área — Depto. Sistemas", "value": "4 / 8" },
+        { "time": "12:00:00", "type": "ok",   "msg": "Sala liberada",                     "value": "0 / 8" }
+      ]
+    },
+    {
+      "id": "A-301", "name": "Aula A-301", "status": "ok",
+      "temperature": 22.3, "meta": "19/30 · 3 sens",
+      "location": "Edif. A · Piso 3 · capacidad 30",
+      "session": "PE-1101 Pensamiento Crítico",
+      "deviceCode": "esp32-9d:3e:1a", "firmware": "v1.4.1", "rssi": -60,
+      "lastReadingTime": "14:31:58", "lastReadingAgo": "24s",
+      "sensors": {
+        "occupancy":   { "value": 19, "capacity": 30, "delta": "estable",       "deltaStatus": "neutral" },
+        "temperature": { "value": 22.3, "unit": "°C",     "delta": "en rango", "deltaStatus": "ok" },
+        "humidity":    { "value": 56,   "unit": "%",       "delta": "en rango", "deltaStatus": "ok" },
+        "luminosity":  { "value": 390,  "unit": "lx",      "delta": "óptimo",  "deltaStatus": "ok" },
+        "co2":         { "value": 700,  "unit": "ppm",     "delta": "en rango", "deltaStatus": "ok" },
+        "energy":      { "value": 1.48, "unit": "kWh / h", "delta": "promedio", "deltaStatus": "ok" }
+      },
+      "events": [
+        { "time": "14:00:00", "type": "info", "msg": "Sesión PE-1101 iniciada",  "value": "19 / 30" },
+        { "time": "12:00:00", "type": "ok",   "msg": "Aula liberada",            "value": "0 / 30"  }
+      ]
+    },
+    {
+      "id": "A-302", "name": "Aula A-302", "status": "warn",
+      "temperature": 25.4, "meta": "30/30 · aforo lleno",
+      "location": "Edif. A · Piso 3 · capacidad 30",
+      "session": "EE-2102 Electrónica",
+      "deviceCode": "esp32-4b:7c:0e", "firmware": "v1.4.2", "rssi": -56,
+      "lastReadingTime": "14:32:16", "lastReadingAgo": "6s",
+      "sensors": {
+        "occupancy":   { "value": 30, "capacity": 30, "delta": "▲ aforo completo",           "deltaStatus": "warn" },
+        "temperature": { "value": 25.4, "unit": "°C",     "delta": "▲ levemente sobre rango","deltaStatus": "warn" },
+        "humidity":    { "value": 65,   "unit": "%",       "delta": "en rango",              "deltaStatus": "ok"   },
+        "luminosity":  { "value": 405,  "unit": "lx",      "delta": "óptimo",               "deltaStatus": "ok"   },
+        "co2":         { "value": 980,  "unit": "ppm",     "delta": "▲ límite superior",     "deltaStatus": "warn" },
+        "energy":      { "value": 1.95, "unit": "kWh / h", "delta": "+8% vs promedio",       "deltaStatus": "neutral" }
+      },
+      "events": [
+        { "time": "14:20:00", "type": "warn", "msg": "Aforo completo — temperatura en ascenso", "value": "30 / 30"  },
+        { "time": "14:00:00", "type": "info", "msg": "Sesión EE-2102 iniciada — Prof. Loli",    "value": "30 / 30"  },
+        { "time": "12:00:00", "type": "ok",   "msg": "Aula liberada",                           "value": "0 / 30"   }
+      ]
+    },
+    {
+      "id": "A-303", "name": "Aula A-303", "status": "ok",
+      "temperature": 21.9, "meta": "14/30 · 3 sens",
+      "location": "Edif. A · Piso 3 · capacidad 30",
+      "session": "HU-1101 Humanidades",
+      "deviceCode": "esp32-7f:2d:4b", "firmware": "v1.4.1", "rssi": -62,
+      "lastReadingTime": "14:31:48", "lastReadingAgo": "34s",
+      "sensors": {
+        "occupancy":   { "value": 14, "capacity": 30, "delta": "estable",       "deltaStatus": "neutral" },
+        "temperature": { "value": 21.9, "unit": "°C",     "delta": "en rango", "deltaStatus": "ok" },
+        "humidity":    { "value": 54,   "unit": "%",       "delta": "en rango", "deltaStatus": "ok" },
+        "luminosity":  { "value": 395,  "unit": "lx",      "delta": "óptimo",  "deltaStatus": "ok" },
+        "co2":         { "value": 640,  "unit": "ppm",     "delta": "en rango", "deltaStatus": "ok" },
+        "energy":      { "value": 1.30, "unit": "kWh / h", "delta": "−10% vs promedio", "deltaStatus": "ok" }
+      },
+      "events": [
+        { "time": "14:00:00", "type": "info", "msg": "Sesión HU-1101 iniciada — Prof. Yalán", "value": "14 / 30" },
+        { "time": "12:00:00", "type": "ok",   "msg": "Aula liberada",                          "value": "0 / 30"  }
+      ]
+    },
+    {
+      "id": "POL-1", "name": "Polideportivo", "status": "off",
+      "temperature": null, "meta": "sin actividad",
+      "location": "Campus Norte · Área deportiva · capacidad 200",
+      "session": null,
+      "deviceCode": "esp32-2a:5c:9d", "firmware": "v1.3.8", "rssi": -80,
+      "lastReadingTime": "08:30:00", "lastReadingAgo": "6h 02m",
+      "sensors": {
+        "occupancy":   { "value": 0,    "capacity": 200, "delta": "sin actividad",  "deltaStatus": "neutral" },
+        "temperature": { "value": 24.0, "unit": "°C",      "delta": "temperatura exterior", "deltaStatus": "neutral" },
+        "humidity":    { "value": 68,   "unit": "%",        "delta": "ambiente",    "deltaStatus": "neutral" },
+        "luminosity":  { "value": 800,  "unit": "lx",       "delta": "luz natural", "deltaStatus": "ok"      },
+        "co2":         { "value": 420,  "unit": "ppm",      "delta": "ambiente",    "deltaStatus": "ok"      },
+        "energy":      { "value": 0.10, "unit": "kWh / h",  "delta": "standby",    "deltaStatus": "ok"      }
+      },
+      "events": [
+        { "time": "08:30:00", "type": "ok", "msg": "Sin actividad programada — modo standby", "value": "0 / 200" }
+      ]
+    },
+    {
+      "id": "AUD-1", "name": "Auditorio Principal", "status": "off",
+      "temperature": null, "meta": "sin actividad",
+      "location": "Campus Norte · Edif. Central · capacidad 300",
+      "session": null,
+      "deviceCode": "esp32-8e:3b:7c", "firmware": "v1.4.0", "rssi": -75,
+      "lastReadingTime": "09:00:00", "lastReadingAgo": "5h 32m",
+      "sensors": {
+        "occupancy":   { "value": 0,    "capacity": 300, "delta": "sin actividad",  "deltaStatus": "neutral" },
+        "temperature": { "value": 22.5, "unit": "°C",      "delta": "en rango",    "deltaStatus": "ok"      },
+        "humidity":    { "value": 55,   "unit": "%",        "delta": "en rango",    "deltaStatus": "ok"      },
+        "luminosity":  { "value": 100,  "unit": "lx",       "delta": "mínima — luces de emergencia", "deltaStatus": "neutral" },
+        "co2":         { "value": 450,  "unit": "ppm",      "delta": "ambiente",    "deltaStatus": "ok"      },
+        "energy":      { "value": 0.25, "unit": "kWh / h",  "delta": "standby",    "deltaStatus": "ok"      }
+      },
+      "events": [
+        { "time": "09:00:00", "type": "ok", "msg": "Sin eventos programados — modo standby", "value": "0 / 300" }
+      ]
+    }
+  ]
+}
