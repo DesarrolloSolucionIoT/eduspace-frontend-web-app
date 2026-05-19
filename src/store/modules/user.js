@@ -13,8 +13,6 @@ export default {
         role: getStoredUser()?.role || null,
         token: localStorage.getItem("token") || null,
         isAuthenticated: !!localStorage.getItem("token"),
-        isVerificationPending: false,
-        verificationEmail: null,
         profile: getStoredUser()?.profile || null,
         classrooms: getStoredUser()?.classrooms || [],
         meetings: getStoredUser()?.meetings || [],
@@ -28,8 +26,6 @@ export default {
             state.classrooms = user?.classrooms || [];
             state.meetings = user?.meetings || [];
             state.isAuthenticated = true;
-            state.isVerificationPending = false;
-            state.verificationEmail = null;
         },
         SET_TOKEN(state, token) {
             state.token = token;
@@ -43,23 +39,11 @@ export default {
             state.profile = null;
             state.classrooms = [];
             state.meetings = [];
-            state.isVerificationPending = false;
-            state.verificationEmail = null;
-        },
-        SET_VERIFICATION_PENDING(state, email) {
-            state.isVerificationPending = true;
-            state.verificationEmail = email;
         },
     },
     actions: {
         async signIn({ commit }, payload) {
-            await AuthenticationService.signIn(payload);
-            commit("SET_VERIFICATION_PENDING", payload.username);
-        },
-
-        async verifyCodeAndLogin({ commit }, verifyPayload) {
-            const response = await AuthenticationService.verifyCode(verifyPayload);
-
+            const response = await AuthenticationService.signIn(payload);
             const { id, profileId, role, token, username, profile, classrooms, meetings } = response.data;
 
             if (!profileId || !role || !token) {
@@ -107,12 +91,6 @@ export default {
         },
         userToken(state) {
             return state.token;
-        },
-        isVerificationPending(state) {
-            return state.isVerificationPending;
-        },
-        verificationEmail(state) {
-            return state.verificationEmail;
         },
         userProfile(state) {
             return state.profile;

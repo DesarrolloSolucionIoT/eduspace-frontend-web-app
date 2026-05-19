@@ -4,7 +4,7 @@ import store from "../store/index.js";
 const HomeComponent = () => import('../public/pages/home.component.vue');
 const LoginComponent = () => import('../iam/login/pages/login.component.vue');
 const RegisterComponent = () => import('../iam/register/pages/register.component.vue');
-const VerifyCodeComponent = () => import('../iam/login/components/verify-code.component.vue');
+const ActivateComponent = () => import('../iam/login/pages/activate.component.vue');
 
 const MeetManagementComponent = () => import('../meeting-management/pages/meet-management.component.vue');
 
@@ -31,7 +31,7 @@ const router = createRouter({
         // Rutas Públicas y de Autenticación
         { path: '/', redirect: '/login' },
         { path: '/login', name: 'login', component: LoginComponent, meta: { title: 'Login' } },
-        { path: '/verify-code', name: 'verify-code', component: VerifyCodeComponent, meta: { title: 'Verify Code' } },
+        { path: '/activate', name: 'activate', component: ActivateComponent, meta: { title: 'Activar cuenta' } },
         { path: '/register', name: 'register', component: RegisterComponent, meta: { title: 'Register' } },
         { path: '/home', name: 'home', component: HomeComponent, meta: { title: 'Home' } },
 

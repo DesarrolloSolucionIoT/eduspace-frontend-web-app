@@ -5,8 +5,8 @@ export class AuthenticationService {
         return http.post("/authentication/sign-in", signInRequest);
     }
 
-    verifyCode(verifyCodeRequest) {
-        return http.post("/authentication/verify-code", verifyCodeRequest);
+    activate(token) {
+        return http.post("/authentication/activate", { token });
     }
 
     async signUp(signUpRequest) {

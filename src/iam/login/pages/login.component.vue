@@ -1,6 +1,6 @@
 <script>
 import LoginForm from '../components/login-form.component.vue';
-import {mapActions, mapState} from 'vuex';
+import {mapActions, mapGetters, mapState} from 'vuex';
 import {SignInRequest} from "../../model/sign-in.request.js";
 
 export default {
@@ -13,12 +13,11 @@ export default {
     };
   },
   computed: {
-    // Correcta ubicación para mapState
     ...mapState("user", {
       userId: "id",
-      userRole: "role",
       userToken: "token",
     }),
+    ...mapGetters("user", ["userRole"]),
   },
   methods: {
     ...mapActions("user", ["signIn"]),
@@ -31,14 +30,34 @@ export default {
 
         await this.signIn(this.signInRequest);
 
-        this.$router.push({name: "verify-code", query: { email: email }});
-      } catch {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Error de acceso',
-          detail: 'Credenciales incorrectas. Verifica tu correo y contraseña.',
-          life: 3000
-        });
+        const role = this.userRole;
+        if (role === 'RoleAdmin') {
+          this.$router.push({ name: 'home-admin' });
+        } else {
+          this.$toast.add({
+            severity: 'warn',
+            summary: 'Acceso restringido',
+            detail: 'Esta plataforma es solo para administradores. Iniciá sesión desde EduSpace Mobile.',
+            life: 5000
+          });
+        }
+      } catch (error) {
+        const code = error?.response?.data?.code;
+        if (error?.response?.status === 403 && code === 'AccountNotActivated') {
+          this.$toast.add({
+            severity: 'warn',
+            summary: 'Cuenta no activada',
+            detail: 'Tu cuenta no está activada. Revisá tu correo para activarla.',
+            life: 5000
+          });
+        } else {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Error de acceso',
+            detail: 'Credenciales incorrectas. Verificá tu usuario y contraseña.',
+            life: 3000
+          });
+        }
       } finally {
         this.isLoggingIn = false;
       }

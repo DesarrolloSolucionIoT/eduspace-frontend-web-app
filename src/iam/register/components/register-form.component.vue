@@ -15,7 +15,6 @@ export default {
         address: "",
         username: "",
       },
-      dialogVisible: false, // Controla la visibilidad del diálogo
       errors: {
         email: "",
         dni: "",
@@ -125,7 +124,14 @@ export default {
       if (this.isFormValid()) {
         try {
           await this.onSubmit(this.formData);
-          this.dialogVisible = true; // Muestra el diálogo cuando se crea la cuenta exitosamente
+          const email = this.formData.email;
+          this.$toast.add({
+            severity: 'info',
+            summary: 'Revisá tu correo',
+            detail: `Te enviamos un correo a ${email}. Hacé click en el link para activar tu cuenta.`,
+            life: 8000
+          });
+          this.$router.push({ name: 'login' });
         } catch (error) {
           // No mostrar el diálogo si hay error
           console.error("Error en el registro:", error);
@@ -141,15 +147,6 @@ export default {
 
 <template>
   <div class="register-container">
-    <!-- Diálogo de éxito -->
-    <pv-dialog
-      v-model:visible="dialogVisible"
-      header="Account Created Successfully"
-    >
-      <p>Your account has been created successfully!</p>
-      <pv-button label="Continue" class="dialog-button" @click="goToLogin" />
-    </pv-dialog>
-
     <!-- Left Side -->
     <div class="left-side">
       <h2>Welcome Back!</h2>
@@ -346,17 +343,4 @@ p {
   background-color: #0097a7;
 }
 
-.dialog-button {
-  margin-top: 20px;
-  background-color: #00bcd4;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.dialog-button:hover {
-  background-color: #0097a7;
-}
 </style>
