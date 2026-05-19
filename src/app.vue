@@ -195,11 +195,13 @@ export default {
     },
   },
   created() {
-    if (!this.isAuthenticated) {
-      this.$router.push({ name: "login" });
-    } else {
+    if (this.isAuthenticated) {
       this.changeToolbar();
     }
+    // No redirect for unauthenticated users — the router guard handles
+    // protected routes via requiresAuth meta. A blanket push to /login here
+    // breaks public routes like /activate (which is reached from an email
+    // link by users who are, by definition, not logged in yet).
   },
   watch: {
     userRole() {
