@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "http://eduspacee.runasp.net/api/:path*"
+      "destination": "https://app-eduspace-7b4076.azurewebsites.net/api/:path*"
     }
   ]
 }
