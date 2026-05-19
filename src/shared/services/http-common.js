@@ -2,7 +2,11 @@ import axios from "axios";
 import store from "../../store/index.js";
 import router from "../../router/index.js";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// Defaults to /api/v1 so production goes through the Vercel rewrite
+// proxy declared in vercel.json (which forwards to the Azure Container
+// Apps backend). Override via VITE_API_BASE_URL for local dev or to
+// point at a different backend.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
 const http = axios.create({
     baseURL: API_BASE_URL,
