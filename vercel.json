@@ -3,6 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://eduspace-api.purplemushroom-1f6e5ae3.brazilsouth.azurecontainerapps.io/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
