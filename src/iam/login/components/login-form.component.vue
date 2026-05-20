@@ -26,11 +26,9 @@ export default {
 <template>
   <div class="login-form-container">
     <h2 class="login-title">Sign in</h2>
-    <form @submit.prevent="submitLogin" class="login-form-grid">
-      <div class="login-inputs">
-        <pv-input-text v-model="email" placeholder="Usuario o correo" required class="login-input" />
-        <pv-password v-model="password" placeholder="Password" toggleMask required class="login-input" />
-      </div>
+    <form @submit.prevent="submitLogin" class="login-form">
+      <pv-input-text v-model="email" placeholder="Usuario o correo" required class="login-input" autocomplete="username" />
+      <pv-password v-model="password" placeholder="Password" toggleMask required class="login-input" inputClass="w-full" autocomplete="current-password" />
       <div class="login-actions">
         <pv-button :loading="loading" class="sign-in-button" label="SIGN IN" type="submit"/>
       </div>
@@ -43,7 +41,8 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 80%;
+  width: 100%;
+  max-width: 360px;
   margin: auto;
 }
 
@@ -53,29 +52,28 @@ export default {
   margin-bottom: 18px;
 }
 
-.login-form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 0px 0px;
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   width: 100%;
 }
 
-.login-inputs {
-  grid-column: 1 / 3;
-  grid-row: 1 / 2;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+.login-input {
+  width: 100%;
+}
+
+/* PrimeVue wraps pv-password in a div — force its child input to fill */
+.login-input :deep(.p-inputtext),
+.login-input :deep(.p-password),
+.login-input :deep(.p-password-input) {
+  width: 100%;
 }
 
 .login-actions {
-  grid-column: 1 / 3;
-  grid-row: 2 / 3;
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin-top: 10px;
+  margin-top: 6px;
 }
 
 .sign-in-button {
@@ -86,7 +84,7 @@ export default {
   border-radius: 25px;
   cursor: pointer;
   font-size: 1em;
-  width: 150px;
+  width: min(180px, 100%);
 }
 
 .sign-in-button:hover,
@@ -98,23 +96,9 @@ export default {
   box-shadow: none;
 }
 
-.login-input {
-  margin-bottom: 18px;
-}
-
-@media (max-width: 600px) {
-  .login-form-grid {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .login-inputs, .login-actions {
-    grid-column: unset;
-    grid-row: unset;
+@media (max-width: 480px) {
+  .sign-in-button {
     width: 100%;
-    justify-content: center;
-    align-items: center;
   }
 }
 </style>

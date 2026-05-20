@@ -119,7 +119,7 @@ export default {
 
       <!-- ── Register panel (right slot) ── -->
       <div class="panel panel--register">
-        <div v-if="registrationError" class="error-banner">
+        <div v-if="registrationError" class="error-banner" role="alert">
           <p>{{ registrationError }}</p>
         </div>
         <RegisterForm :onSubmit="handleSubmit" />
@@ -151,13 +151,10 @@ export default {
 </template>
 
 <style scoped>
-/* ────────────────────────────────────────────────
-   Escape the 20px shell padding — same trick as
-   activate.component.vue so no white gap appears.
-──────────────────────────────────────────────── */
 /* Outer shell — bleeds past .main-content padding so the page
    background fills the viewport edge-to-edge (same trick as
-   activate.component.vue). Centers the auth card inside. */
+   activate.component.vue). Centers the auth card inside.
+   `100dvh` accounts for the mobile address-bar shrink/grow. */
 .auth-shell {
   display: flex;
   align-items: center;
@@ -165,19 +162,22 @@ export default {
 
   align-self: stretch;
   min-height: calc(100vh - 40px);
+  min-height: calc(100dvh - 40px);
   margin: -20px;
   padding: 20px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
 
   background: #f7fafc;
 }
 
-/* The actual auth card — original sizing: 60% wide × 50vh,
-   centered. Holds the two form panels + the sliding overlay. */
+/* The auth card scales from compact tablet to large desktop without
+   getting cramped or sparse. `min-height: auto` lets the register form
+   set the height naturally — no clipped fields on short viewports. */
 .auth-card {
   position: relative;
   overflow: hidden;
-  width: 60%;
-  min-height: 50vh;
+  width: min(95%, 960px);
+  min-height: auto;
   display: flex;
   align-items: stretch;
   border-radius: 15px;
@@ -185,20 +185,16 @@ export default {
   background: #fff;
 }
 
-/* ────────────────────────────────────────────────
-   Form panels — each takes half the card.
-   They are stacked in a row; the overlay sits on
-   top and slides between them.
-──────────────────────────────────────────────── */
+/* Form panels — each takes half the card on desktop. Padding scales
+   with viewport so the panel never devours the form on small screens. */
 .panel {
   width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 40px;
+  padding: clamp(24px, 4vw, 40px);
   background: #fff;
-  /* ensure forms sit below the overlay */
   z-index: 1;
 }
 
@@ -255,7 +251,7 @@ export default {
 }
 
 .overlay-panel h2 {
-  font-size: 2em;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
   margin: 0;
   color: #fff;
 }
@@ -263,6 +259,7 @@ export default {
 .overlay-panel p {
   margin: 0 0 8px;
   line-height: 1.5;
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
 }
 
 .overlay-button {
@@ -273,7 +270,7 @@ export default {
   border-radius: 25px;
   cursor: pointer;
   font-size: 1em;
-  width: 150px;
+  width: min(180px, 80%);
   margin-top: 8px;
 }
 
@@ -304,23 +301,45 @@ export default {
   margin: 0;
 }
 
-/* ────────────────────────────────────────────────
-   Mobile: stack vertically, hide overlay, show
-   only the active form panel.
-──────────────────────────────────────────────── */
+/* Tablet sweet-spot: avoid the abrupt jump between 60% desktop card
+   and stacked mobile. The overlay still slides — we just tighten the
+   layout so 9 register fields don't squish at 1024px and below. */
+@media (max-width: 1024px) {
+  .auth-card {
+    width: min(92%, 820px);
+  }
+
+  .overlay-panel {
+    padding: clamp(20px, 3vw, 32px);
+  }
+}
+
+/* Mobile: stack vertically, hide overlay, show only the active panel.
+   Card stretches edge-to-edge (with a small radius) so the form has
+   maximum width — critical for the 9-field register form. */
 @media (max-width: 768px) {
+  .auth-shell {
+    padding: 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    margin: -20px;
+    min-height: calc(100vh - 24px);
+    min-height: calc(100dvh - 24px);
+  }
+
   .auth-card {
     flex-direction: column;
-    width: 90%;
+    width: 100%;
     height: auto;
-    min-height: 70vh;
+    min-height: auto;
+    border-radius: 12px;
   }
 
   .panel {
     width: 100%;
+    padding: clamp(20px, 6vw, 32px) clamp(16px, 5vw, 24px);
   }
 
-  /* Hide the inactive panel on mobile */
+  /* Show only the active panel on mobile (no overlay to gate the other) */
   .auth-card:not(.panels-right-active) .panel--register {
     display: none;
   }
@@ -329,9 +348,17 @@ export default {
     display: none;
   }
 
-  /* Kill the sliding overlay on mobile — not needed */
+  /* Kill the sliding overlay on mobile — it has no room to slide */
   .overlay-wrapper {
     display: none;
+  }
+}
+
+/* Small phones: extra-compact padding so 9 register fields still fit
+   without horizontal scroll on a 320px viewport. */
+@media (max-width: 380px) {
+  .panel {
+    padding: 18px 12px;
   }
 }
 </style>

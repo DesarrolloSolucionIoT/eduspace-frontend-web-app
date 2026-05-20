@@ -261,25 +261,45 @@ export default {
 }
 
 .register-panel h2 {
-  font-size: 2em;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
   margin-bottom: 0.75em;
   color: #2d3748;
 }
 
 .register-form {
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
+/* `flex-wrap` lets the two-column rows collapse to single-column when
+   the panel is narrow. `min-width` on children sets the breakpoint at
+   which they wrap, instead of relying on a single media query. */
 .form-field {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: clamp(8px, 1.5vw, 12px);
   margin-bottom: 1em;
 }
 
+.form-field > * {
+  flex: 1 1 calc(50% - 12px);
+  min-width: 180px;
+}
+
 .input-container {
-  flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+/* Force every PrimeVue input to fill its flex slot — by default
+   pv-input-text / pv-password / pv-calendar render at intrinsic width. */
+.form-field :deep(.p-inputtext),
+.form-field :deep(.p-password),
+.form-field :deep(.p-password-input),
+.form-field :deep(.p-calendar),
+.form-field :deep(.p-datepicker-input) {
+  width: 100%;
 }
 
 .error-message {
@@ -298,7 +318,8 @@ export default {
   border-radius: 25px;
   cursor: pointer;
   font-size: 1em;
-  width: 150px;
+  width: min(180px, 100%);
+  align-self: center;
 }
 
 .sign-up-button:hover,
@@ -308,5 +329,15 @@ export default {
   border: none;
   outline: none;
   box-shadow: none;
+}
+
+@media (max-width: 480px) {
+  .form-field > * {
+    flex-basis: 100%;
+  }
+
+  .sign-up-button {
+    width: 100%;
+  }
 }
 </style>
