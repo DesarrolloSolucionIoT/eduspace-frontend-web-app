@@ -115,6 +115,10 @@ export default {
       <!-- ── Login panel (left slot) ── -->
       <div class="panel panel--login">
         <LoginForm :loading="isLoggingIn" @onLogin="handleLogin" />
+        <p class="mobile-switcher">
+          ¿No tenés cuenta?
+          <button type="button" class="switcher-link" @click="goToSignUp">Registrate</button>
+        </p>
       </div>
 
       <!-- ── Register panel (right slot) ── -->
@@ -123,6 +127,10 @@ export default {
           <p>{{ registrationError }}</p>
         </div>
         <RegisterForm :onSubmit="handleSubmit" />
+        <p class="mobile-switcher">
+          ¿Ya tenés cuenta?
+          <button type="button" class="switcher-link" @click="goToSignIn">Iniciar sesión</button>
+        </p>
       </div>
 
       <!-- ── Sliding overlay ── -->
@@ -301,6 +309,34 @@ export default {
   margin: 0;
 }
 
+/* Mobile-only switcher between login and register (replaces the
+   sliding overlay which has no room on small viewports). */
+.mobile-switcher {
+  display: none;
+  margin: 20px 0 0;
+  font-size: 0.9rem;
+  color: #4a5568;
+  text-align: center;
+}
+
+.switcher-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 4px;
+  color: #34a7c1;
+  font-weight: 600;
+  font-size: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.switcher-link:hover,
+.switcher-link:focus {
+  color: #2fa1b4;
+  outline: none;
+}
+
 /* Tablet sweet-spot: avoid the abrupt jump between 60% desktop card
    and stacked mobile. The overlay still slides — we just tighten the
    layout so 9 register fields don't squish at 1024px and below. */
@@ -351,6 +387,11 @@ export default {
   /* Kill the sliding overlay on mobile — it has no room to slide */
   .overlay-wrapper {
     display: none;
+  }
+
+  /* Surface the switcher only here — desktop uses the overlay buttons */
+  .mobile-switcher {
+    display: block;
   }
 }
 
