@@ -1,7 +1,28 @@
 <template>
   <pv-toast />
-  <div class="app-container">
-    <header v-if="userRole" class="sidenav-wrapper">
+  <div class="app-container" :class="{ 'sidebar-open': isSidebarOpen }">
+    <button
+      v-if="userRole"
+      type="button"
+      class="sidenav-toggle"
+      :aria-label="isSidebarOpen ? 'Cerrar menú' : 'Abrir menú'"
+      :aria-expanded="isSidebarOpen"
+      @click="toggleSidebar"
+    >
+      <i :class="['pi', isSidebarOpen ? 'pi-times' : 'pi-bars']"></i>
+    </button>
+
+    <div
+      v-if="userRole && isMobile && isSidebarOpen"
+      class="sidenav-backdrop"
+      @click="closeSidebar"
+    ></div>
+
+    <header
+      v-if="userRole"
+      class="sidenav-wrapper"
+      :class="{ 'is-open': isSidebarOpen, 'is-mobile': isMobile }"
+    >
       <div class="sidenav admin-sidenav">
         <div class="sidenav-top-bar">
           <language-switcher />
@@ -105,6 +126,8 @@ export default {
       items: [],
       DefaultAvatar,
       LogoSidebar,
+      isSidebarOpen: window.innerWidth >= 1024,
+      isMobile: window.innerWidth < 1024,
     };
   },
   computed: {
@@ -112,6 +135,17 @@ export default {
   },
   methods: {
     ...mapActions("user", ["signOut"]),
+    toggleSidebar() {
+      this.isSidebarOpen = !this.isSidebarOpen;
+    },
+    closeSidebar() {
+      this.isSidebarOpen = false;
+    },
+    handleResize() {
+      const mobile = window.innerWidth < 1024;
+      this.isMobile = mobile;
+      this.isSidebarOpen = !mobile;
+    },
     async handleLogOut() {
       await this.signOut();
       this.$router.push({ name: "login" });
@@ -182,6 +216,12 @@ export default {
       });
     },
   },
+  mounted() {
+    window.addEventListener("resize", this.handleResize);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.handleResize);
+  },
   created() {
     if (this.isAuthenticated) {
       this.changeToolbar();
@@ -194,6 +234,11 @@ export default {
   watch: {
     userRole() {
       this.changeToolbar();
+    },
+    $route() {
+      if (this.isMobile) {
+        this.isSidebarOpen = false;
+      }
     },
   },
 };
@@ -343,13 +388,70 @@ export default {
   align-items: center;
 }
 
-@media (max-width: 768px) {
+.sidenav-toggle {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1100;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  color: #064C58;
+  font-size: 1.25rem;
+  transition: background-color 0.2s ease;
+}
+
+.sidenav-toggle:hover {
+  background: #f4f4f4;
+}
+
+.sidenav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  animation: backdropFadeIn 0.2s ease;
+}
+
+@keyframes backdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 1023px) {
+  .sidenav-toggle {
+    display: inline-flex;
+  }
+
+  .sidenav-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    will-change: transform;
+  }
+
+  .sidenav-wrapper.is-open {
+    transform: translateX(0);
+  }
+
   .sidenav {
-    width: 200px;
+    width: min(320px, 85vw);
   }
 
   .main-content {
-    margin-left: 0;
+    width: 100%;
+    padding-top: 70px;
   }
 }
 
