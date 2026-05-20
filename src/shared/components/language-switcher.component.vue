@@ -26,7 +26,8 @@ export default {
   },
   computed: {
     currentLocale() {
-      return this.$i18n.locale;
+      const loc = this.$i18n.locale;
+      return loc && typeof loc === 'object' && 'value' in loc ? loc.value : loc;
     },
   },
   methods: {

@@ -22,7 +22,12 @@ const i18n = createI18n({
 
 export function setLocale(locale) {
   if (!SUPPORTED.includes(locale)) return;
-  i18n.global.locale = locale;
+  const target = i18n.global.locale;
+  if (target && typeof target === 'object' && 'value' in target) {
+    target.value = locale;
+  } else {
+    i18n.global.locale = locale;
+  }
   localStorage.setItem(STORAGE_KEY, locale);
   document.documentElement.setAttribute('lang', locale);
 }
