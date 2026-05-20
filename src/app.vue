@@ -21,7 +21,11 @@
     <header
       v-if="userRole"
       class="sidenav-wrapper"
-      :class="{ 'is-open': isSidebarOpen, 'is-mobile': isMobile }"
+      :class="{
+        'is-open': isSidebarOpen,
+        'is-mobile': isMobile,
+        'is-collapsed': !isMobile && !isSidebarOpen,
+      }"
     >
       <div class="sidenav admin-sidenav">
         <div class="sidenav-top-bar">
@@ -290,6 +294,8 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 350px;
+  flex-shrink: 0;
 }
 
 .sidenav {
@@ -389,7 +395,7 @@ export default {
 }
 
 .sidenav-toggle {
-  display: none;
+  display: inline-flex;
   position: fixed;
   top: 12px;
   left: 12px;
@@ -425,11 +431,16 @@ export default {
   to { opacity: 1; }
 }
 
-@media (max-width: 1023px) {
-  .sidenav-toggle {
-    display: inline-flex;
-  }
+.sidenav-wrapper {
+  overflow: hidden;
+  transition: width 0.25s ease;
+}
 
+.sidenav-wrapper.is-collapsed {
+  width: 0;
+}
+
+@media (max-width: 1023px) {
   .sidenav-wrapper {
     position: fixed;
     top: 0;
