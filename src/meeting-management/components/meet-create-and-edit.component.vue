@@ -90,8 +90,9 @@ export default {
       (newVal) => {
         if (newVal && newVal.length > 2) {
           this.selectedTeachers = newVal.slice(0, 2);
-          this.selectedTeachersError =
-            "Solo puedes invitar hasta 2 profesores.";
+          this.selectedTeachersError = this.$t(
+            "meetingManagement.create.maxTeachersError"
+          );
         } else {
           this.selectedTeachersError = null;
         }
@@ -130,8 +131,9 @@ export default {
           )
           .slice(0, 2);
         if (this.item.teachers.length > 2) {
-          this.selectedTeachersError =
-            "Solo puedes invitar hasta 2 profesores.";
+          this.selectedTeachersError = this.$t(
+            "meetingManagement.create.maxTeachersError"
+          );
         } else {
           this.selectedTeachersError = null;
         }
@@ -146,7 +148,9 @@ export default {
     onSaveRequested() {
       this.submitted = true;
       if (this.selectedTeachers && this.selectedTeachers.length > 2) {
-        this.selectedTeachersError = "Solo puedes invitar hasta 2 profesores.";
+        this.selectedTeachersError = this.$t(
+          "meetingManagement.create.maxTeachersError"
+        );
         return;
       }
       if (
@@ -200,31 +204,31 @@ export default {
         <div class="form-section">
           <div class="section-header">
             <i class="pi pi-info-circle"></i>
-            <h3>Meeting Information</h3>
+            <h3>{{ $t('meetingManagement.create.meetingInfo') }}</h3>
           </div>
 
           <div class="form-row">
             <div class="form-field full-width">
-              <label for="title">Title <span class="required">*</span></label>
+              <label for="title">{{ $t('meetingManagement.create.title') }} <span class="required">*</span></label>
               <pv-input-text
                 id="title"
                 v-model="localItem.title"
-                placeholder="Enter meeting title"
+                :placeholder="$t('meetingManagement.create.titlePlaceholder')"
                 :class="{ 'p-invalid': submitted && !localItem.title }"
               />
               <small v-if="submitted && !localItem.title" class="error-message">
-                Title is required
+                {{ $t('meetingManagement.create.titleRequired') }}
               </small>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-field full-width">
-              <label for="description">Description</label>
+              <label for="description">{{ $t('common.description') }}</label>
               <pv-input-text
                 id="description"
                 v-model="localItem.description"
-                placeholder="Enter meeting description (optional)"
+                :placeholder="$t('meetingManagement.create.descriptionPlaceholder')"
               />
             </div>
           </div>
@@ -232,7 +236,7 @@ export default {
           <div class="form-row">
             <div class="form-field full-width">
               <label for="classroom"
-                >Classroom <span class="required">*</span></label
+                >{{ $t('meetingManagement.common.classroom') }} <span class="required">*</span></label
               >
               <pv-dropdown
                 id="classroom"
@@ -240,7 +244,7 @@ export default {
                 :options="classrooms"
                 optionLabel="name"
                 optionValue="id"
-                placeholder="Select a classroom"
+                :placeholder="$t('meetingManagement.create.classroomPlaceholder')"
                 :class="{ 'p-invalid': submitted && !localItem.classroomId }"
                 class="w-full"
               />
@@ -248,7 +252,7 @@ export default {
                 v-if="submitted && !localItem.classroomId"
                 class="error-message"
               >
-                Classroom is required
+                {{ $t('meetingManagement.create.classroomRequired') }}
               </small>
             </div>
           </div>
@@ -257,12 +261,12 @@ export default {
         <div class="form-section">
           <div class="section-header">
             <i class="pi pi-calendar"></i>
-            <h3>Date & Time</h3>
+            <h3>{{ $t('meetingManagement.create.dateTime') }}</h3>
           </div>
 
           <div class="form-row">
             <div class="form-field full-width">
-              <label for="date">Date <span class="required">*</span></label>
+              <label for="date">{{ $t('common.date') }} <span class="required">*</span></label>
               <pv-date-picker
                 id="date"
                 v-model="localItem.date"
@@ -270,11 +274,11 @@ export default {
                 fluid
                 :showOnFocus="false"
                 date-format="yy-mm-dd"
-                placeholder="Select meeting date"
+                :placeholder="$t('meetingManagement.create.datePlaceholder')"
                 :class="{ 'p-invalid': submitted && !localItem.date }"
               />
               <small v-if="submitted && !localItem.date" class="error-message">
-                Date is required
+                {{ $t('meetingManagement.create.dateRequired') }}
               </small>
             </div>
           </div>
@@ -282,32 +286,32 @@ export default {
           <div class="form-row two-cols">
             <div class="form-field">
               <label for="start-time"
-                >Start Time <span class="required">*</span></label
+                >{{ $t('meetingManagement.create.startTime') }} <span class="required">*</span></label
               >
               <pv-date-picker
                 id="start-time"
                 v-model="localItem.start"
                 timeOnly
-                placeholder="Start time"
+                :placeholder="$t('meetingManagement.create.startTimePlaceholder')"
                 :class="{ 'p-invalid': submitted && !localItem.start }"
               />
               <small v-if="submitted && !localItem.start" class="error-message">
-                Start time is required
+                {{ $t('meetingManagement.create.startTimeRequired') }}
               </small>
             </div>
             <div class="form-field">
               <label for="end-time"
-                >End Time <span class="required">*</span></label
+                >{{ $t('meetingManagement.create.endTime') }} <span class="required">*</span></label
               >
               <pv-date-picker
                 id="end-time"
                 v-model="localItem.end"
                 timeOnly
-                placeholder="End time"
+                :placeholder="$t('meetingManagement.create.endTimePlaceholder')"
                 :class="{ 'p-invalid': submitted && !localItem.end }"
               />
               <small v-if="submitted && !localItem.end" class="error-message">
-                End time is required
+                {{ $t('meetingManagement.create.endTimeRequired') }}
               </small>
             </div>
           </div>
@@ -316,19 +320,19 @@ export default {
         <div class="form-section">
           <div class="section-header">
             <i class="pi pi-users"></i>
-            <h3>Participants</h3>
+            <h3>{{ $t('meetingManagement.participants.title') }}</h3>
           </div>
 
           <div class="form-row">
             <div class="form-field full-width">
-              <label for="invite">Invite Teachers</label>
+              <label for="invite">{{ $t('meetingManagement.participants.inviteTeachers') }}</label>
               <pv-multi-select
                 id="invite"
                 v-model="selectedTeachers"
                 :options="teachersWithDisabled"
                 option-label="name"
                 option-value="id"
-                placeholder="Select teachers to invite"
+                :placeholder="$t('meetingManagement.participants.selectTeachersPlaceholder')"
                 class="w-full"
                 :class="{ 'p-invalid': submitted && selectedTeachersError }"
                 display="chip"
@@ -337,7 +341,7 @@ export default {
                 selectedTeachersError
               }}</small>
               <small class="field-hint">
-                You can invite multiple teachers to this meeting
+                {{ $t('meetingManagement.participants.inviteHint') }}
               </small>
             </div>
           </div>

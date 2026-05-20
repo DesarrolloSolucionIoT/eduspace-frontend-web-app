@@ -1,24 +1,24 @@
 <template>
   <form @submit.prevent="submitForm" class="teacher-form">
     <div class="form-section">
-      <h3 class="section-title">Personal Information</h3>
+      <h3 class="section-title">{{ $t('personalData.form.personalInformation') }}</h3>
 
       <div class="form-row">
         <div class="form-group">
-          <label for="firstName">First Name *</label>
+          <label for="firstName">{{ $t('personalData.form.firstName') }} *</label>
           <pv-input-text
             id="firstName"
             v-model="formData.firstName"
-            placeholder="Enter first name"
+            :placeholder="$t('personalData.form.firstNamePlaceholder')"
             required
           />
         </div>
         <div class="form-group">
-          <label for="lastName">Last Name *</label>
+          <label for="lastName">{{ $t('personalData.form.lastName') }} *</label>
           <pv-input-text
             id="lastName"
             v-model="formData.lastName"
-            placeholder="Enter last name"
+            :placeholder="$t('personalData.form.lastNamePlaceholder')"
             required
           />
         </div>
@@ -26,11 +26,11 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label for="email">Email *</label>
+          <label for="email">{{ $t('personalData.form.email') }} *</label>
           <pv-input-text
             id="email"
             v-model="formData.email"
-            placeholder="example@domain.com"
+            :placeholder="$t('personalData.form.emailPlaceholder')"
             required
             :class="{ 'p-invalid': errors.email }"
             @blur="validateField('email', formData.email)"
@@ -41,11 +41,11 @@
           </small>
         </div>
         <div class="form-group">
-          <label for="phone">Phone *</label>
+          <label for="phone">{{ $t('personalData.form.phone') }} *</label>
           <pv-input-text
             id="phone"
             v-model="formData.phone"
-            placeholder="987654321"
+            :placeholder="$t('personalData.form.phonePlaceholder')"
             required
             :class="{ 'p-invalid': errors.phone }"
             @input="formData.phone = formData.phone.replace(/\D/g, ''); validateField('phone', formData.phone)"
@@ -60,11 +60,11 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label for="dni">DNI *</label>
+          <label for="dni">{{ $t('personalData.form.dni') }} *</label>
           <pv-input-text
             id="dni"
             v-model="formData.dni"
-            placeholder="12345678"
+            :placeholder="$t('personalData.form.dniPlaceholder')"
             required
             :class="{ 'p-invalid': errors.dni }"
             @input="formData.dni = formData.dni.replace(/\D/g, ''); validateField('dni', formData.dni)"
@@ -76,11 +76,11 @@
           </small>
         </div>
         <div class="form-group">
-          <label for="address">Address *</label>
+          <label for="address">{{ $t('personalData.form.address') }} *</label>
           <pv-input-text
             id="address"
             v-model="formData.address"
-            placeholder="Enter address"
+            :placeholder="$t('personalData.form.addressPlaceholder')"
             required
           />
         </div>
@@ -88,24 +88,24 @@
     </div>
 
     <div class="form-section" v-if="!isEdit">
-      <h3 class="section-title">Account Credentials</h3>
+      <h3 class="section-title">{{ $t('personalData.form.accountCredentials') }}</h3>
 
       <div class="form-row">
         <div class="form-group">
-          <label for="username">Username *</label>
+          <label for="username">{{ $t('personalData.form.username') }} *</label>
           <pv-input-text
             id="username"
             v-model="formData.username"
-            placeholder="Enter username"
+            :placeholder="$t('personalData.form.usernamePlaceholder')"
             required
           />
         </div>
         <div class="form-group">
-          <label for="password">Password *</label>
+          <label for="password">{{ $t('personalData.form.password') }} *</label>
           <pv-password
             id="password"
             v-model="formData.password"
-            placeholder="Enter password"
+            :placeholder="$t('personalData.form.passwordPlaceholder')"
             required
             :feedback="false"
           />
@@ -115,13 +115,13 @@
 
     <div class="form-actions">
       <pv-button
-        label="Cancel"
+        :label="$t('common.cancel')"
         severity="secondary"
         @click="cancel"
         type="button"
       />
       <pv-button
-        :label="isEdit ? 'Update Teacher' : 'Save Teacher'"
+        :label="isEdit ? $t('personalData.form.updateTeacher') : $t('personalData.form.saveTeacher')"
         icon="pi pi-check"
         type="submit"
         :loading="loading"
@@ -218,17 +218,17 @@ export default {
       switch (field) {
         case "email":
           if (value && !this.validateEmail(value)) {
-            this.errors.email = "Enter a valid email (e.g.: user@domain.com)";
+            this.errors.email = this.$t('personalData.validation.emailInvalid');
           }
           break;
         case "dni":
           if (value && !this.validateDNI(value)) {
-            this.errors.dni = "DNI must be exactly 8 digits";
+            this.errors.dni = this.$t('personalData.validation.dniInvalid');
           }
           break;
         case "phone":
           if (value && !this.validatePhone(value)) {
-            this.errors.phone = "Phone must be 9 digits and start with 9";
+            this.errors.phone = this.$t('personalData.validation.phoneInvalid');
           }
           break;
       }

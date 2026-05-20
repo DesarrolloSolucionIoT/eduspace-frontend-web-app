@@ -17,12 +17,12 @@ export default {
   <main class="not-found">
     <div class="not-found__panel">
       <p class="not-found__code">404</p>
-      <h1 class="not-found__title">Página no encontrada</h1>
+      <h1 class="not-found__title">{{ $t('shared.notFound.title') }}</h1>
       <p class="not-found__message">
-        La ruta <code>{{ $route.fullPath }}</code> no existe.
+        {{ $t('shared.notFound.routePrefix') }} <code>{{ $route.fullPath }}</code> {{ $t('shared.notFound.routeSuffix') }}
       </p>
       <router-link :to="homeRoute" custom v-slot="{ navigate }">
-        <pv-button label="Volver al inicio" icon="pi pi-home" @click="navigate" />
+        <pv-button :label="$t('shared.notFound.backHome')" icon="pi pi-home" @click="navigate" />
       </router-link>
     </div>
   </main>

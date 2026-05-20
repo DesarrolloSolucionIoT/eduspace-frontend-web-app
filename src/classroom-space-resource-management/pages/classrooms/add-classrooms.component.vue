@@ -26,8 +26,8 @@ export default {
         if (!teacherId) {
           this.$toast.add({
             severity: 'warn',
-            summary: 'Atención',
-            detail: 'Debes seleccionar un profesor.',
+            summary: this.$t('classroomSpace.common.attention'),
+            detail: this.$t('classroomSpace.classrooms.validation.selectTeacher'),
             life: 3000
           });
           return;
@@ -37,7 +37,7 @@ export default {
 
         await this.classroomService.create(payload, teacherId);
 
-        this.$toast.add({severity: 'success', summary: 'Éxito', detail: 'Aula creada correctamente', life: 3000});
+        this.$toast.add({severity: 'success', summary: this.$t('common.success'), detail: this.$t('classroomSpace.classrooms.toast.createSuccess'), life: 3000});
         this.serverError = null;
         this.$router.push({ name: 'admin-classrooms' });
       } catch (error) {
@@ -82,9 +82,9 @@ export default {
 
         let rawMessage = extractServerMessage(error);
 
-        // Map some known backend english messages to friendly Spanish
+        // Map some known backend english messages to friendly localized text
         const mapping = [
-          { re: /Classroom with the same title already exist/i, msg: 'Ya existe un aula con ese nombre.' },
+          { re: /Classroom with the same title already exist/i, msg: this.$t('classroomSpace.classrooms.errors.duplicateName') },
         ];
         for (const m of mapping) {
           if (m.re.test(rawMessage)) {
@@ -93,14 +93,14 @@ export default {
           }
         }
 
-        // Map axios generic "Request failed with status code 500" to a friendly Spanish message
+        // Map axios generic "Request failed with status code 500" to a friendly localized message
         const axiosStatusMatch = rawMessage && rawMessage.match(/Request failed with status code (\d{3})/i);
         if (axiosStatusMatch) {
           const statusCode = axiosStatusMatch[1];
           if (statusCode === '500') {
-            rawMessage = 'Error del servidor (500). Intenta más tarde.';
+            rawMessage = this.$t('classroomSpace.classrooms.errors.server500');
           } else {
-            rawMessage = `Error del servidor (${statusCode}).`;
+            rawMessage = this.$t('classroomSpace.classrooms.errors.serverGeneric', { statusCode });
           }
         }
 

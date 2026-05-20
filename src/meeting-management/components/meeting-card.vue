@@ -3,7 +3,7 @@
     <template #title>
       <div class="card-title">
         <i class="pi pi-calendar"></i>
-        <span>{{ meeting.title || "Untitled meeting" }}</span>
+        <span>{{ meeting.title || $t('meetingManagement.common.untitledMeeting') }}</span>
       </div>
     </template>
     <template #content>
@@ -12,7 +12,7 @@
           <div class="compact-row">
             <i class="pi pi-calendar-plus"></i>
             <div class="compact-info">
-              <div class="compact-label">{{ meeting.date || "N/A" }}</div>
+              <div class="compact-label">{{ meeting.date || $t('meetingManagement.common.notAvailable') }}</div>
               <div class="compact-sub">
                 {{ meeting.start || "—" }} - {{ meeting.end || "—" }}
               </div>
@@ -22,8 +22,8 @@
               <div class="compact-teachers">
                 {{
                   meeting.teachers && meeting.teachers.length
-                    ? meeting.teachers.length + " teachers"
-                    : "No teachers"
+                    ? $t('meetingManagement.common.teachersCount', { count: meeting.teachers.length })
+                    : $t('meetingManagement.common.noTeachers')
                 }}
               </div>
             </div>
@@ -34,24 +34,24 @@
           <div class="row">
             <i class="pi pi-building"></i>
             <div>
-              <div class="label">Classroom</div>
+              <div class="label">{{ $t('meetingManagement.common.classroom') }}</div>
               <div class="value">{{ classroomName }}</div>
             </div>
           </div>
           <div class="row">
             <i class="pi pi-calendar-plus"></i>
             <div>
-              <div class="label">Date</div>
-              <div class="value">{{ meeting.date || "N/A" }}</div>
+              <div class="label">{{ $t('common.date') }}</div>
+              <div class="value">{{ meeting.date || $t('meetingManagement.common.notAvailable') }}</div>
             </div>
           </div>
           <div class="row time-row">
             <i class="pi pi-clock"></i>
             <div>
-              <div class="label">Time</div>
+              <div class="label">{{ $t('meetingManagement.common.time') }}</div>
               <div class="value">
-                {{ meeting.start || meeting.startTime || "N/A" }} -
-                {{ meeting.end || meeting.endTime || "N/A" }}
+                {{ meeting.start || meeting.startTime || $t('meetingManagement.common.notAvailable') }} -
+                {{ meeting.end || meeting.endTime || $t('meetingManagement.common.notAvailable') }}
               </div>
             </div>
           </div>
@@ -59,7 +59,7 @@
           <div class="row">
             <i class="pi pi-users"></i>
             <div>
-              <div class="label">Teachers</div>
+              <div class="label">{{ $t('meetingManagement.common.teachers') }}</div>
               <div class="value">
                 <span v-if="meeting.teachers && meeting.teachers.length">
                   {{
@@ -72,13 +72,13 @@
                       .join(", ")
                   }}
                 </span>
-                <span v-else>No teachers</span>
+                <span v-else>{{ $t('meetingManagement.common.noTeachers') }}</span>
               </div>
             </div>
           </div>
 
           <div class="description" v-if="meeting.description">
-            <div class="label">Description</div>
+            <div class="label">{{ $t('common.description') }}</div>
             <div class="value">{{ meeting.description }}</div>
           </div>
         </div>
@@ -88,14 +88,14 @@
       <div class="card-actions">
         <pv-button
           icon="pi pi-pencil"
-          label="Edit"
+          :label="$t('common.edit')"
           severity="warning"
           size="small"
           @click="$emit('edit', meeting)"
         />
         <pv-button
           icon="pi pi-trash"
-          label="Delete"
+          :label="$t('common.delete')"
           severity="danger"
           size="small"
           @click="$emit('delete', meeting)"
@@ -121,9 +121,10 @@ export default {
   computed: {
     classroomName() {
       const c = this.meeting.classroom;
-      if (!c) return "N/A";
+      const fallback = this.$t("meetingManagement.common.notAvailable");
+      if (!c) return fallback;
       if (typeof c === "string") return c;
-      return c.name || c.room || "N/A";
+      return c.name || c.room || fallback;
     },
   },
 };

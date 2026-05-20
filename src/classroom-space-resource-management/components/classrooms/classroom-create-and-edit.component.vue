@@ -46,8 +46,8 @@ export default {
       if (!this.form.name || !this.form.description || !this.form.teacherId) {
         this.$toast.add({
           severity: 'warn',
-          summary: 'Campos incompletos',
-          detail: 'Por favor completa todos los campos.',
+          summary: this.$t('classroomSpace.common.validation.incompleteFieldsTitle'),
+          detail: this.$t('classroomSpace.common.validation.fillAllFields'),
           life: 3000
         });
         return;
@@ -86,16 +86,16 @@ export default {
 <template>
   <div class="classroom-create-and-edit-container">
     <div class="breadcrumb" style="display: flex; align-items: center">
-      <h4 style="margin-right: 20px">Classrooms and Shared Spaces</h4>
+      <h4 style="margin-right: 20px">{{ $t('classroomSpace.common.breadcrumbRoot') }}</h4>
       <i class="pi pi-chevron-right"></i>
-      <h4 style="margin-left: 20px">Classrooms</h4>
+      <h4 style="margin-left: 20px">{{ $t('classroomSpace.classrooms.title') }}</h4>
       <i class="pi pi-chevron-right"></i>
-      <h4 style="margin-left: 20px">{{ isCreateMode ? 'Add Classroom' : 'Edit Classroom' }}</h4>
+      <h4 style="margin-left: 20px">{{ isCreateMode ? $t('classroomSpace.classrooms.addTitle') : $t('classroomSpace.classrooms.editSingular') }}</h4>
     </div>
 
     <div class="classroom-create-form">
     <div class="form-header">
-      <h2>{{ isCreateMode ? 'Create Classroom' : 'Edit Classroom' }}</h2>
+      <h2>{{ isCreateMode ? $t('classroomSpace.classrooms.createSingular') : $t('classroomSpace.classrooms.editSingular') }}</h2>
     </div>
     <!-- If the server error is specifically about the name/title, show it inline under Name. Otherwise show a general box. -->
     <div v-if="!nameFieldError && serverError" class="server-error">
@@ -103,32 +103,32 @@ export default {
     </div>
     <form @submit.prevent="save" class="form-grid">
       <div class="form-field">
-        <pv-float-label>Name:</pv-float-label>
-        <pv-input-text v-model="form.name" placeholder="Enter name" @input="clearServerError" />
+        <pv-float-label>{{ $t('common.name') }}:</pv-float-label>
+        <pv-input-text v-model="form.name" :placeholder="$t('classroomSpace.common.namePlaceholder')" @input="clearServerError" />
         <div v-if="nameFieldError" class="field-error">{{ nameFieldError }}</div>
       </div>
 
       <div class="form-field">
-        <pv-float-label>Description:</pv-float-label>
-        <pv-input-text v-model="form.description" placeholder="Enter description" @input="clearServerError" />
+        <pv-float-label>{{ $t('common.description') }}:</pv-float-label>
+        <pv-input-text v-model="form.description" :placeholder="$t('classroomSpace.common.descriptionPlaceholder')" @input="clearServerError" />
       </div>
 
-      <pv-float-label for="teacher">Teacher</pv-float-label>
+      <pv-float-label for="teacher">{{ $t('classroomSpace.classrooms.teacher') }}</pv-float-label>
       <pv-select
           v-model="form.teacherId"
           :options="teacherOptions"
           option-label="label"
           option-value="value"
-          placeholder="Select a teacher"
+          :placeholder="$t('classroomSpace.classrooms.selectTeacherPlaceholder')"
           class="form-control"
           @change="clearServerError"
       />
 
       <div class="form-actions">
-        <pv-button :loading="loading" class="p-button-success" label="Save" type="submit"/>
+        <pv-button :loading="loading" class="p-button-success" :label="$t('common.save')" type="submit"/>
         <pv-button
           type="button"
-          label="Cancel"
+          :label="$t('common.cancel')"
           class="p-button-secondary"
           @click="cancel"
         />

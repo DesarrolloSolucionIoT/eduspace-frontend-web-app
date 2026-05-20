@@ -57,7 +57,7 @@ export default {
 <template>
   <div class="resources-page">
     <div class="page-header">
-      <h2>Resources Management</h2>
+      <h2>{{ $t('classroomSpace.resources.pageTitle') }}</h2>
     </div>
 
     <div class="page-content">
@@ -65,7 +65,7 @@ export default {
         <div class="filter-card">
           <div class="filter-header">
             <i class="pi pi-filter"></i>
-            <h3>Filter by Classroom</h3>
+            <h3>{{ $t('classroomSpace.resources.filterByClassroom') }}</h3>
           </div>
           <pv-select
               id="classroom-select"
@@ -73,7 +73,7 @@ export default {
               :options="classrooms"
               optionLabel="name"
               optionValue="id"
-              placeholder="Select a Classroom"
+              :placeholder="$t('classroomSpace.resources.selectClassroomPlaceholder')"
               class="classroom-select"
               @change="loadResources"
           />
@@ -86,12 +86,12 @@ export default {
                 <i class="pi pi-box"></i>
               </div>
               <div class="add-card-text">
-                <h3>Add Resource</h3>
-                <p>Create new equipment</p>
+                <h3>{{ $t('classroomSpace.resources.addTitle') }}</h3>
+                <p>{{ $t('classroomSpace.resources.addSubtitle') }}</p>
               </div>
             </div>
             <pv-button
-                label="Add Resource"
+                :label="$t('classroomSpace.resources.addTitle')"
                 icon="pi pi-plus"
                 severity="success"
                 @click="goToAdd"
@@ -104,14 +104,14 @@ export default {
       <div class="resources-content">
         <div v-if="!selectedClassroomId" class="empty-state">
           <i class="pi pi-arrow-left" style="font-size: 3rem; color: #ccc;"></i>
-          <h3>Select a classroom</h3>
-          <p>Choose a classroom from the left to view its resources</p>
+          <h3>{{ $t('classroomSpace.resources.empty.selectTitle') }}</h3>
+          <p>{{ $t('classroomSpace.resources.empty.selectMessage') }}</p>
         </div>
 
         <div v-else-if="resources.length === 0" class="empty-state">
           <i class="pi pi-inbox" style="font-size: 3rem; color: #ccc;"></i>
-          <h3>No resources found</h3>
-          <p>This classroom doesn't have any resources yet</p>
+          <h3>{{ $t('classroomSpace.resources.empty.noneTitle') }}</h3>
+          <p>{{ $t('classroomSpace.resources.empty.noneMessage') }}</p>
         </div>
 
         <div v-else class="resources-grid">

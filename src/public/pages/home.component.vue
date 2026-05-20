@@ -6,8 +6,8 @@ export default {
 
 <template>
   <div class="w-full">
-    <h1>Home</h1>
-    <p>Welcome to EduSpace</p>
+    <h1>{{ $t('public.home.title') }}</h1>
+    <p>{{ $t('public.home.welcome') }}</p>
   </div>
 </template>
 

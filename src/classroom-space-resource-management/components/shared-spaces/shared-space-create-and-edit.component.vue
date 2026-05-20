@@ -47,7 +47,7 @@ export default {
         return;
       }
       if (this.form.capacity > (maxCapacity[this.form.name] || 0)) {
-        this.capacityError = `Capacity for ${this.form.name} must not exceed ${maxCapacity[this.form.name]}.`;
+        this.capacityError = this.$t('classroomSpace.sharedSpaces.validation.capacityExceeded', { name: this.form.name, max: maxCapacity[this.form.name] });
       } else {
         this.capacityError = "";
       }
@@ -58,7 +58,7 @@ export default {
         !this.form.capacity ||
         !this.form.description
       ) {
-        this.capacityError = "Please fill in all fields.";
+        this.capacityError = this.$t('classroomSpace.common.validation.fillAllFields');
         return;
       }
       this.validateCapacity();
@@ -77,38 +77,38 @@ export default {
 <template>
   <div class="shared-space-create-and-edit-container">
     <div class="breadcrumb" style="display: flex; align-items: center">
-      <h4 style="margin-right: 20px">Classrooms and Shared Spaces</h4>
+      <h4 style="margin-right: 20px">{{ $t('classroomSpace.common.breadcrumbRoot') }}</h4>
       <i class="pi pi-chevron-right"></i>
-      <h4 style="margin-left: 20px">Shared Spaces</h4>
+      <h4 style="margin-left: 20px">{{ $t('classroomSpace.sharedSpaces.title') }}</h4>
       <i class="pi pi-chevron-right"></i>
       <h4 style="margin-left: 20px">
-        {{ isCreateMode ? "Add Shared Space" : "Edit Shared Space" }}
+        {{ isCreateMode ? $t('classroomSpace.sharedSpaces.addSingular') : $t('classroomSpace.sharedSpaces.editSingular') }}
       </h4>
     </div>
 
     <div class="shared-space-create-form">
     <div class="form-header">
-      <h2>{{ isCreateMode ? "Create Shared Space" : "Edit Shared Space" }}</h2>
+      <h2>{{ isCreateMode ? $t('classroomSpace.sharedSpaces.createSingular') : $t('classroomSpace.sharedSpaces.editSingular') }}</h2>
     </div>
     <form @submit.prevent="save" class="form-grid">
       <div class="form-field">
-        <pv-float-label>Name:</pv-float-label>
+        <pv-float-label>{{ $t('common.name') }}:</pv-float-label>
         <pv-dropdown
           v-model="form.name"
           :options="sharedSpaceOptions"
           option-label="label"
           option-value="value"
-          placeholder="Select shared space"
+          :placeholder="$t('classroomSpace.sharedSpaces.selectPlaceholder')"
           class="pv-input-text"
         />
       </div>
 
       <div class="form-field">
-        <pv-float-label>Capacity:</pv-float-label>
+        <pv-float-label>{{ $t('classroomSpace.sharedSpaces.capacity') }}:</pv-float-label>
         <pv-input-number
           v-model.number="form.capacity"
           :min="0"
-          placeholder="Enter capacity"
+          :placeholder="$t('classroomSpace.sharedSpaces.capacityPlaceholder')"
         />
         <div v-if="capacityError" style="color: red; font-size: 0.9em; margin-top: 4px;">
           {{ capacityError }}
@@ -116,18 +116,18 @@ export default {
       </div>
 
       <div class="form-field">
-        <pv-float-label>Description:</pv-float-label>
+        <pv-float-label>{{ $t('common.description') }}:</pv-float-label>
         <pv-input-text
           v-model="form.description"
-          placeholder="Enter description"
+          :placeholder="$t('classroomSpace.common.descriptionPlaceholder')"
         />
       </div>
 
       <div class="form-actions">
-        <pv-button type="submit" label="Save" class="p-button-success" :disabled="!!capacityError" />
+        <pv-button type="submit" :label="$t('common.save')" class="p-button-success" :disabled="!!capacityError" />
         <pv-button
           type="button"
-          label="Cancel"
+          :label="$t('common.cancel')"
           class="p-button-secondary"
           @click="cancel"
         />

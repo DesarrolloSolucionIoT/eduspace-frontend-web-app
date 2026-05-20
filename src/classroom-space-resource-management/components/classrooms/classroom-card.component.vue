@@ -27,18 +27,18 @@ export default {
     <div class="card border-round-xl shadow-2 p-3 h-full">
       <div class="text-xl font-semibold mb-2">{{ classroom.name }}</div>
       <div class="mb-2">
-        <span class="font-medium text-600">Description: {{ classroom.description }}</span>
+        <span class="font-medium text-600">{{ $t('common.description') }}: {{ classroom.description }}</span>
       </div>
       <div class="text-md text-gray-700">
-        Teacher: {{ classroom.teacherName }}
+        {{ $t('classroomSpace.classrooms.teacher') }}: {{ classroom.teacherName }}
       </div>
       <div class="flex align-items-center gap-2 mb-3">
         <i class="pi pi-box text-yellow-500"></i>
-        <span>Classroom</span>
+        <span>{{ $t('classroomSpace.classrooms.singular') }}</span>
       </div>
       <div class="card-buttons">
-        <pv-button label="Edit" severity="info" text raised class="w-full" @click="editClassroom"/>
-        <pv-button label="Delete" severity="danger" text raised class="w-full" @click="deleteClassroom"/>
+        <pv-button :label="$t('common.edit')" severity="info" text raised class="w-full" @click="editClassroom"/>
+        <pv-button :label="$t('common.delete')" severity="danger" text raised class="w-full" @click="deleteClassroom"/>
       </div>
     </div>
   </div>

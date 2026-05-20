@@ -19,11 +19,11 @@ export default {
     async saveSharedSpace(shared_space_data) {
       try {
         await this.sharedAreaService.create(shared_space_data);
-        this.$toast.add({severity: 'success', summary: 'Éxito', detail: 'Espacio compartido creado.', life: 3000});
+        this.$toast.add({severity: 'success', summary: this.$t('common.success'), detail: this.$t('classroomSpace.sharedSpaces.toast.createSuccess'), life: 3000});
         this.$router.push("/dashboard-admin/classrooms-shared-spaces/shared-spaces");
       } catch (error) {
         console.error("Error creating the shared area:", error);
-        this.$toast.add({severity: 'error', summary: 'Error', detail: 'No se pudo crear el espacio.', life: 3000});
+        this.$toast.add({severity: 'error', summary: this.$t('common.error'), detail: this.$t('classroomSpace.sharedSpaces.toast.createError'), life: 3000});
       }
     },
     cancel() {

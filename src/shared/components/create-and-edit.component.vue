@@ -34,10 +34,11 @@ export default {
       this.$emit('saved', this.entity);
     },
     getHeaderTitle() {
-      return `${this.edit ? 'Edit' : 'New'} ${this.entityName}`;
+      const prefix = this.edit ? this.$t('shared.createAndEdit.edit') : this.$t('shared.createAndEdit.new');
+      return `${prefix} ${this.entityName}`;
     },
     getSubmitLabel() {
-      return this.edit ? 'Update' : 'Create';
+      return this.edit ? this.$t('shared.createAndEdit.update') : this.$t('shared.createAndEdit.create');
     },
     getDialogStyle() {
       let dialogStyle = defaultStyle;
@@ -62,7 +63,7 @@ export default {
     <template #footer>
       <div class="flex justify-content-end">
         <pv-button type="button" :label="getSubmitLabel()" class="p-button-text" icon="pi pi-check" @click="onSave" />
-        <pv-button type="button" label="Cancel" severity="secondary" class="p-button-text" icon="pi pi-times"
+        <pv-button type="button" :label="$t('common.cancel')" severity="secondary" class="p-button-text" icon="pi pi-times"
                    @click="onCancel" />
       </div>
     </template>

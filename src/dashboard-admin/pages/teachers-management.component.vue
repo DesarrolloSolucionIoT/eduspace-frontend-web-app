@@ -1,9 +1,9 @@
 <template>
   <div class="teachers-management-page">
     <div class="page-header">
-      <h1>Teachers Management</h1>
+      <h1>{{ $t('dashboardAdmin.teachers.title') }}</h1>
       <pv-button
-        label="Add Teacher"
+        :label="$t('dashboardAdmin.teachers.addTeacher')"
         icon="pi pi-plus"
         @click="showAddDialog = true"
         class="add-teacher-button"
@@ -12,13 +12,13 @@
 
     <div v-if="loading" class="loading-container">
       <pv-progress-spinner />
-      <p>Loading teachers...</p>
+      <p>{{ $t('dashboardAdmin.teachers.loading') }}</p>
     </div>
 
     <div v-else-if="teachers.length === 0" class="empty-state">
       <i class="pi pi-users" style="font-size: 4rem; color: #ccc"></i>
-      <h3>No teachers found</h3>
-      <p>Start by adding your first teacher</p>
+      <h3>{{ $t('dashboardAdmin.teachers.emptyTitle') }}</h3>
+      <p>{{ $t('dashboardAdmin.teachers.emptyDescription') }}</p>
     </div>
 
     <div v-else class="teacher-grid">
@@ -34,7 +34,7 @@
 
     <pv-dialog
       v-model:visible="showAddDialog"
-      header="Add New Teacher"
+      :header="$t('dashboardAdmin.teachers.addDialogHeader')"
       :modal="true"
       :closable="true"
       :style="{ width: '90vw', maxWidth: '950px' }"
@@ -49,7 +49,7 @@
 
     <pv-dialog
       v-model:visible="showDetailsDialog"
-      header="Teacher Details"
+      :header="$t('dashboardAdmin.teachers.detailsDialogHeader')"
       :modal="true"
       :closable="true"
       :style="{ width: '90vw', maxWidth: '600px' }"
@@ -57,32 +57,32 @@
     >
       <div v-if="selectedTeacher" class="teacher-details">
         <div class="detail-row">
-          <span class="detail-label">Full Name:</span>
+          <span class="detail-label">{{ $t('dashboardAdmin.teachers.fullName') }}:</span>
           <span class="detail-value"
             >{{ selectedTeacher.firstName }}
             {{ selectedTeacher.lastName }}</span
           >
         </div>
         <div class="detail-row">
-          <span class="detail-label">Email:</span>
+          <span class="detail-label">{{ $t('dashboardAdmin.personalData.email') }}:</span>
           <span class="detail-value">{{ selectedTeacher.email }}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">DNI:</span>
+          <span class="detail-label">{{ $t('dashboardAdmin.personalData.dni') }}:</span>
           <span class="detail-value">{{ selectedTeacher.dni }}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Phone:</span>
+          <span class="detail-label">{{ $t('dashboardAdmin.personalData.phone') }}:</span>
           <span class="detail-value">{{ selectedTeacher.phone }}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-label">Address:</span>
+          <span class="detail-label">{{ $t('dashboardAdmin.personalData.address') }}:</span>
           <span class="detail-value">{{ selectedTeacher.address }}</span>
         </div>
       </div>
       <template #footer>
         <pv-button
-          label="Close"
+          :label="$t('common.close')"
           icon="pi pi-times"
           @click="showDetailsDialog = false"
           severity="secondary"
@@ -92,7 +92,7 @@
 
     <pv-dialog
       v-model:visible="showEditDialog"
-      header="Edit Teacher"
+      :header="$t('dashboardAdmin.teachers.editDialogHeader')"
       :modal="true"
       :closable="true"
       :style="{ width: '90vw', maxWidth: '950px' }"
@@ -109,7 +109,7 @@
 
     <pv-dialog
       v-model:visible="showDeleteDialog"
-      header="Confirm Delete"
+      :header="$t('dashboardAdmin.teachers.deleteDialogHeader')"
       :modal="true"
       :closable="true"
       :style="{ width: '90vw', maxWidth: '450px' }"
@@ -117,7 +117,7 @@
     >
       <div v-if="teacherToDelete" class="delete-confirmation">
         <p>
-          Are you sure you want to delete the teacher
+          {{ $t('dashboardAdmin.teachers.deleteConfirmIntro') }}
           <strong
             >{{ teacherToDelete.firstName }}
             {{ teacherToDelete.lastName }}</strong
@@ -125,20 +125,19 @@
         </p>
         <p class="warning-text">
           <i class="pi pi-exclamation-triangle"></i>
-          Note: This teacher cannot be deleted if they are assigned to any
-          meetings.
+          {{ $t('dashboardAdmin.teachers.deleteWarningMeetings') }}
         </p>
-        <p class="warning-text">This action cannot be undone.</p>
+        <p class="warning-text">{{ $t('dashboardAdmin.teachers.deleteIrreversible') }}</p>
       </div>
       <template #footer>
         <pv-button
-          label="Cancel"
+          :label="$t('common.cancel')"
           icon="pi pi-times"
           @click="showDeleteDialog = false"
           severity="secondary"
         />
         <pv-button
-          label="Delete"
+          :label="$t('common.delete')"
           icon="pi pi-trash"
           @click="confirmDeleteTeacher"
           severity="danger"
@@ -189,8 +188,8 @@ export default {
       } catch (error) {
         this.$toast.add({
           severity: "error",
-          summary: "Error",
-          detail: error.message || "Failed to load teachers",
+          summary: this.$t('common.error'),
+          detail: error.message || this.$t('dashboardAdmin.teachers.toastLoadError'),
           life: 4000,
         });
       } finally {
@@ -204,8 +203,8 @@ export default {
         await TeacherService.addTeacher(teacherData);
         this.$toast.add({
           severity: "success",
-          summary: "Success",
-          detail: "Teacher added successfully",
+          summary: this.$t('common.success'),
+          detail: this.$t('dashboardAdmin.teachers.toastAddSuccess'),
           life: 3000,
         });
         this.showAddDialog = false;
@@ -213,8 +212,8 @@ export default {
       } catch (error) {
         this.$toast.add({
           severity: "error",
-          summary: "Error",
-          detail: error.message || "Failed to add teacher",
+          summary: this.$t('common.error'),
+          detail: error.message || this.$t('dashboardAdmin.teachers.toastAddError'),
           life: 4000,
         });
       } finally {
@@ -229,8 +228,8 @@ export default {
       } catch (error) {
         this.$toast.add({
           severity: "error",
-          summary: "Error",
-          detail: error.message || "Failed to load teacher details",
+          summary: this.$t('common.error'),
+          detail: error.message || this.$t('dashboardAdmin.teachers.toastDetailsError'),
           life: 4000,
         });
       }
@@ -258,8 +257,8 @@ export default {
         );
         this.$toast.add({
           severity: "success",
-          summary: "Success",
-          detail: "Teacher updated successfully",
+          summary: this.$t('common.success'),
+          detail: this.$t('dashboardAdmin.teachers.toastUpdateSuccess'),
           life: 3000,
         });
         this.showEditDialog = false;
@@ -268,8 +267,8 @@ export default {
       } catch (error) {
         this.$toast.add({
           severity: "error",
-          summary: "Error",
-          detail: error.message || "Failed to update teacher",
+          summary: this.$t('common.error'),
+          detail: error.message || this.$t('dashboardAdmin.teachers.toastUpdateError'),
           life: 4000,
         });
       } finally {
@@ -282,8 +281,8 @@ export default {
         await TeacherService.deleteTeacher(this.teacherToDelete.id);
         this.$toast.add({
           severity: "success",
-          summary: "Success",
-          detail: "Teacher deleted successfully",
+          summary: this.$t('common.success'),
+          detail: this.$t('dashboardAdmin.teachers.toastDeleteSuccess'),
           life: 3000,
         });
         this.showDeleteDialog = false;
@@ -293,7 +292,7 @@ export default {
         const errorMessage =
           error.message ||
           error.response?.data?.message ||
-          "Failed to delete teacher";
+          this.$t('dashboardAdmin.teachers.toastDeleteError');
 
         if (
           errorMessage.includes("foreign key constraint") ||
@@ -302,15 +301,14 @@ export default {
         ) {
           this.$toast.add({
             severity: "warn",
-            summary: "Cannot Delete Teacher",
-            detail:
-              "This teacher cannot be deleted because they are assigned to meetings. Please remove them from all meetings first.",
+            summary: this.$t('dashboardAdmin.teachers.toastDeleteBlockedSummary'),
+            detail: this.$t('dashboardAdmin.teachers.toastDeleteBlockedDetail'),
             life: 6000,
           });
         } else {
           this.$toast.add({
             severity: "error",
-            summary: "Error",
+            summary: this.$t('common.error'),
             detail: errorMessage,
             life: 4000,
           });

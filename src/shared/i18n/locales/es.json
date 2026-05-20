@@ -1,0 +1,527 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "back": "Volver",
+    "search": "Buscar",
+    "loading": "Cargando...",
+    "yes": "Sí",
+    "no": "No",
+    "actions": "Acciones",
+    "close": "Cerrar",
+    "accept": "Aceptar",
+    "required": "Requerido",
+    "optional": "Opcional",
+    "success": "Éxito",
+    "error": "Error",
+    "warning": "Advertencia",
+    "info": "Información",
+    "noData": "Sin datos disponibles",
+    "name": "Nombre",
+    "description": "Descripción",
+    "date": "Fecha",
+    "status": "Estado",
+    "language": "Idioma"
+  },
+  "nav": {
+    "home": "Inicio",
+    "classroomsAndSharedSpaces": "Aulas y Espacios Compartidos",
+    "meetingManagement": "Gestión de Reuniones",
+    "iotMonitoring": "Monitoreo IoT",
+    "teachersManagement": "Gestión de Docentes",
+    "myProfile": "Mi Perfil",
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "logoutConfirm": "¿Estás seguro de que deseas cerrar sesión?",
+    "logoutCancelled": "Cierre de sesión cancelado",
+    "complaintsBook": "Libro de Reclamaciones",
+    "administrator": "Administrador",
+    "copyright": "Copyright equipo EduSpace"
+  },
+  "language": {
+    "es": "ES",
+    "en": "EN",
+    "spanish": "Español",
+    "english": "Inglés"
+  },
+  "iam": {
+    "login": {
+      "title": "Iniciar sesión",
+      "emailPlaceholder": "Usuario o correo",
+      "passwordPlaceholder": "Contraseña",
+      "signInButton": "INICIAR SESIÓN"
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "signUpButton": "REGISTRARSE",
+      "unknownError": "Error desconocido durante el registro",
+      "placeholders": {
+        "firstName": "Nombre",
+        "lastName": "Apellido",
+        "birthdate": "Fecha de nacimiento",
+        "phone": "Teléfono (ej: 987654321)",
+        "email": "Email",
+        "username": "Usuario",
+        "password": "Contraseña",
+        "dni": "DNI (8 dígitos)",
+        "address": "Dirección"
+      },
+      "errors": {
+        "email": "Ingrese un email válido (ejemplo: usuario@dominio.com)",
+        "dni": "El DNI debe tener exactamente 8 dígitos",
+        "phone": "El teléfono debe tener 9 dígitos y comenzar con 9 (ej: 987654321)",
+        "birthdate": "Debe ser mayor de 18 años"
+      },
+      "toast": {
+        "checkEmailSummary": "Revisa tu correo",
+        "checkEmailDetail": "Te enviamos un correo a {email}. Haz clic en el link para activar tu cuenta."
+      }
+    },
+    "activate": {
+      "signIn": "Iniciar sesión",
+      "backToLogin": "Volver al inicio de sesión",
+      "loading": {
+        "title": "Activando tu cuenta...",
+        "description": "Por favor espera un momento."
+      },
+      "success": {
+        "title": "¡Cuenta activada!",
+        "description": "Ya puedes iniciar sesión con tus credenciales."
+      },
+      "errorMissingToken": {
+        "title": "Link inválido",
+        "description": "El link de activación es inválido o está incompleto."
+      },
+      "errorExpired": {
+        "title": "Link expirado",
+        "description": "El link expiró. Pídele a tu administrador que te envíe uno nuevo."
+      },
+      "errorUsed": {
+        "title": "Link ya utilizado",
+        "description": "Este link ya fue usado. Si ya activaste tu cuenta, puedes iniciar sesión."
+      },
+      "errorInvalid": {
+        "title": "Link inválido",
+        "description": "El link de activación es inválido."
+      }
+    },
+    "auth": {
+      "noAccount": "¿No tenés cuenta?",
+      "hasAccount": "¿Ya tenés cuenta?",
+      "signUpLink": "Registrate",
+      "signInLink": "Iniciar sesión",
+      "overlay": {
+        "welcomeBackTitle": "¡Bienvenido de nuevo!",
+        "welcomeBackText": "Para seguir conectado con nosotros, inicia sesión con tus datos personales",
+        "signInButton": "INICIAR SESIÓN",
+        "goodDayTitle": "¡Buen día!",
+        "goodDayText": "Ingresa tus datos personales y comienza tu viaje con nosotros",
+        "signUpButton": "REGISTRARSE"
+      },
+      "toast": {
+        "restrictedAccessSummary": "Acceso restringido",
+        "restrictedAccessDetail": "Esta plataforma es solo para administradores. Inicia sesión desde EduSpace Mobile.",
+        "notActivatedSummary": "Cuenta no activada",
+        "notActivatedDetail": "Tu cuenta no está activada. Revisa tu correo para activarla.",
+        "loginErrorSummary": "Error de acceso",
+        "loginErrorDetail": "Credenciales incorrectas. Verifica tu usuario y contraseña."
+      }
+    }
+  },
+  "dashboardAdmin": {
+    "common": {
+      "go": "Ir"
+    },
+    "home": {
+      "name": "Nombre",
+      "lastName": "Apellido",
+      "cellPhone": "Teléfono",
+      "status": "Estado",
+      "statusAdmin": "Admin",
+      "email": "Correo",
+      "notAvailable": "No disponible",
+      "teachersCreated": "Docentes Creados",
+      "noTeachers": "Aún no se han creado docentes.",
+      "meetingsInCharge": "Reuniones a Cargo",
+      "noMeetings": "No hay reuniones asignadas a este administrador.",
+      "reports": "Reportes",
+      "noReports": "No se han creado reportes.",
+      "reportType": "Tipo",
+      "reportDescription": "Descripción",
+      "reportResourceId": "ID del Recurso",
+      "reportCreatedAt": "Creado el",
+      "reportStatus": "Estado",
+      "toastLoadMeetingsError": "No se pudieron cargar las reuniones",
+      "toastMeetCreated": "Reunión creada exitosamente",
+      "toastMeetCreateError": "Ocurrió un error al crear la reunión.",
+      "toastMeetUpdated": "Reunión actualizada exitosamente",
+      "toastMeetUpdateError": "Ocurrió un error al actualizar la reunión."
+    },
+    "personalData": {
+      "title": "Mi Perfil",
+      "subtitle": "Gestiona tu información personal y configuración de la cuenta",
+      "roleBadge": "Administrador",
+      "personalInfo": "Información Personal",
+      "saveChanges": "Guardar Cambios",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "dni": "DNI",
+      "dniTooltip": "El DNI no se puede modificar",
+      "address": "Dirección",
+      "deleteAccount": "Eliminar Cuenta",
+      "deleteWarning": "Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor, estate seguro.",
+      "deleteConfirm": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción <strong>no</strong> se puede deshacer y perderás el acceso inmediatamente.",
+      "deleteConfirmButton": "Sí, Eliminar mi Cuenta",
+      "toastLoadError": "No se pudieron cargar los datos del perfil",
+      "toastUpdateSuccess": "Perfil actualizado exitosamente",
+      "toastUpdateError": "No se pudo actualizar el perfil",
+      "toastDeletedSummary": "Cuenta Eliminada",
+      "toastDeletedDetail": "Tu cuenta ha sido eliminada.",
+      "toastDeleteError": "No se pudo eliminar la cuenta"
+    },
+    "teachers": {
+      "title": "Gestión de Docentes",
+      "addTeacher": "Agregar Docente",
+      "loading": "Cargando docentes...",
+      "emptyTitle": "No se encontraron docentes",
+      "emptyDescription": "Comienza agregando tu primer docente",
+      "addDialogHeader": "Agregar Nuevo Docente",
+      "detailsDialogHeader": "Detalles del Docente",
+      "editDialogHeader": "Editar Docente",
+      "deleteDialogHeader": "Confirmar Eliminación",
+      "fullName": "Nombre Completo",
+      "deleteConfirmIntro": "¿Estás seguro de que deseas eliminar al docente",
+      "deleteWarningMeetings": "Nota: Este docente no puede ser eliminado si está asignado a alguna reunión.",
+      "deleteIrreversible": "Esta acción no se puede deshacer.",
+      "toastLoadError": "No se pudieron cargar los docentes",
+      "toastAddSuccess": "Docente agregado exitosamente",
+      "toastAddError": "No se pudo agregar el docente",
+      "toastDetailsError": "No se pudieron cargar los detalles del docente",
+      "toastUpdateSuccess": "Docente actualizado exitosamente",
+      "toastUpdateError": "No se pudo actualizar el docente",
+      "toastDeleteSuccess": "Docente eliminado exitosamente",
+      "toastDeleteError": "No se pudo eliminar el docente",
+      "toastDeleteBlockedSummary": "No se puede eliminar el docente",
+      "toastDeleteBlockedDetail": "Este docente no se puede eliminar porque está asignado a reuniones. Por favor, retíralo de todas las reuniones primero."
+    },
+    "classrooms": {
+      "title": "Aulas y Espacios Compartidos",
+      "classroomsTitle": "Aulas",
+      "classroomsDescription": "Gestión y registro de las aulas con entorno de recursos disponibles en la infraestructura.",
+      "sharedSpacesTitle": "Espacios Compartidos",
+      "sharedSpacesDescription": "Gestión y registro de espacios destinados a actividades deportivas dentro de la institución. Esto incluye gimnasios, canchas y otros espacios dedicados al deporte.",
+      "resourcesTitle": "Recursos",
+      "resourcesDescription": "Gestión y registro de los recursos disponibles en las aulas como proyectores, computadoras y otros equipos."
+    },
+    "meetings": {
+      "title": "Gestión de Reuniones",
+      "cardTitle": "Gestión de Reuniones",
+      "cardDescription": "La lista de reuniones presenta una línea de tiempo de las próximas reuniones programadas, junto con detalles relevantes de cada una. Cada entrada incluye la fecha y hora de la reunión, el aula reservada, los participantes involucrados, el propósito de la reunión y cualquier nota adicional importante, como materiales que se deben traer o instrucciones especiales."
+    },
+    "iot": {
+      "sectionTitle": "Monitoreo IoT — Campus",
+      "sectionSub": "datos simulados · Sprint 1",
+      "detailedView": "Vista detallada →",
+      "kpiAvgOccupancy": "Ocupación promedio",
+      "vsLastWeek": "vs semana ant.",
+      "kpiEnergy": "Consumo eléctrico",
+      "vsLastQuarter": "vs trim. ant.",
+      "kpiOpenAlerts": "Alertas abiertas",
+      "active": "activas",
+      "last24h": "últimas 24 h",
+      "kpiOnlineSensors": "Sensores online",
+      "mttr": "MTTR averías",
+      "spacesStatusTitle": "Estado de espacios en tiempo real",
+      "filterAll": "Todos",
+      "filterClassrooms": "Aulas",
+      "filterLabs": "Laboratorios",
+      "filterCommon": "Áreas comunes",
+      "floorCount": "{spaces} espacios / {online} sensores online",
+      "legendOk": "óptimo",
+      "legendWarn": "atención",
+      "legendDanger": "crítico",
+      "legendOff": "sin uso",
+      "activeAlerts": "Alertas activas",
+      "noAlerts": "Sin alertas activas",
+      "telemetryTitle": "Telemetría agregada — últimas 24 h",
+      "occupancy": "Ocupación",
+      "temperature": "Temperatura",
+      "buildingUsageTitle": "Uso por edificio · últimos 7 días",
+      "sensorHealthTitle": "Salud de sensores",
+      "onlineOffline": "{online} online · {offline} offline",
+      "colDevice": "Device",
+      "colSpace": "Espacio",
+      "colType": "Tipo",
+      "colReading": "Lectura",
+      "colUptime": "Uptime",
+      "colTechnician": "Técnico",
+      "colStatus": "Estado",
+      "recentBreakdowns": "Averías recientes"
+    }
+  },
+  "classroomSpace": {
+    "common": {
+      "breadcrumbRoot": "Aulas y Espacios Compartidos",
+      "attention": "Atención",
+      "namePlaceholder": "Ingresa un nombre",
+      "descriptionPlaceholder": "Ingresa una descripción",
+      "validation": {
+        "fillAllFields": "Por favor completa todos los campos.",
+        "incompleteFieldsTitle": "Campos incompletos"
+      }
+    },
+    "classrooms": {
+      "title": "Aulas",
+      "singular": "Aula",
+      "addTitle": "Agregar Aula",
+      "addSubtitle": "Crea un nuevo espacio de aprendizaje",
+      "createSingular": "Crear Aula",
+      "editSingular": "Editar Aula",
+      "teacher": "Docente",
+      "selectTeacherPlaceholder": "Selecciona un docente",
+      "unassigned": "Sin asignar",
+      "loading": "Cargando datos del aula...",
+      "validation": {
+        "selectTeacher": "Debes seleccionar un profesor."
+      },
+      "toast": {
+        "createSuccess": "Aula creada correctamente",
+        "updateSuccess": "Aula actualizada correctamente",
+        "updateError": "Error al actualizar: {message}"
+      },
+      "errors": {
+        "duplicateName": "Ya existe un aula con ese nombre.",
+        "server500": "Error del servidor (500). Intenta más tarde.",
+        "serverGeneric": "Error del servidor ({statusCode})."
+      }
+    },
+    "sharedSpaces": {
+      "title": "Espacios Compartidos",
+      "addTitle": "Agregar Espacio Compartido",
+      "addSubtitle": "Crea un nuevo espacio común",
+      "addSingular": "Agregar Espacio Compartido",
+      "createSingular": "Crear Espacio Compartido",
+      "editSingular": "Editar Espacio Compartido",
+      "capacity": "Capacidad",
+      "capacityPlaceholder": "Ingresa la capacidad",
+      "equipment": "equipamiento",
+      "selectPlaceholder": "Selecciona un espacio compartido",
+      "validation": {
+        "capacityExceeded": "La capacidad para {name} no debe exceder {max}."
+      },
+      "toast": {
+        "createSuccess": "Espacio compartido creado.",
+        "createError": "No se pudo crear el espacio."
+      }
+    },
+    "resources": {
+      "pageTitle": "Gestión de Recursos",
+      "singular": "Recurso",
+      "addTitle": "Agregar Recurso",
+      "addSubtitle": "Crea un nuevo equipamiento",
+      "createSingular": "Crear Recurso",
+      "editSingular": "Editar Recurso",
+      "type": "Tipo",
+      "typeLabel": "Tipo de Recurso",
+      "namePlaceholder": "Ingresa el nombre del recurso",
+      "selectTypePlaceholder": "Selecciona un tipo",
+      "filterByClassroom": "Filtrar por Aula",
+      "selectClassroomPlaceholder": "Selecciona un aula",
+      "assignToClassroom": "Asignar al Aula",
+      "assignedToClassroom": "Asignado al Aula",
+      "loading": "Cargando datos del recurso...",
+      "empty": {
+        "selectTitle": "Selecciona un aula",
+        "selectMessage": "Elige un aula a la izquierda para ver sus recursos",
+        "noneTitle": "No se encontraron recursos",
+        "noneMessage": "Esta aula aún no tiene recursos"
+      },
+      "toast": {
+        "createSuccess": "Recurso creado correctamente.",
+        "updateSuccess": "Recurso actualizado correctamente."
+      }
+    }
+  },
+  "meetingManagement": {
+    "common": {
+      "classroom": "Aula",
+      "teachers": "Profesores",
+      "time": "Horario",
+      "notAvailable": "N/D",
+      "untitledMeeting": "Reunión sin título",
+      "noTeachers": "Sin profesores",
+      "teachersCount": "{count} profesores"
+    },
+    "list": {
+      "title": "Gestión de Reuniones",
+      "subtitle": "Programa y organiza reuniones con los profesores",
+      "newMeeting": "Nueva Reunión",
+      "empty": "No hay reuniones programadas.",
+      "deleted": "Reunión eliminada",
+      "deleteError": "No se pudo eliminar la reunión.",
+      "loadError": "No se pudieron cargar los datos de reuniones.",
+      "viewing": "Viendo reunión: {title}"
+    },
+    "create": {
+      "meetingInfo": "Información de la Reunión",
+      "title": "Título",
+      "titlePlaceholder": "Ingresa el título de la reunión",
+      "titleRequired": "El título es requerido",
+      "descriptionPlaceholder": "Ingresa la descripción de la reunión (opcional)",
+      "classroomPlaceholder": "Selecciona un aula",
+      "classroomRequired": "El aula es requerida",
+      "dateTime": "Fecha y Hora",
+      "datePlaceholder": "Selecciona la fecha de la reunión",
+      "dateRequired": "La fecha es requerida",
+      "startTime": "Hora de Inicio",
+      "startTimePlaceholder": "Hora de inicio",
+      "startTimeRequired": "La hora de inicio es requerida",
+      "endTime": "Hora de Fin",
+      "endTimePlaceholder": "Hora de fin",
+      "endTimeRequired": "La hora de fin es requerida",
+      "maxTeachersError": "Solo puedes invitar hasta 2 profesores.",
+      "success": "Reunión creada exitosamente",
+      "error": "Ocurrió un error al crear la reunión."
+    },
+    "edit": {
+      "success": "Reunión y participantes actualizados exitosamente",
+      "error": "Ocurrió un error al actualizar la reunión."
+    },
+    "participants": {
+      "title": "Participantes",
+      "inviteTeachers": "Invitar Profesores",
+      "selectTeachersPlaceholder": "Selecciona los profesores a invitar",
+      "inviteHint": "Puedes invitar a varios profesores a esta reunión"
+    }
+  },
+  "iotMonitoring": {
+    "title": "Monitoreo IoT",
+    "devicesOnline": "{count} dispositivos online",
+    "activeAlerts": "{count} alertas activas",
+    "simulatedData": "datos simulados (Sprint 1)",
+    "liveMock": "live · mock",
+    "configureThresholds": "Configurar umbrales",
+    "linkDevice": "+ Vincular dispositivo",
+    "spaces": "Espacios",
+    "totalCount": "{count} total",
+    "filterPlaceholder": "Filtrar A-203, LAB-22…",
+    "noResults": "Sin resultados para \"{query}\"",
+    "history": "Histórico",
+    "emptyState": "Selecciona un espacio para ver el detalle de sus sensores",
+    "noDataOffline": "sin datos · dispositivo offline",
+    "capacity": "aforo",
+    "sensors": {
+      "occupancy": "Ocupación",
+      "temperature": "Temperatura",
+      "humidity": "Humedad",
+      "luminosity": "Luminosidad",
+      "co2": "CO₂",
+      "energy": "Consumo"
+    },
+    "status": {
+      "ok": "óptimo",
+      "warn": "atención",
+      "danger": "crítico",
+      "off": "offline"
+    },
+    "rssi": {
+      "none": "sin señal",
+      "excellent": "excelente",
+      "good": "buena",
+      "weak": "débil"
+    },
+    "weekdays": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb",
+      "sun": "Dom"
+    },
+    "device": {
+      "device": "Dispositivo",
+      "firmware": "Firmware",
+      "rssi": "RSSI",
+      "lastReading": "Última lectura",
+      "ago": "hace {value}"
+    },
+    "events": {
+      "title": "Eventos recientes",
+      "window": "últimas 6 h",
+      "empty": "Sin eventos registrados"
+    }
+  },
+  "personalData": {
+    "form": {
+      "personalInformation": "Información Personal",
+      "accountCredentials": "Credenciales de Cuenta",
+      "firstName": "Nombre",
+      "firstNamePlaceholder": "Ingrese el nombre",
+      "lastName": "Apellido",
+      "lastNamePlaceholder": "Ingrese el apellido",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "ejemplo@dominio.com",
+      "phone": "Teléfono",
+      "phonePlaceholder": "987654321",
+      "dni": "DNI",
+      "dniPlaceholder": "12345678",
+      "address": "Dirección",
+      "addressPlaceholder": "Ingrese la dirección",
+      "username": "Nombre de Usuario",
+      "usernamePlaceholder": "Ingrese el nombre de usuario",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Ingrese la contraseña",
+      "saveTeacher": "Guardar Docente",
+      "updateTeacher": "Actualizar Docente"
+    },
+    "validation": {
+      "emailInvalid": "Ingrese un correo válido (ej.: usuario@dominio.com)",
+      "dniInvalid": "El DNI debe tener exactamente 8 dígitos",
+      "phoneInvalid": "El teléfono debe tener 9 dígitos y comenzar con 9"
+    },
+    "card": {
+      "teacher": "Docente",
+      "email": "Correo Electrónico",
+      "dni": "DNI",
+      "phone": "Teléfono",
+      "address": "Dirección",
+      "viewDetails": "Ver Detalles"
+    }
+  },
+  "shared": {
+    "notFound": {
+      "title": "Página no encontrada",
+      "routePrefix": "La ruta",
+      "routeSuffix": "no existe.",
+      "backHome": "Volver al inicio"
+    },
+    "createAndEdit": {
+      "new": "Nuevo",
+      "edit": "Editar",
+      "create": "Crear",
+      "update": "Actualizar"
+    },
+    "dataMeet": {
+      "management": "Gestión de {items}",
+      "new": "Nuevo",
+      "export": "Exportar",
+      "confirmation": "Confirmación",
+      "confirmDeleteSelected": "¿Está seguro de que desea eliminar los {items} seleccionados?",
+      "confirmDeleteItem": "¿Está seguro de que desea eliminar el {item} seleccionado?",
+      "pageReport": "Mostrando {first} a {last} de {totalRecords} {items}"
+    }
+  },
+  "public": {
+    "home": {
+      "title": "Inicio",
+      "welcome": "Bienvenido a EduSpace"
+    }
+  }
+}

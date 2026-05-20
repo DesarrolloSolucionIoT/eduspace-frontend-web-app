@@ -27,14 +27,14 @@ export default {
     async updateClassroom(classroomData) {
       try {
         await this.classroomService.update(this.classroomId, classroomData);
-        this.$toast.add({severity: 'success', summary: 'Éxito', detail: 'Aula actualizada correctamente', life: 3000});
+        this.$toast.add({severity: 'success', summary: this.$t('common.success'), detail: this.$t('classroomSpace.classrooms.toast.updateSuccess'), life: 3000});
         this.$router.push("/dashboard-admin/classrooms-shared-spaces");
       } catch (error) {
         console.error("Error updating classroom:", error);
         this.$toast.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Error al actualizar: ' + error.message,
+          summary: this.$t('common.error'),
+          detail: this.$t('classroomSpace.classrooms.toast.updateError', { message: error.message }),
           life: 3000
         });
       }
@@ -56,7 +56,7 @@ export default {
     />
   </div>
   <div v-else>
-    <p>Loading classroom data...</p>
+    <p>{{ $t('classroomSpace.classrooms.loading') }}</p>
   </div>
 </template>
 

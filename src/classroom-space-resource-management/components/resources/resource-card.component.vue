@@ -22,18 +22,18 @@ export default {
   <div class="card border-round-xl shadow-2 p-3 h-full">
     <div class="text-xl font-semibold mb-2">{{ resource.name }}</div>
     <div class="mb-2">
-      <span class="font-medium text-600">Type: {{ resource.kindOfResource }}</span>
+      <span class="font-medium text-600">{{ $t('classroomSpace.resources.type') }}: {{ resource.kindOfResource }}</span>
     </div>
     <div class="text-md text-gray-700">
-      Assigned to Classroom: {{ resource.classroom.name }}
+      {{ $t('classroomSpace.resources.assignedToClassroom') }}: {{ resource.classroom.name }}
     </div>
     <div class="flex align-items-center gap-2 mb-3 mt-3">
       <i class="pi pi-box text-yellow-500"></i>
-      <span>Resource</span>
+      <span>{{ $t('classroomSpace.resources.singular') }}</span>
     </div>
     <div class="card-buttons">
-      <pv-button label="Edit" severity="info" text raised class="w-full" @click="editResource"/>
-      <pv-button label="Delete" severity="danger" text raised class="w-full" @click="deleteResource"/>
+      <pv-button :label="$t('common.edit')" severity="info" text raised class="w-full" @click="editResource"/>
+      <pv-button :label="$t('common.delete')" severity="danger" text raised class="w-full" @click="deleteResource"/>
     </div>
   </div>
 </template>

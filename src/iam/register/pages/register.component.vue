@@ -33,7 +33,7 @@ export default {
       } catch (error) {
         console.error("Error during registration:", error.message || error);
         this.registrationError =
-          error.message || "Error desconocido durante el registro";
+          error.message || this.$t('iam.register.unknownError');
 
         // Pasar el error de vuelta al formulario para que no muestre el diálogo de éxito
         throw error;

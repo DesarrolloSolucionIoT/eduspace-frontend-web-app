@@ -44,8 +44,8 @@ export default {
         await this.resourceService.update(this.classroomId, this.resourceId, resourceData);
         this.$toast.add({
           severity: 'success',
-          summary: 'Éxito',
-          detail: 'Recurso actualizado correctamente.',
+          summary: this.$t('common.success'),
+          detail: this.$t('classroomSpace.resources.toast.updateSuccess'),
           life: 3000
         });
         this.$router.push({ name: 'resource-list' });
@@ -70,6 +70,6 @@ export default {
     />
   </div>
   <div v-else>
-    <p>Loading resource data...</p>
+    <p>{{ $t('classroomSpace.resources.loading') }}</p>
   </div>
 </template>

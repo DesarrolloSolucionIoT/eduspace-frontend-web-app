@@ -253,11 +253,11 @@ export default {
   methods: {
     notifySuccessfulAction(message) {
       if (this.$toast)
-        this.$toast.add({ severity: "success", summary: "Success", detail: message, life: 3000 });
+        this.$toast.add({ severity: "success", summary: this.$t('common.success'), detail: message, life: 3000 });
     },
     notifyErrorAction(message) {
       if (this.$toast)
-        this.$toast.add({ severity: "error", summary: "Error", detail: message, life: 3000 });
+        this.$toast.add({ severity: "error", summary: this.$t('common.error'), detail: message, life: 3000 });
     },
     async loadMeetings() {
       try {
@@ -307,7 +307,7 @@ export default {
         if (!this.meetings.length && mapped.length) this.meetings = mapped;
       } catch (error) {
         console.error("Error loading meetings in admin home", error);
-        this.notifyErrorAction("Could not load meetings");
+        this.notifyErrorAction(this.$t('dashboardAdmin.home.toastLoadMeetingsError'));
       }
     },
     onSaveRequested(payload) {
@@ -323,10 +323,10 @@ export default {
           await Promise.all(payload.teacherIds.map(tid => this.meetService.addTeacherToMeeting(newMeeting.meetingId, tid)));
         }
         await this.loadMeetings();
-        this.notifySuccessfulAction("Meet Created Successfully");
+        this.notifySuccessfulAction(this.$t('dashboardAdmin.home.toastMeetCreated'));
       } catch (error) {
         console.error("Error creating meet from admin home", error);
-        this.notifyErrorAction("An error occurred while creating the meet.");
+        this.notifyErrorAction(this.$t('dashboardAdmin.home.toastMeetCreateError'));
       } finally {
         this.createAndEditDialogIsVisible = false;
       }
@@ -337,16 +337,16 @@ export default {
         payload.meetData.classroomId = this.meet.classroom?.id;
         await this.meetService.update(this.meet.id, payload.meetData);
         await this.loadMeetings();
-        this.notifySuccessfulAction("Meet Updated Successfully");
+        this.notifySuccessfulAction(this.$t('dashboardAdmin.home.toastMeetUpdated'));
       } catch (error) {
         console.error("Error updating meet from admin home", error);
-        this.notifyErrorAction("An error occurred while updating the meet.");
+        this.notifyErrorAction(this.$t('dashboardAdmin.home.toastMeetUpdateError'));
       } finally {
         this.createAndEditDialogIsVisible = false;
       }
     },
     formatDate(dateString) {
-      if (!dateString) return "N/A";
+      if (!dateString) return this.$t('dashboardAdmin.home.notAvailable');
       return new Date(dateString).toLocaleDateString("es-ES", { year: "numeric", month: "2-digit", day: "2-digit" });
     },
     iotStatusLabel(status) {
@@ -378,11 +378,11 @@ export default {
         />
       </div>
       <div class="admin-details">
-        <p><strong>Name:</strong> {{ admin?.firstName || "Not available" }}</p>
-        <p><strong>Last Name:</strong> {{ admin?.lastName || "Not available" }}</p>
-        <p><strong>Cell Phone:</strong> {{ admin?.phone || "Not available" }}</p>
-        <p><strong>Status:</strong> Admin</p>
-        <p><strong>Email:</strong> {{ admin?.email || "Not available" }}</p>
+        <p><strong>{{ $t('dashboardAdmin.home.name') }}:</strong> {{ admin?.firstName || $t('dashboardAdmin.home.notAvailable') }}</p>
+        <p><strong>{{ $t('dashboardAdmin.home.lastName') }}:</strong> {{ admin?.lastName || $t('dashboardAdmin.home.notAvailable') }}</p>
+        <p><strong>{{ $t('dashboardAdmin.home.cellPhone') }}:</strong> {{ admin?.phone || $t('dashboardAdmin.home.notAvailable') }}</p>
+        <p><strong>{{ $t('dashboardAdmin.home.status') }}:</strong> {{ $t('dashboardAdmin.home.statusAdmin') }}</p>
+        <p><strong>{{ $t('dashboardAdmin.home.email') }}:</strong> {{ admin?.email || $t('dashboardAdmin.home.notAvailable') }}</p>
       </div>
     </div>
 
@@ -391,7 +391,7 @@ export default {
       <template #header>
         <div class="card-header-content">
           <i class="pi pi-users header-icon"></i>
-          <h3 class="card-title">Teachers Created</h3>
+          <h3 class="card-title">{{ $t('dashboardAdmin.home.teachersCreated') }}</h3>
         </div>
       </template>
       <template #content>
@@ -400,7 +400,7 @@ export default {
         </div>
         <div v-else class="empty-state">
           <i class="pi pi-users empty-icon"></i>
-          <p>No teachers have been created yet.</p>
+          <p>{{ $t('dashboardAdmin.home.noTeachers') }}</p>
         </div>
       </template>
     </pv-card>
@@ -409,7 +409,7 @@ export default {
       <template #header>
         <div class="card-header-content">
           <i class="pi pi-calendar header-icon"></i>
-          <h3 class="card-title">Meetings in Charge</h3>
+          <h3 class="card-title">{{ $t('dashboardAdmin.home.meetingsInCharge') }}</h3>
         </div>
       </template>
       <template #content>
@@ -420,7 +420,7 @@ export default {
         </div>
         <div v-else class="empty-state">
           <i class="pi pi-calendar empty-icon"></i>
-          <p>No meetings assigned to this administrator.</p>
+          <p>{{ $t('dashboardAdmin.home.noMeetings') }}</p>
         </div>
       </template>
     </pv-card>
@@ -429,7 +429,7 @@ export default {
       <template #header>
         <div class="card-header-content">
           <i class="pi pi-file header-icon"></i>
-          <h3 class="card-title">Reports</h3>
+          <h3 class="card-title">{{ $t('dashboardAdmin.home.reports') }}</h3>
         </div>
       </template>
       <template #content>
@@ -437,23 +437,23 @@ export default {
           <ul class="reports-list">
             <li v-for="(report, index) in reports" :key="index" class="report-item">
               <div class="report-row">
-                <span class="report-label">Type:</span>
+                <span class="report-label">{{ $t('dashboardAdmin.home.reportType') }}:</span>
                 <span class="report-value">{{ report.kindOfReport }}</span>
               </div>
               <div class="report-row">
-                <span class="report-label">Description:</span>
+                <span class="report-label">{{ $t('dashboardAdmin.home.reportDescription') }}:</span>
                 <span class="report-value">{{ report.description }}</span>
               </div>
               <div class="report-row">
-                <span class="report-label">Resource ID:</span>
+                <span class="report-label">{{ $t('dashboardAdmin.home.reportResourceId') }}:</span>
                 <span class="report-value">{{ report.resourceId }}</span>
               </div>
               <div class="report-row">
-                <span class="report-label">Created At:</span>
+                <span class="report-label">{{ $t('dashboardAdmin.home.reportCreatedAt') }}:</span>
                 <span class="report-value">{{ formatDate(report.createdAt) }}</span>
               </div>
               <div class="report-row">
-                <span class="report-label">Status:</span>
+                <span class="report-label">{{ $t('dashboardAdmin.home.reportStatus') }}:</span>
                 <span class="report-value" :class="'status-' + report.status.toLowerCase()">{{ report.status }}</span>
               </div>
               <hr v-if="index < reports.length - 1" class="report-divider" />
@@ -462,7 +462,7 @@ export default {
         </div>
         <div v-else class="empty-state">
           <i class="pi pi-file empty-icon"></i>
-          <p>No reports have been created.</p>
+          <p>{{ $t('dashboardAdmin.home.noReports') }}</p>
         </div>
       </template>
     </pv-card>
@@ -473,44 +473,44 @@ export default {
     <div class="iot-section-header">
       <div class="iot-section-title">
         <i class="pi pi-wifi" style="font-size: 18px; color: #6366f1;"></i>
-        <span>Monitoreo IoT — Campus</span>
-        <span class="iot-sub">datos simulados · Sprint 1</span>
+        <span>{{ $t('dashboardAdmin.iot.sectionTitle') }}</span>
+        <span class="iot-sub">{{ $t('dashboardAdmin.iot.sectionSub') }}</span>
       </div>
       <router-link to="/dashboard-admin/iot-monitoring" class="iot-detail-link">
-        Vista detallada →
+        {{ $t('dashboardAdmin.iot.detailedView') }}
       </router-link>
     </div>
 
     <!-- KPI strip -->
     <div class="kpi-strip">
       <div class="kpi-card">
-        <div class="kpi-label">Ocupación promedio</div>
+        <div class="kpi-label">{{ $t('dashboardAdmin.iot.kpiAvgOccupancy') }}</div>
         <div class="kpi-value">{{ iotAvgOccupancy }}<span class="kpi-unit">%</span></div>
-        <div class="kpi-delta kpi-up">▲ 4.2 pp <span class="kpi-muted">vs semana ant.</span></div>
+        <div class="kpi-delta kpi-up">▲ 4.2 pp <span class="kpi-muted">{{ $t('dashboardAdmin.iot.vsLastWeek') }}</span></div>
         <div class="kpi-spark">
           <pv-chart type="line" :data="kpiSparkData[0]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
         </div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Consumo eléctrico</div>
+        <div class="kpi-label">{{ $t('dashboardAdmin.iot.kpiEnergy') }}</div>
         <div class="kpi-value">{{ iotTotalEnergy }}<span class="kpi-unit">kWh / h</span></div>
-        <div class="kpi-delta kpi-down">▼ 24.1% <span class="kpi-muted">vs trim. ant.</span></div>
+        <div class="kpi-delta kpi-down">▼ 24.1% <span class="kpi-muted">{{ $t('dashboardAdmin.iot.vsLastQuarter') }}</span></div>
         <div class="kpi-spark">
           <pv-chart type="line" :data="kpiSparkData[1]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
         </div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Alertas abiertas</div>
-        <div class="kpi-value kpi-warn">{{ iotAlertCount }}<span class="kpi-unit">activas</span></div>
-        <div class="kpi-delta" style="color: #f59e0b;">▲ 2 <span class="kpi-muted">últimas 24 h</span></div>
+        <div class="kpi-label">{{ $t('dashboardAdmin.iot.kpiOpenAlerts') }}</div>
+        <div class="kpi-value kpi-warn">{{ iotAlertCount }}<span class="kpi-unit">{{ $t('dashboardAdmin.iot.active') }}</span></div>
+        <div class="kpi-delta" style="color: #f59e0b;">▲ 2 <span class="kpi-muted">{{ $t('dashboardAdmin.iot.last24h') }}</span></div>
         <div class="kpi-spark">
           <pv-chart type="line" :data="kpiSparkData[2]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
         </div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Sensores online</div>
+        <div class="kpi-label">{{ $t('dashboardAdmin.iot.kpiOnlineSensors') }}</div>
         <div class="kpi-value">{{ iotOnlineCount }}<span class="kpi-unit">/ {{ iotSpaces.length }}</span></div>
-        <div class="kpi-delta kpi-up">▼ 3.1 min <span class="kpi-muted">MTTR averías</span></div>
+        <div class="kpi-delta kpi-up">▼ 3.1 min <span class="kpi-muted">{{ $t('dashboardAdmin.iot.mttr') }}</span></div>
         <div class="kpi-spark">
           <pv-chart type="line" :data="kpiSparkData[3]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
         </div>
@@ -523,17 +523,17 @@ export default {
       <!-- Floor map -->
       <div class="iot-card floor-card">
         <div class="iot-card-head">
-          <span class="iot-card-title">Estado de espacios en tiempo real</span>
+          <span class="iot-card-title">{{ $t('dashboardAdmin.iot.spacesStatusTitle') }}</span>
           <span class="iot-tag">// IoT Monitoring</span>
         </div>
         <div class="floor-filter-bar">
           <div class="seg-control">
-            <button :class="{ 'seg-active': floorTypeFilter === 'all' }"       @click="floorTypeFilter = 'all'">Todos</button>
-            <button :class="{ 'seg-active': floorTypeFilter === 'classrooms' }" @click="floorTypeFilter = 'classrooms'">Aulas</button>
-            <button :class="{ 'seg-active': floorTypeFilter === 'labs' }"       @click="floorTypeFilter = 'labs'">Laboratorios</button>
-            <button :class="{ 'seg-active': floorTypeFilter === 'common' }"     @click="floorTypeFilter = 'common'">Áreas comunes</button>
+            <button :class="{ 'seg-active': floorTypeFilter === 'all' }"       @click="floorTypeFilter = 'all'">{{ $t('dashboardAdmin.iot.filterAll') }}</button>
+            <button :class="{ 'seg-active': floorTypeFilter === 'classrooms' }" @click="floorTypeFilter = 'classrooms'">{{ $t('dashboardAdmin.iot.filterClassrooms') }}</button>
+            <button :class="{ 'seg-active': floorTypeFilter === 'labs' }"       @click="floorTypeFilter = 'labs'">{{ $t('dashboardAdmin.iot.filterLabs') }}</button>
+            <button :class="{ 'seg-active': floorTypeFilter === 'common' }"     @click="floorTypeFilter = 'common'">{{ $t('dashboardAdmin.iot.filterCommon') }}</button>
           </div>
-          <span class="floor-count-tag">{{ filteredFloorSpaces.length }} espacios / {{ iotOnlineCount }} sensores online</span>
+          <span class="floor-count-tag">{{ $t('dashboardAdmin.iot.floorCount', { spaces: filteredFloorSpaces.length, online: iotOnlineCount }) }}</span>
         </div>
 
         <div class="floor-grid">
@@ -553,17 +553,17 @@ export default {
         </div>
 
         <div class="map-legend">
-          <span><span class="ld ld-ok"></span>óptimo ({{ iotSpaces.filter(s => s.status === 'ok').length }})</span>
-          <span><span class="ld ld-warn"></span>atención ({{ iotSpaces.filter(s => s.status === 'warn').length }})</span>
-          <span><span class="ld ld-danger"></span>crítico ({{ iotSpaces.filter(s => s.status === 'danger').length }})</span>
-          <span><span class="ld ld-off"></span>sin uso ({{ iotSpaces.filter(s => s.status === 'off').length }})</span>
+          <span><span class="ld ld-ok"></span>{{ $t('dashboardAdmin.iot.legendOk') }} ({{ iotSpaces.filter(s => s.status === 'ok').length }})</span>
+          <span><span class="ld ld-warn"></span>{{ $t('dashboardAdmin.iot.legendWarn') }} ({{ iotSpaces.filter(s => s.status === 'warn').length }})</span>
+          <span><span class="ld ld-danger"></span>{{ $t('dashboardAdmin.iot.legendDanger') }} ({{ iotSpaces.filter(s => s.status === 'danger').length }})</span>
+          <span><span class="ld ld-off"></span>{{ $t('dashboardAdmin.iot.legendOff') }} ({{ iotSpaces.filter(s => s.status === 'off').length }})</span>
         </div>
       </div>
 
       <!-- Alertas feed -->
       <div class="iot-card alerts-card">
         <div class="iot-card-head">
-          <span class="iot-card-title">Alertas activas</span>
+          <span class="iot-card-title">{{ $t('dashboardAdmin.iot.activeAlerts') }}</span>
           <span class="alert-badge" :class="iotAlertCount > 0 ? 'badge-danger' : 'badge-ok'">
             <span class="led-sm" :class="iotAlertCount > 0 ? 'led-danger' : 'led-ok'"></span>
             {{ iotAlertCount }}
@@ -585,7 +585,7 @@ export default {
           </div>
           <div v-if="iotAlertsFeed.length === 0" class="alerts-empty">
             <i class="pi pi-check-circle" style="color: #22c55e;"></i>
-            Sin alertas activas
+            {{ $t('dashboardAdmin.iot.noAlerts') }}
           </div>
         </div>
       </div>
@@ -594,11 +594,11 @@ export default {
     <!-- Gráfica de telemetría agregada -->
     <div class="iot-card telemetry-card">
       <div class="iot-card-head">
-        <span class="iot-card-title">Telemetría agregada — últimas 24 h</span>
+        <span class="iot-card-title">{{ $t('dashboardAdmin.iot.telemetryTitle') }}</span>
         <span class="iot-tag">// IoT</span>
         <div class="telemetry-legend">
-          <span class="tleg-item"><span class="tleg-dot" style="background:#6366f1"></span>Ocupación</span>
-          <span class="tleg-item"><span class="tleg-dot" style="background:#38bdf8"></span>Temperatura</span>
+          <span class="tleg-item"><span class="tleg-dot" style="background:#6366f1"></span>{{ $t('dashboardAdmin.iot.occupancy') }}</span>
+          <span class="tleg-item"><span class="tleg-dot" style="background:#38bdf8"></span>{{ $t('dashboardAdmin.iot.temperature') }}</span>
           <span class="tleg-item"><span class="tleg-dot" style="background:#f59e0b"></span>CO₂</span>
         </div>
       </div>
@@ -613,7 +613,7 @@ export default {
       <!-- Uso por edificio -->
       <div class="iot-card util-card">
         <div class="iot-card-head">
-          <span class="iot-card-title">Uso por edificio · últimos 7 días</span>
+          <span class="iot-card-title">{{ $t('dashboardAdmin.iot.buildingUsageTitle') }}</span>
           <span class="iot-tag">// Reporting</span>
         </div>
         <div class="util-list">
@@ -630,22 +630,22 @@ export default {
       <!-- Salud de sensores -->
       <div class="iot-card sensor-health-card">
         <div class="iot-card-head">
-          <span class="iot-card-title">Salud de sensores</span>
+          <span class="iot-card-title">{{ $t('dashboardAdmin.iot.sensorHealthTitle') }}</span>
           <span class="iot-tag">// Devices</span>
           <span class="alert-badge badge-ok" style="margin-left: auto;">
             <span class="led-sm led-ok"></span>
-            {{ iotOnlineCount }} online · {{ iotSpaces.length - iotOnlineCount }} offline
+            {{ $t('dashboardAdmin.iot.onlineOffline', { online: iotOnlineCount, offline: iotSpaces.length - iotOnlineCount }) }}
           </span>
         </div>
         <div class="iot-table-wrap">
           <table class="iot-table">
             <thead>
               <tr>
-                <th>Device</th>
-                <th>Espacio</th>
-                <th>Tipo</th>
-                <th>Lectura</th>
-                <th class="num">Uptime</th>
+                <th>{{ $t('dashboardAdmin.iot.colDevice') }}</th>
+                <th>{{ $t('dashboardAdmin.iot.colSpace') }}</th>
+                <th>{{ $t('dashboardAdmin.iot.colType') }}</th>
+                <th>{{ $t('dashboardAdmin.iot.colReading') }}</th>
+                <th class="num">{{ $t('dashboardAdmin.iot.colUptime') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -669,7 +669,7 @@ export default {
     <!-- Averías recientes -->
     <div class="iot-card breakdowns-card">
       <div class="iot-card-head">
-        <span class="iot-card-title">Averías recientes</span>
+        <span class="iot-card-title">{{ $t('dashboardAdmin.iot.recentBreakdowns') }}</span>
         <span class="iot-tag">// Breakdown Mgmt</span>
       </div>
       <div class="iot-table-wrap">
@@ -677,10 +677,10 @@ export default {
           <thead>
             <tr>
               <th>#</th>
-              <th>Espacio</th>
-              <th>Tipo</th>
-              <th>Técnico</th>
-              <th>Estado</th>
+              <th>{{ $t('dashboardAdmin.iot.colSpace') }}</th>
+              <th>{{ $t('dashboardAdmin.iot.colType') }}</th>
+              <th>{{ $t('dashboardAdmin.iot.colTechnician') }}</th>
+              <th>{{ $t('dashboardAdmin.iot.colStatus') }}</th>
               <th class="num">SLA</th>
             </tr>
           </thead>

@@ -49,7 +49,7 @@ export default {
         this.originalData = JSON.parse(JSON.stringify(response));
       } catch (error) {
         console.error("Error loading profile:", error);
-        this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Could not load profile data' });
+        this.$toast.add({ severity: 'error', summary: this.$t('common.error'), detail: this.$t('dashboardAdmin.personalData.toastLoadError') });
       } finally {
         this.loading = false;
       }
@@ -72,10 +72,10 @@ export default {
         await AdministratorService.update(this.userId, payload);
 
         this.originalData = JSON.parse(JSON.stringify(this.admin));
-        this.$toast.add({ severity: 'success', summary: 'Success', detail: 'Profile updated successfully', life: 3000 });
+        this.$toast.add({ severity: 'success', summary: this.$t('common.success'), detail: this.$t('dashboardAdmin.personalData.toastUpdateSuccess'), life: 3000 });
       } catch (error) {
         console.error("Error updating profile:", error);
-        this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to update profile' });
+        this.$toast.add({ severity: 'error', summary: this.$t('common.error'), detail: this.$t('dashboardAdmin.personalData.toastUpdateError') });
       } finally {
         this.isSaving = false;
       }
@@ -90,7 +90,7 @@ export default {
       try {
         await AdministratorService.delete(this.userId);
 
-        this.$toast.add({ severity: 'info', summary: 'Account Deleted', detail: 'Your account has been deleted.', life: 2000 });
+        this.$toast.add({ severity: 'info', summary: this.$t('dashboardAdmin.personalData.toastDeletedSummary'), detail: this.$t('dashboardAdmin.personalData.toastDeletedDetail'), life: 2000 });
         this.showDeleteDialog = false;
 
         setTimeout(async () => {
@@ -100,7 +100,7 @@ export default {
 
       } catch (error) {
         console.error("Error deleting account:", error);
-        this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Could not delete account' });
+        this.$toast.add({ severity: 'error', summary: this.$t('common.error'), detail: this.$t('dashboardAdmin.personalData.toastDeleteError') });
         this.isDeleting = false;
       }
     }
@@ -113,8 +113,8 @@ export default {
     <pv-toast />
 
     <div class="page-header">
-      <h1>My Profile</h1>
-      <p>Manage your personal information and account settings</p>
+      <h1>{{ $t('dashboardAdmin.personalData.title') }}</h1>
+      <p>{{ $t('dashboardAdmin.personalData.subtitle') }}</p>
     </div>
 
     <div v-if="loading" class="loading-container">
@@ -131,15 +131,15 @@ export default {
             shape="circle"
           />
           <h2>{{ admin.firstName }} {{ admin.lastName }}</h2>
-          <span class="role-badge">Administrator</span>
+          <span class="role-badge">{{ $t('dashboardAdmin.personalData.roleBadge') }}</span>
         </div>
       </div>
 
       <div class="profile-card form-card">
         <div class="form-header">
-          <h3>Personal Information</h3>
+          <h3>{{ $t('dashboardAdmin.personalData.personalInfo') }}</h3>
           <pv-button
-            label="Save Changes"
+            :label="$t('dashboardAdmin.personalData.saveChanges')"
             icon="pi pi-check"
             @click="updateProfile"
             :loading="isSaving"
@@ -149,38 +149,38 @@ export default {
 
         <div class="form-grid">
           <div class="field">
-            <label>First Name</label>
+            <label>{{ $t('dashboardAdmin.personalData.firstName') }}</label>
             <pv-input-text v-model="admin.firstName" />
           </div>
           <div class="field">
-            <label>Last Name</label>
+            <label>{{ $t('dashboardAdmin.personalData.lastName') }}</label>
             <pv-input-text v-model="admin.lastName" />
           </div>
           <div class="field">
-            <label>Email</label>
+            <label>{{ $t('dashboardAdmin.personalData.email') }}</label>
             <pv-input-text v-model="admin.email" />
           </div>
           <div class="field">
-            <label>Phone</label>
+            <label>{{ $t('dashboardAdmin.personalData.phone') }}</label>
             <pv-input-text v-model="admin.phone" />
           </div>
           <div class="field">
-            <label>DNI</label>
-            <pv-input-text v-model="admin.dni" disabled class="disabled-input" v-tooltip="'DNI cannot be changed'" />
+            <label>{{ $t('dashboardAdmin.personalData.dni') }}</label>
+            <pv-input-text v-model="admin.dni" disabled class="disabled-input" v-tooltip="$t('dashboardAdmin.personalData.dniTooltip')" />
           </div>
           <div class="field full-width">
-            <label>Address</label>
+            <label>{{ $t('dashboardAdmin.personalData.address') }}</label>
             <pv-input-text v-model="admin.address" />
           </div>
         </div>
 
         <div class="danger-zone">
           <div class="danger-text">
-            <h4>Delete Account</h4>
-            <p>Once you delete your account, there is no going back. Please be certain.</p>
+            <h4>{{ $t('dashboardAdmin.personalData.deleteAccount') }}</h4>
+            <p>{{ $t('dashboardAdmin.personalData.deleteWarning') }}</p>
           </div>
           <pv-button
-            label="Delete Account"
+            :label="$t('dashboardAdmin.personalData.deleteAccount')"
             severity="danger"
             outlined
             icon="pi pi-trash"
@@ -192,17 +192,17 @@ export default {
 
     <pv-dialog
       v-model:visible="showDeleteDialog"
-      header="Delete Account"
+      :header="$t('dashboardAdmin.personalData.deleteAccount')"
       modal
       :style="{ width: '450px' }"
     >
       <div class="confirmation-content">
         <i class="pi pi-exclamation-triangle" style="font-size: 2rem; color: #ef4444; margin-bottom: 1rem;"></i>
-        <p>Are you sure you want to delete your account? This action <strong>cannot</strong> be undone and you will lose access immediately.</p>
+        <p v-html="$t('dashboardAdmin.personalData.deleteConfirm')"></p>
       </div>
       <template #footer>
-        <pv-button label="Cancel" text severity="secondary" @click="showDeleteDialog = false" />
-        <pv-button label="Yes, Delete my Account" severity="danger" @click="deleteAccount" :loading="isDeleting" />
+        <pv-button :label="$t('common.cancel')" text severity="secondary" @click="showDeleteDialog = false" />
+        <pv-button :label="$t('dashboardAdmin.personalData.deleteConfirmButton')" severity="danger" @click="deleteAccount" :loading="isDeleting" />
       </template>
     </pv-dialog>
 

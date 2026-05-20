@@ -27,7 +27,7 @@ export default {
     notifySuccessfulAction(message) {
       this.$toast.add({
         severity: "success",
-        summary: "Success",
+        summary: this.$t("common.success"),
         detail: message,
         life: 3000,
       });
@@ -35,7 +35,7 @@ export default {
     notifyErrorAction(message) {
       this.$toast.add({
         severity: "error",
-        summary: "Error",
+        summary: this.$t("common.error"),
         detail: message,
         life: 3000,
       });
@@ -76,7 +76,8 @@ export default {
         });
       } catch (error) {
         console.error("Error loading and enriching meetings:", error);
-        const errorMessage = error.userMessage || "Could not load meetings data.";
+        const errorMessage =
+          error.userMessage || this.$t("meetingManagement.list.loadError");
         this.notifyErrorAction(errorMessage);
       }
     },
@@ -98,11 +99,12 @@ export default {
         .delete(item.id)
         .then(() => {
           this.meetings = this.meetings.filter((m) => m.id !== item.id);
-          this.notifySuccessfulAction("Meet Deleted");
+          this.notifySuccessfulAction(this.$t("meetingManagement.list.deleted"));
         })
         .catch((error) => {
           console.error("Error deleting meet:", error);
-          const errorMessage = error.userMessage || "Could not delete meet.";
+          const errorMessage =
+            error.userMessage || this.$t("meetingManagement.list.deleteError");
           this.notifyErrorAction(errorMessage);
         });
     },
@@ -136,11 +138,12 @@ export default {
           await Promise.all(addTeachersPromises);
         }
         await this.loadMeetings();
-        this.notifySuccessfulAction("Meet Created Successfully");
+        this.notifySuccessfulAction(this.$t("meetingManagement.create.success"));
         this.createAndEditDialogIsVisible = false;
       } catch (error) {
         console.error("Error creating meet:", error);
-        const errorMessage = error.userMessage || "An error occurred while creating the meet.";
+        const errorMessage =
+          error.userMessage || this.$t("meetingManagement.create.error");
         this.notifyErrorAction(errorMessage);
       }
     },
@@ -173,17 +176,20 @@ export default {
         await Promise.all(updatePromises);
 
         await this.loadMeetings();
-        this.notifySuccessfulAction("Meeting and participants updated successfully");
+        this.notifySuccessfulAction(this.$t("meetingManagement.edit.success"));
         this.createAndEditDialogIsVisible = false;
       } catch (error) {
         console.error("Error updating meet:", error);
-        const errorMessage = error.userMessage || "An error occurred while updating the meet.";
+        const errorMessage =
+          error.userMessage || this.$t("meetingManagement.edit.error");
         this.notifyErrorAction(errorMessage);
       }
     },
     onViewItem(meeting) {
       this.notifySuccessfulAction(
-        `Viewing meeting: ${meeting.title || meeting.id}`
+        this.$t("meetingManagement.list.viewing", {
+          title: meeting.title || meeting.id,
+        })
       );
     },
   },
@@ -204,15 +210,15 @@ export default {
           <i class="pi pi-calendar"></i>
         </div>
         <div class="header-text">
-          <h1>Meeting Management</h1>
-          <p>Schedule and organize meetings with teachers</p>
+          <h1>{{ $t('meetingManagement.list.title') }}</h1>
+          <p>{{ $t('meetingManagement.list.subtitle') }}</p>
         </div>
       </div>
     </div>
 
     <div class="meetings-list">
       <button class="p-button p-button-success" @click="onNewItem">
-        Nuevo Meeting
+        {{ $t('meetingManagement.list.newMeeting') }}
       </button>
       <div v-if="meetings.length" class="cards">
         <MeetingCard
@@ -225,7 +231,7 @@ export default {
         />
       </div>
       <div v-else>
-        <p>No hay reuniones programadas.</p>
+        <p>{{ $t('meetingManagement.list.empty') }}</p>
       </div>
     </div>
 

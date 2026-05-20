@@ -62,24 +62,22 @@ export default {
       switch (field) {
         case "email":
           if (value && !this.validateEmail(value)) {
-            this.errors.email =
-              "Ingrese un email válido (ejemplo: usuario@dominio.com)";
+            this.errors.email = this.$t('iam.register.errors.email');
           }
           break;
         case "dni":
           if (value && !this.validateDNI(value)) {
-            this.errors.dni = "El DNI debe tener exactamente 8 dígitos";
+            this.errors.dni = this.$t('iam.register.errors.dni');
           }
           break;
         case "phone":
           if (value && !this.validatePhone(value)) {
-            this.errors.phone =
-              "El teléfono debe tener 9 dígitos y comenzar con 9 (ej: 987654321)";
+            this.errors.phone = this.$t('iam.register.errors.phone');
           }
           break;
         case "birthdate":
           if (value && !this.validateAge(value)) {
-            this.errors.birthdate = "Debe ser mayor de 18 años";
+            this.errors.birthdate = this.$t('iam.register.errors.birthdate');
           }
           break;
       }
@@ -127,8 +125,8 @@ export default {
           const email = this.formData.email;
           this.$toast.add({
             severity: 'info',
-            summary: 'Revisa tu correo',
-            detail: `Te enviamos un correo a ${email}. Haz clic en el link para activar tu cuenta.`,
+            summary: this.$t('iam.register.toast.checkEmailSummary'),
+            detail: this.$t('iam.register.toast.checkEmailDetail', { email }),
             life: 8000
           });
           this.$router.push({ name: 'login' });
@@ -144,19 +142,19 @@ export default {
 
 <template>
   <div class="register-panel">
-    <h2>Create Account</h2>
+    <h2>{{ $t('iam.register.title') }}</h2>
 
     <!-- Registration Form -->
     <form @submit.prevent="submitForm" class="register-form">
         <div class="form-field">
           <pv-input-text
             v-model="formData.firstName"
-            placeholder="Name"
+            :placeholder="$t('iam.register.placeholders.firstName')"
             required
           />
           <pv-input-text
             v-model="formData.lastName"
-            placeholder="Last Name"
+            :placeholder="$t('iam.register.placeholders.lastName')"
             required
           />
         </div>
@@ -165,7 +163,7 @@ export default {
           <div class="input-container">
             <pv-date-picker
               v-model="formData.birthdate"
-              placeholder="Fecha de nacimiento"
+              :placeholder="$t('iam.register.placeholders.birthdate')"
               required
               :class="{ 'p-invalid': errors.birthdate }"
               @blur="validateField('birthdate', formData.birthdate)"
@@ -181,7 +179,7 @@ export default {
           <div class="input-container">
             <pv-input-text
               v-model="formData.phone"
-              placeholder="Teléfono (ej: 987654321)"
+              :placeholder="$t('iam.register.placeholders.phone')"
               required
               :class="{ 'p-invalid': errors.phone }"
               @input="formData.phone = formData.phone.replace(/\D/g, '')"
@@ -198,7 +196,7 @@ export default {
           <div class="input-container">
             <pv-input-text
               v-model="formData.email"
-              placeholder="Email"
+              :placeholder="$t('iam.register.placeholders.email')"
               required
               :class="{ 'p-invalid': errors.email }"
               @blur="validateField('email', formData.email)"
@@ -212,13 +210,13 @@ export default {
         <div class="form-field">
           <pv-input-text
             v-model="formData.username"
-            placeholder="Username"
+            :placeholder="$t('iam.register.placeholders.username')"
             toggleMask
             required
           />
           <pv-password
             v-model="formData.password"
-            placeholder="Password"
+            :placeholder="$t('iam.register.placeholders.password')"
             toggleMask
             required
           />
@@ -228,7 +226,7 @@ export default {
           <div class="input-container">
             <pv-input-text
               v-model="formData.dni"
-              placeholder="DNI (8 dígitos)"
+              :placeholder="$t('iam.register.placeholders.dni')"
               required
               :class="{ 'p-invalid': errors.dni }"
               @input="formData.dni = formData.dni.replace(/\D/g, '')"
@@ -241,12 +239,12 @@ export default {
           </div>
           <pv-input-text
             v-model="formData.address"
-            placeholder="Dirección"
+            :placeholder="$t('iam.register.placeholders.address')"
             required
           />
         </div>
 
-        <pv-button type="submit" label="SIGN UP" class="sign-up-button" />
+        <pv-button type="submit" :label="$t('iam.register.signUpButton')" class="sign-up-button" />
       </form>
   </div>
 </template>

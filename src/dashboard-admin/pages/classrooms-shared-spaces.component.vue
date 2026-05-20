@@ -1,19 +1,17 @@
 <template>
   <div class="classrooms-shared-spaces-container">
-    <h2>Classrooms and Shared Spaces</h2>
+    <h2>{{ $t('dashboardAdmin.classrooms.title') }}</h2>
 
     <div class="p-grid p-align-center p-justify-center">
     <!-- Card 1: Classrooms -->
     <div class="p-col-12 p-md-6">
       <pv-card class="pv-card">
         <template #header>
-          <h3>Classrooms</h3>
-          <p>
-            Management and registration of the classrooms with resources environment available with the infrastructure.
-          </p>
+          <h3>{{ $t('dashboardAdmin.classrooms.classroomsTitle') }}</h3>
+          <p>{{ $t('dashboardAdmin.classrooms.classroomsDescription') }}</p>
         </template>
         <template #footer>
-          <pv-button  class = "pv-button" label="Go" @click="goToClassrooms" />
+          <pv-button  class = "pv-button" :label="$t('dashboardAdmin.common.go')" @click="goToClassrooms" />
         </template>
       </pv-card>
     </div>
@@ -22,15 +20,12 @@
     <div class="p-col-12 p-md-6">
       <pv-card class="pv-card">
         <template #header>
-          <h3>Shared Spaces</h3>
-          <p>
-            Management and registration of spaces designated for sports activities within the institution.
-            This includes gyms, courts, and other spaces dedicated to sports.
-          </p>
+          <h3>{{ $t('dashboardAdmin.classrooms.sharedSpacesTitle') }}</h3>
+          <p>{{ $t('dashboardAdmin.classrooms.sharedSpacesDescription') }}</p>
         </template>
 
         <template #footer>
-          <pv-button  class = "pv-button" label="Go" @click="goToSpaceShared" />
+          <pv-button  class = "pv-button" :label="$t('dashboardAdmin.common.go')" @click="goToSpaceShared" />
         </template>
       </pv-card>
     </div>
@@ -39,14 +34,12 @@
     <div class="p-col-12 p-md-6">
       <pv-card class="pv-card">
         <template #header>
-          <h3>Resources</h3>
-          <p>
-            Management and registration of resources available in classrooms such as projectors, computers, and other equipment.
-          </p>
+          <h3>{{ $t('dashboardAdmin.classrooms.resourcesTitle') }}</h3>
+          <p>{{ $t('dashboardAdmin.classrooms.resourcesDescription') }}</p>
         </template>
 
         <template #footer>
-          <pv-button  class = "pv-button" label="Go" @click="goToResources" />
+          <pv-button  class = "pv-button" :label="$t('dashboardAdmin.common.go')" @click="goToResources" />
         </template>
       </pv-card>
       </div>

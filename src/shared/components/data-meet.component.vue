@@ -25,12 +25,12 @@ export default {
     },
     confirmDeleteSelected() {
       this.$confirm.require({
-        message:      'Are you sure you want to delete the selected ${this.title.plural}?',
-          header:       'Confirmation',
+        message:      this.$t('shared.dataMeet.confirmDeleteSelected', { items: this.title.plural }),
+          header:       this.$t('shared.dataMeet.confirmation'),
           icon:         'pi pi-exclamation-triangle',
           rejectClass:  'p-button-secondary p-button=outlined',
-          rejectLabel:  'Cancel',
-          acceptLabel:  'Delete',
+          rejectLabel:  this.$t('common.cancel'),
+          acceptLabel:  this.$t('common.delete'),
           acceptClass:  'p-button-danger',
           accept:       () => this.$emit('delete-selected-items-requested', this.selectedItems),
           reject:       () => {}
@@ -44,12 +44,12 @@ export default {
     },
     confirmDeleteItem(item) {
       this.$confirm.require({
-        message:      'Are you sure you want to delete the selected ${this.title.singular}?',
-          header:       'Confirmation',
+        message:      this.$t('shared.dataMeet.confirmDeleteItem', { item: this.title.singular }),
+          header:       this.$t('shared.dataMeet.confirmation'),
           icon:         'pi pi-exclamation-triangle',
           rejectClass:  'p-button-secondary p-button=outlined',
-          rejectLabel:  'Cancel',
-          acceptLabel:  'Delete',
+          rejectLabel:  this.$t('common.cancel'),
+          acceptLabel:  this.$t('common.delete'),
           acceptClass:  'p-button-danger',
           accept:       () => this.$emit('delete-item-requested', item),
           reject:       () => {}
@@ -65,17 +65,17 @@ export default {
 <template>
   <pv-toast/>
   <pv-confirm-dialog/>
-  <h3>{{ title.plural }} Management</h3>
+  <h3>{{ $t('shared.dataMeet.management', { items: title.plural }) }}</h3>
 
   <!-- Toolbar section -->
   <pv-toolbar class="mb-4">
     <template #start>
-      <pv-button class="mr-2" icon="pi pi-plus" label="New" severity="success" @click="newItem"/>
-      <pv-button :disabled="!selectedItems || !selectedItems.length" icon="pi pi-trash" label="Delete" severity="danger"
+      <pv-button class="mr-2" icon="pi pi-plus" :label="$t('shared.dataMeet.new')" severity="success" @click="newItem"/>
+      <pv-button :disabled="!selectedItems || !selectedItems.length" icon="pi pi-trash" :label="$t('common.delete')" severity="danger"
                  @click="confirmDeleteSelected"/>
     </template>
     <template #end>
-      <pv-button icon="pi pi-download" label="Export" severity="help" @click="exportToCsv($event)"/>
+      <pv-button icon="pi pi-download" :label="$t('shared.dataMeet.export')" severity="help" @click="exportToCsv($event)"/>
     </template>
   </pv-toolbar>
 
@@ -87,7 +87,7 @@ export default {
       :rows="10"
       :rows-per-page-options="[5, 10, 15]"
       :value="items"
-      current-page-report-template="Showing {first} to {last} of {totalRecords} ${{title.plural}}"
+      :current-page-report-template="$t('shared.dataMeet.pageReport', { items: title.plural })"
       data-key="id"
       paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown">
     <pv-column :exportable="false" selection-mode="multiple" style="width: 3em"/>

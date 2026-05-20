@@ -29,7 +29,7 @@
       </div>
       <div class="header-info">
         <h3 class="teacher-name">{{ fullName }}</h3>
-        <span class="teacher-role">Teacher</span>
+        <span class="teacher-role">{{ $t('personalData.card.teacher') }}</span>
       </div>
     </div>
 
@@ -39,7 +39,7 @@
           <i class="pi pi-envelope"></i>
         </div>
         <div class="info-text">
-          <span class="label">Email</span>
+          <span class="label">{{ $t('personalData.card.email') }}</span>
           <span class="value" :title="teacher.email">{{ maskedEmail }}</span>
         </div>
       </div>
@@ -50,7 +50,7 @@
             <i class="pi pi-id-card"></i>
           </div>
           <div class="info-text">
-            <span class="label">DNI</span>
+            <span class="label">{{ $t('personalData.card.dni') }}</span>
             <span class="value">{{ teacher.dni }}</span>
           </div>
         </div>
@@ -60,7 +60,7 @@
             <i class="pi pi-phone"></i>
           </div>
           <div class="info-text">
-            <span class="label">Phone</span>
+            <span class="label">{{ $t('personalData.card.phone') }}</span>
             <span class="value">{{ formattedPhone }}</span>
           </div>
         </div>
@@ -71,7 +71,7 @@
           <i class="pi pi-map-marker"></i>
         </div>
         <div class="info-text">
-          <span class="label">Address</span>
+          <span class="label">{{ $t('personalData.card.address') }}</span>
           <span class="value">{{ teacher.address }}</span>
         </div>
       </div>
@@ -83,14 +83,14 @@
         text
         rounded
         severity="secondary"
-        v-tooltip.top="'View Details'"
+        v-tooltip.top="$t('personalData.card.viewDetails')"
         @click="$emit('view', teacher.id)"
       />
 
       <div class="right-actions">
         <pv-button
           icon="pi pi-pencil"
-          label="Edit"
+          :label="$t('common.edit')"
           outlined
           size="small"
           severity="info"

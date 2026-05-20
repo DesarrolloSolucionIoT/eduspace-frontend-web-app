@@ -1,22 +1,17 @@
 <template>
   <div class="classroom-changes-meetings-container">
-    <h2>Meeting Management</h2>
+    <h2>{{ $t('dashboardAdmin.meetings.title') }}</h2>
 
     <div class="p-grid p-align-center p-justify-center">
       <div class="p-col-12 p-md-6">
         <pv-card class="pv-card">
           <template #header>
-            <h3>Meeting Management</h3>
-            <p>
-              The meeting list presents a timeline of upcoming scheduled meetings, along with relevant details about
-              each. Each entry in the list includes the date and time of the meeting, the reserved room, the
-              participants involved, the purpose of the meeting, and any important additional notes, such as materials
-              that need to be brought or special instructions.
-            </p>
+            <h3>{{ $t('dashboardAdmin.meetings.cardTitle') }}</h3>
+            <p>{{ $t('dashboardAdmin.meetings.cardDescription') }}</p>
           </template>
 
           <template #footer>
-            <pv-button class="pv-button" label="Go" @click="goToMeetingManagement"/>
+            <pv-button class="pv-button" :label="$t('dashboardAdmin.common.go')" @click="goToMeetingManagement"/>
           </template>
         </pv-card>
       </div>

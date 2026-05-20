@@ -1,6 +1,7 @@
 <script>
 import LoginForm from '../../login/components/login-form.component.vue';
 import RegisterForm from '../../register/components/register-form.component.vue';
+import LanguageSwitcher from '../../../shared/components/language-switcher.component.vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { SignInRequest } from '../../model/sign-in.request.js';
 import { SignUpRequest } from '../../model/sign-up.request.js';
@@ -8,7 +9,7 @@ import RegisterService from '../../register/services/register.services.js';
 
 export default {
   name: "AuthSplitScreen",
-  components: { LoginForm, RegisterForm },
+  components: { LoginForm, RegisterForm, LanguageSwitcher },
 
   data() {
     return {
@@ -62,8 +63,8 @@ export default {
         } else {
           this.$toast.add({
             severity: 'warn',
-            summary: 'Acceso restringido',
-            detail: 'Esta plataforma es solo para administradores. Inicia sesión desde EduSpace Mobile.',
+            summary: this.$t('iam.auth.toast.restrictedAccessSummary'),
+            detail: this.$t('iam.auth.toast.restrictedAccessDetail'),
             life: 5000,
           });
         }
@@ -72,15 +73,15 @@ export default {
         if (error?.response?.status === 403 && code === 'AccountNotActivated') {
           this.$toast.add({
             severity: 'warn',
-            summary: 'Cuenta no activada',
-            detail: 'Tu cuenta no está activada. Revisa tu correo para activarla.',
+            summary: this.$t('iam.auth.toast.notActivatedSummary'),
+            detail: this.$t('iam.auth.toast.notActivatedDetail'),
             life: 5000,
           });
         } else {
           this.$toast.add({
             severity: 'error',
-            summary: 'Error de acceso',
-            detail: 'Credenciales incorrectas. Verifica tu usuario y contraseña.',
+            summary: this.$t('iam.auth.toast.loginErrorSummary'),
+            detail: this.$t('iam.auth.toast.loginErrorDetail'),
             life: 3000,
           });
         }
@@ -100,7 +101,7 @@ export default {
         await RegisterService.registerAdministrator(signUpRequest);
       } catch (error) {
         console.error("Error during registration:", error.message || error);
-        this.registrationError = error.message || "Error desconocido durante el registro";
+        this.registrationError = error.message || this.$t('iam.register.unknownError');
         throw error;
       }
     },
@@ -110,14 +111,17 @@ export default {
 
 <template>
   <div class="auth-shell">
+    <div class="auth-language-switcher">
+      <LanguageSwitcher />
+    </div>
     <div class="auth-card" :class="{ 'panels-right-active': mode === 'signup' }">
 
       <!-- ── Login panel (left slot) ── -->
       <div class="panel panel--login">
         <LoginForm :loading="isLoggingIn" @onLogin="handleLogin" />
         <p class="mobile-switcher">
-          ¿No tenés cuenta?
-          <button type="button" class="switcher-link" @click="goToSignUp">Registrate</button>
+          {{ $t('iam.auth.noAccount') }}
+          <button type="button" class="switcher-link" @click="goToSignUp">{{ $t('iam.auth.signUpLink') }}</button>
         </p>
       </div>
 
@@ -128,8 +132,8 @@ export default {
         </div>
         <RegisterForm :onSubmit="handleSubmit" />
         <p class="mobile-switcher">
-          ¿Ya tenés cuenta?
-          <button type="button" class="switcher-link" @click="goToSignIn">Iniciar sesión</button>
+          {{ $t('iam.auth.hasAccount') }}
+          <button type="button" class="switcher-link" @click="goToSignIn">{{ $t('iam.auth.signInLink') }}</button>
         </p>
       </div>
 
@@ -139,16 +143,16 @@ export default {
 
           <!-- Shown when overlay is on the left (signup mode) -->
           <div class="overlay-panel overlay-panel--left">
-            <h2>Welcome Back!</h2>
-            <p>To keep connected with us please login with your personal info</p>
-            <pv-button label="SIGN IN" class="overlay-button" @click="goToSignIn" />
+            <h2>{{ $t('iam.auth.overlay.welcomeBackTitle') }}</h2>
+            <p>{{ $t('iam.auth.overlay.welcomeBackText') }}</p>
+            <pv-button :label="$t('iam.auth.overlay.signInButton')" class="overlay-button" @click="goToSignIn" />
           </div>
 
           <!-- Shown when overlay is on the right (signin mode) -->
           <div class="overlay-panel overlay-panel--right">
-            <h2>Good day!</h2>
-            <p>Enter your personal details and start your journey with us</p>
-            <pv-button label="SIGN UP" class="overlay-button" @click="goToSignUp" />
+            <h2>{{ $t('iam.auth.overlay.goodDayTitle') }}</h2>
+            <p>{{ $t('iam.auth.overlay.goodDayText') }}</p>
+            <pv-button :label="$t('iam.auth.overlay.signUpButton')" class="overlay-button" @click="goToSignUp" />
           </div>
 
         </div>
@@ -164,6 +168,7 @@ export default {
    activate.component.vue). Centers the auth card inside.
    `100dvh` accounts for the mobile address-bar shrink/grow. */
 .auth-shell {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -176,6 +181,13 @@ export default {
   padding-bottom: max(20px, env(safe-area-inset-bottom));
 
   background: #f7fafc;
+}
+
+.auth-language-switcher {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 10;
 }
 
 /* The auth card scales from compact tablet to large desktop without

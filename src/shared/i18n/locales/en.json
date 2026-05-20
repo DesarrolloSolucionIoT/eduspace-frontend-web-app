@@ -1,0 +1,527 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "back": "Back",
+    "search": "Search",
+    "loading": "Loading...",
+    "yes": "Yes",
+    "no": "No",
+    "actions": "Actions",
+    "close": "Close",
+    "accept": "Accept",
+    "required": "Required",
+    "optional": "Optional",
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Information",
+    "noData": "No data available",
+    "name": "Name",
+    "description": "Description",
+    "date": "Date",
+    "status": "Status",
+    "language": "Language"
+  },
+  "nav": {
+    "home": "Home",
+    "classroomsAndSharedSpaces": "Classrooms and Shared Spaces",
+    "meetingManagement": "Meeting Management",
+    "iotMonitoring": "IoT Monitoring",
+    "teachersManagement": "Teachers Management",
+    "myProfile": "My Profile",
+    "login": "Login",
+    "logout": "Log out",
+    "logoutConfirm": "Are you sure you want to log out?",
+    "logoutCancelled": "Logout cancelled",
+    "complaintsBook": "Complaints Book",
+    "administrator": "Administrator",
+    "copyright": "Copyright EduSpace team"
+  },
+  "language": {
+    "es": "ES",
+    "en": "EN",
+    "spanish": "Spanish",
+    "english": "English"
+  },
+  "iam": {
+    "login": {
+      "title": "Sign in",
+      "emailPlaceholder": "Username or email",
+      "passwordPlaceholder": "Password",
+      "signInButton": "SIGN IN"
+    },
+    "register": {
+      "title": "Create account",
+      "signUpButton": "SIGN UP",
+      "unknownError": "Unknown error during registration",
+      "placeholders": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "birthdate": "Date of birth",
+        "phone": "Phone (e.g. 987654321)",
+        "email": "Email",
+        "username": "Username",
+        "password": "Password",
+        "dni": "DNI (8 digits)",
+        "address": "Address"
+      },
+      "errors": {
+        "email": "Enter a valid email (example: user@domain.com)",
+        "dni": "DNI must be exactly 8 digits",
+        "phone": "Phone must have 9 digits and start with 9 (e.g. 987654321)",
+        "birthdate": "You must be at least 18 years old"
+      },
+      "toast": {
+        "checkEmailSummary": "Check your email",
+        "checkEmailDetail": "We sent an email to {email}. Click the link to activate your account."
+      }
+    },
+    "activate": {
+      "signIn": "Sign in",
+      "backToLogin": "Back to sign in",
+      "loading": {
+        "title": "Activating your account...",
+        "description": "Please wait a moment."
+      },
+      "success": {
+        "title": "Account activated!",
+        "description": "You can now sign in with your credentials."
+      },
+      "errorMissingToken": {
+        "title": "Invalid link",
+        "description": "The activation link is invalid or incomplete."
+      },
+      "errorExpired": {
+        "title": "Link expired",
+        "description": "The link has expired. Ask your administrator to send you a new one."
+      },
+      "errorUsed": {
+        "title": "Link already used",
+        "description": "This link has already been used. If you already activated your account, you can sign in."
+      },
+      "errorInvalid": {
+        "title": "Invalid link",
+        "description": "The activation link is invalid."
+      }
+    },
+    "auth": {
+      "noAccount": "Don't have an account?",
+      "hasAccount": "Already have an account?",
+      "signUpLink": "Sign up",
+      "signInLink": "Sign in",
+      "overlay": {
+        "welcomeBackTitle": "Welcome Back!",
+        "welcomeBackText": "To keep connected with us please login with your personal info",
+        "signInButton": "SIGN IN",
+        "goodDayTitle": "Good day!",
+        "goodDayText": "Enter your personal details and start your journey with us",
+        "signUpButton": "SIGN UP"
+      },
+      "toast": {
+        "restrictedAccessSummary": "Restricted access",
+        "restrictedAccessDetail": "This platform is for administrators only. Sign in from EduSpace Mobile.",
+        "notActivatedSummary": "Account not activated",
+        "notActivatedDetail": "Your account is not activated. Check your email to activate it.",
+        "loginErrorSummary": "Sign-in error",
+        "loginErrorDetail": "Incorrect credentials. Check your username and password."
+      }
+    }
+  },
+  "dashboardAdmin": {
+    "common": {
+      "go": "Go"
+    },
+    "home": {
+      "name": "Name",
+      "lastName": "Last Name",
+      "cellPhone": "Cell Phone",
+      "status": "Status",
+      "statusAdmin": "Admin",
+      "email": "Email",
+      "notAvailable": "Not available",
+      "teachersCreated": "Teachers Created",
+      "noTeachers": "No teachers have been created yet.",
+      "meetingsInCharge": "Meetings in Charge",
+      "noMeetings": "No meetings assigned to this administrator.",
+      "reports": "Reports",
+      "noReports": "No reports have been created.",
+      "reportType": "Type",
+      "reportDescription": "Description",
+      "reportResourceId": "Resource ID",
+      "reportCreatedAt": "Created At",
+      "reportStatus": "Status",
+      "toastLoadMeetingsError": "Could not load meetings",
+      "toastMeetCreated": "Meeting created successfully",
+      "toastMeetCreateError": "An error occurred while creating the meeting.",
+      "toastMeetUpdated": "Meeting updated successfully",
+      "toastMeetUpdateError": "An error occurred while updating the meeting."
+    },
+    "personalData": {
+      "title": "My Profile",
+      "subtitle": "Manage your personal information and account settings",
+      "roleBadge": "Administrator",
+      "personalInfo": "Personal Information",
+      "saveChanges": "Save Changes",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "dni": "DNI",
+      "dniTooltip": "DNI cannot be changed",
+      "address": "Address",
+      "deleteAccount": "Delete Account",
+      "deleteWarning": "Once you delete your account, there is no going back. Please be certain.",
+      "deleteConfirm": "Are you sure you want to delete your account? This action <strong>cannot</strong> be undone and you will lose access immediately.",
+      "deleteConfirmButton": "Yes, Delete my Account",
+      "toastLoadError": "Could not load profile data",
+      "toastUpdateSuccess": "Profile updated successfully",
+      "toastUpdateError": "Failed to update profile",
+      "toastDeletedSummary": "Account Deleted",
+      "toastDeletedDetail": "Your account has been deleted.",
+      "toastDeleteError": "Could not delete account"
+    },
+    "teachers": {
+      "title": "Teachers Management",
+      "addTeacher": "Add Teacher",
+      "loading": "Loading teachers...",
+      "emptyTitle": "No teachers found",
+      "emptyDescription": "Start by adding your first teacher",
+      "addDialogHeader": "Add New Teacher",
+      "detailsDialogHeader": "Teacher Details",
+      "editDialogHeader": "Edit Teacher",
+      "deleteDialogHeader": "Confirm Delete",
+      "fullName": "Full Name",
+      "deleteConfirmIntro": "Are you sure you want to delete the teacher",
+      "deleteWarningMeetings": "Note: This teacher cannot be deleted if they are assigned to any meetings.",
+      "deleteIrreversible": "This action cannot be undone.",
+      "toastLoadError": "Failed to load teachers",
+      "toastAddSuccess": "Teacher added successfully",
+      "toastAddError": "Failed to add teacher",
+      "toastDetailsError": "Failed to load teacher details",
+      "toastUpdateSuccess": "Teacher updated successfully",
+      "toastUpdateError": "Failed to update teacher",
+      "toastDeleteSuccess": "Teacher deleted successfully",
+      "toastDeleteError": "Failed to delete teacher",
+      "toastDeleteBlockedSummary": "Cannot Delete Teacher",
+      "toastDeleteBlockedDetail": "This teacher cannot be deleted because they are assigned to meetings. Please remove them from all meetings first."
+    },
+    "classrooms": {
+      "title": "Classrooms and Shared Spaces",
+      "classroomsTitle": "Classrooms",
+      "classroomsDescription": "Management and registration of the classrooms with resources environment available with the infrastructure.",
+      "sharedSpacesTitle": "Shared Spaces",
+      "sharedSpacesDescription": "Management and registration of spaces designated for sports activities within the institution. This includes gyms, courts, and other spaces dedicated to sports.",
+      "resourcesTitle": "Resources",
+      "resourcesDescription": "Management and registration of resources available in classrooms such as projectors, computers, and other equipment."
+    },
+    "meetings": {
+      "title": "Meeting Management",
+      "cardTitle": "Meeting Management",
+      "cardDescription": "The meeting list presents a timeline of upcoming scheduled meetings, along with relevant details about each. Each entry in the list includes the date and time of the meeting, the reserved room, the participants involved, the purpose of the meeting, and any important additional notes, such as materials that need to be brought or special instructions."
+    },
+    "iot": {
+      "sectionTitle": "IoT Monitoring — Campus",
+      "sectionSub": "simulated data · Sprint 1",
+      "detailedView": "Detailed view →",
+      "kpiAvgOccupancy": "Average occupancy",
+      "vsLastWeek": "vs last week",
+      "kpiEnergy": "Energy consumption",
+      "vsLastQuarter": "vs last quarter",
+      "kpiOpenAlerts": "Open alerts",
+      "active": "active",
+      "last24h": "last 24 h",
+      "kpiOnlineSensors": "Online sensors",
+      "mttr": "MTTR breakdowns",
+      "spacesStatusTitle": "Real-time space status",
+      "filterAll": "All",
+      "filterClassrooms": "Classrooms",
+      "filterLabs": "Labs",
+      "filterCommon": "Common areas",
+      "floorCount": "{spaces} spaces / {online} sensors online",
+      "legendOk": "optimal",
+      "legendWarn": "attention",
+      "legendDanger": "critical",
+      "legendOff": "unused",
+      "activeAlerts": "Active alerts",
+      "noAlerts": "No active alerts",
+      "telemetryTitle": "Aggregated telemetry — last 24 h",
+      "occupancy": "Occupancy",
+      "temperature": "Temperature",
+      "buildingUsageTitle": "Building usage · last 7 days",
+      "sensorHealthTitle": "Sensor health",
+      "onlineOffline": "{online} online · {offline} offline",
+      "colDevice": "Device",
+      "colSpace": "Space",
+      "colType": "Type",
+      "colReading": "Reading",
+      "colUptime": "Uptime",
+      "colTechnician": "Technician",
+      "colStatus": "Status",
+      "recentBreakdowns": "Recent breakdowns"
+    }
+  },
+  "classroomSpace": {
+    "common": {
+      "breadcrumbRoot": "Classrooms and Shared Spaces",
+      "attention": "Attention",
+      "namePlaceholder": "Enter name",
+      "descriptionPlaceholder": "Enter description",
+      "validation": {
+        "fillAllFields": "Please fill in all fields.",
+        "incompleteFieldsTitle": "Incomplete fields"
+      }
+    },
+    "classrooms": {
+      "title": "Classrooms",
+      "singular": "Classroom",
+      "addTitle": "Add Classroom",
+      "addSubtitle": "Create a new learning space",
+      "createSingular": "Create Classroom",
+      "editSingular": "Edit Classroom",
+      "teacher": "Teacher",
+      "selectTeacherPlaceholder": "Select a teacher",
+      "unassigned": "Unassigned",
+      "loading": "Loading classroom data...",
+      "validation": {
+        "selectTeacher": "You must select a teacher."
+      },
+      "toast": {
+        "createSuccess": "Classroom created successfully",
+        "updateSuccess": "Classroom updated successfully",
+        "updateError": "Update failed: {message}"
+      },
+      "errors": {
+        "duplicateName": "A classroom with that name already exists.",
+        "server500": "Server error (500). Please try again later.",
+        "serverGeneric": "Server error ({statusCode})."
+      }
+    },
+    "sharedSpaces": {
+      "title": "Shared Spaces",
+      "addTitle": "Add Shared Area",
+      "addSubtitle": "Create a new common space",
+      "addSingular": "Add Shared Space",
+      "createSingular": "Create Shared Space",
+      "editSingular": "Edit Shared Space",
+      "capacity": "Capacity",
+      "capacityPlaceholder": "Enter capacity",
+      "equipment": "equipment",
+      "selectPlaceholder": "Select shared space",
+      "validation": {
+        "capacityExceeded": "Capacity for {name} must not exceed {max}."
+      },
+      "toast": {
+        "createSuccess": "Shared space created.",
+        "createError": "Could not create the space."
+      }
+    },
+    "resources": {
+      "pageTitle": "Resources Management",
+      "singular": "Resource",
+      "addTitle": "Add Resource",
+      "addSubtitle": "Create new equipment",
+      "createSingular": "Create Resource",
+      "editSingular": "Edit Resource",
+      "type": "Type",
+      "typeLabel": "Type of Resource",
+      "namePlaceholder": "Enter resource name",
+      "selectTypePlaceholder": "Select a type",
+      "filterByClassroom": "Filter by Classroom",
+      "selectClassroomPlaceholder": "Select a classroom",
+      "assignToClassroom": "Assign to Classroom",
+      "assignedToClassroom": "Assigned to Classroom",
+      "loading": "Loading resource data...",
+      "empty": {
+        "selectTitle": "Select a classroom",
+        "selectMessage": "Choose a classroom from the left to view its resources",
+        "noneTitle": "No resources found",
+        "noneMessage": "This classroom doesn't have any resources yet"
+      },
+      "toast": {
+        "createSuccess": "Resource created successfully.",
+        "updateSuccess": "Resource updated successfully."
+      }
+    }
+  },
+  "meetingManagement": {
+    "common": {
+      "classroom": "Classroom",
+      "teachers": "Teachers",
+      "time": "Time",
+      "notAvailable": "N/A",
+      "untitledMeeting": "Untitled meeting",
+      "noTeachers": "No teachers",
+      "teachersCount": "{count} teachers"
+    },
+    "list": {
+      "title": "Meeting Management",
+      "subtitle": "Schedule and organize meetings with teachers",
+      "newMeeting": "New Meeting",
+      "empty": "No meetings scheduled.",
+      "deleted": "Meeting deleted",
+      "deleteError": "Could not delete meeting.",
+      "loadError": "Could not load meetings data.",
+      "viewing": "Viewing meeting: {title}"
+    },
+    "create": {
+      "meetingInfo": "Meeting Information",
+      "title": "Title",
+      "titlePlaceholder": "Enter meeting title",
+      "titleRequired": "Title is required",
+      "descriptionPlaceholder": "Enter meeting description (optional)",
+      "classroomPlaceholder": "Select a classroom",
+      "classroomRequired": "Classroom is required",
+      "dateTime": "Date & Time",
+      "datePlaceholder": "Select meeting date",
+      "dateRequired": "Date is required",
+      "startTime": "Start Time",
+      "startTimePlaceholder": "Start time",
+      "startTimeRequired": "Start time is required",
+      "endTime": "End Time",
+      "endTimePlaceholder": "End time",
+      "endTimeRequired": "End time is required",
+      "maxTeachersError": "You can only invite up to 2 teachers.",
+      "success": "Meeting created successfully",
+      "error": "An error occurred while creating the meeting."
+    },
+    "edit": {
+      "success": "Meeting and participants updated successfully",
+      "error": "An error occurred while updating the meeting."
+    },
+    "participants": {
+      "title": "Participants",
+      "inviteTeachers": "Invite Teachers",
+      "selectTeachersPlaceholder": "Select teachers to invite",
+      "inviteHint": "You can invite multiple teachers to this meeting"
+    }
+  },
+  "iotMonitoring": {
+    "title": "IoT Monitoring",
+    "devicesOnline": "{count} devices online",
+    "activeAlerts": "{count} active alerts",
+    "simulatedData": "simulated data (Sprint 1)",
+    "liveMock": "live · mock",
+    "configureThresholds": "Configure thresholds",
+    "linkDevice": "+ Link device",
+    "spaces": "Spaces",
+    "totalCount": "{count} total",
+    "filterPlaceholder": "Filter A-203, LAB-22…",
+    "noResults": "No results for \"{query}\"",
+    "history": "History",
+    "emptyState": "Select a space to view its sensor details",
+    "noDataOffline": "no data · device offline",
+    "capacity": "capacity",
+    "sensors": {
+      "occupancy": "Occupancy",
+      "temperature": "Temperature",
+      "humidity": "Humidity",
+      "luminosity": "Luminosity",
+      "co2": "CO₂",
+      "energy": "Consumption"
+    },
+    "status": {
+      "ok": "optimal",
+      "warn": "attention",
+      "danger": "critical",
+      "off": "offline"
+    },
+    "rssi": {
+      "none": "no signal",
+      "excellent": "excellent",
+      "good": "good",
+      "weak": "weak"
+    },
+    "weekdays": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "device": {
+      "device": "Device",
+      "firmware": "Firmware",
+      "rssi": "RSSI",
+      "lastReading": "Last reading",
+      "ago": "{value} ago"
+    },
+    "events": {
+      "title": "Recent events",
+      "window": "last 6 h",
+      "empty": "No events recorded"
+    }
+  },
+  "personalData": {
+    "form": {
+      "personalInformation": "Personal Information",
+      "accountCredentials": "Account Credentials",
+      "firstName": "First Name",
+      "firstNamePlaceholder": "Enter first name",
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Enter last name",
+      "email": "Email",
+      "emailPlaceholder": "example@domain.com",
+      "phone": "Phone",
+      "phonePlaceholder": "987654321",
+      "dni": "DNI",
+      "dniPlaceholder": "12345678",
+      "address": "Address",
+      "addressPlaceholder": "Enter address",
+      "username": "Username",
+      "usernamePlaceholder": "Enter username",
+      "password": "Password",
+      "passwordPlaceholder": "Enter password",
+      "saveTeacher": "Save Teacher",
+      "updateTeacher": "Update Teacher"
+    },
+    "validation": {
+      "emailInvalid": "Enter a valid email (e.g.: user@domain.com)",
+      "dniInvalid": "DNI must be exactly 8 digits",
+      "phoneInvalid": "Phone must be 9 digits and start with 9"
+    },
+    "card": {
+      "teacher": "Teacher",
+      "email": "Email",
+      "dni": "DNI",
+      "phone": "Phone",
+      "address": "Address",
+      "viewDetails": "View Details"
+    }
+  },
+  "shared": {
+    "notFound": {
+      "title": "Page not found",
+      "routePrefix": "The route",
+      "routeSuffix": "does not exist.",
+      "backHome": "Back to home"
+    },
+    "createAndEdit": {
+      "new": "New",
+      "edit": "Edit",
+      "create": "Create",
+      "update": "Update"
+    },
+    "dataMeet": {
+      "management": "{items} Management",
+      "new": "New",
+      "export": "Export",
+      "confirmation": "Confirmation",
+      "confirmDeleteSelected": "Are you sure you want to delete the selected {items}?",
+      "confirmDeleteItem": "Are you sure you want to delete the selected {item}?",
+      "pageReport": "Showing {first} to {last} of {totalRecords} {items}"
+    }
+  },
+  "public": {
+    "home": {
+      "title": "Home",
+      "welcome": "Welcome to EduSpace"
+    }
+  }
+}

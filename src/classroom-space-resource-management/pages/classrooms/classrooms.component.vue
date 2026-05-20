@@ -26,7 +26,7 @@ export default {
               const teacher = teachers.find(t => t.id === classroom.teacherId);
               return {
                 ...classroom,
-                teacherName: teacher ? `${teacher.firstName} ${teacher.lastName}` : 'Unassigned',
+                teacherName: teacher ? `${teacher.firstName} ${teacher.lastName}` : this.$t('classroomSpace.classrooms.unassigned'),
               }
             }
         )
@@ -55,9 +55,9 @@ export default {
 <template>
   <div class="classrooms-page">
     <div class="breadcrumb">
-      <h4>Classrooms and Shared Spaces</h4>
+      <h4>{{ $t('classroomSpace.common.breadcrumbRoot') }}</h4>
       <i class="pi pi-chevron-right"></i>
-      <h4>Classrooms</h4>
+      <h4>{{ $t('classroomSpace.classrooms.title') }}</h4>
     </div>
 
     <div class="page-content">
@@ -68,12 +68,12 @@ export default {
               <i class="pi pi-building"></i>
             </div>
             <div class="add-card-text">
-              <h3>Add Classroom</h3>
-              <p>Create a new learning space</p>
+              <h3>{{ $t('classroomSpace.classrooms.addTitle') }}</h3>
+              <p>{{ $t('classroomSpace.classrooms.addSubtitle') }}</p>
             </div>
           </div>
           <pv-button
-              label="Add Classroom"
+              :label="$t('classroomSpace.classrooms.addTitle')"
               icon="pi pi-plus"
               severity="warning"
               @click="goToAdd"

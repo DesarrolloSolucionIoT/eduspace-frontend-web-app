@@ -43,6 +43,7 @@ import IftaLabel from "primevue/iftalabel";
 
 import FullCalendar from "@fullcalendar/vue3"
 import router from "./router/index.js";
+import i18n from "./shared/i18n/index.js";
 import SelectButton from "primevue/selectbutton";
 import InputMask from "primevue/inputmask";
 import DatePicker from "primevue/datepicker";
@@ -61,6 +62,9 @@ const app = createApp(App);
 
 //user vuex
 app.use(store);
+
+// Use i18n
+app.use(i18n);
 
 // Use Router
 

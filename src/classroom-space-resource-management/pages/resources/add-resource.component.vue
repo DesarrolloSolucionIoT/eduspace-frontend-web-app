@@ -23,7 +23,7 @@ export default {
           kindOfResource: resourceData.kindOfResource
         };
         await this.resourceService.create(resourceData.classroomId, payload);
-        this.$toast.add({severity: 'success', summary: 'Éxito', detail: 'Recurso creado correctamente.', life: 3000});
+        this.$toast.add({severity: 'success', summary: this.$t('common.success'), detail: this.$t('classroomSpace.resources.toast.createSuccess'), life: 3000});
         this.$router.push("/dashboard-admin/classrooms-shared-spaces/resources");
       } catch (error) {
         console.error("Error creating resource:", error);

@@ -70,7 +70,7 @@ export default {
         <span>{{ maxLabel() }}</span>
       </div>
     </div>
-    <div v-else class="threshold-bar-empty">sin datos · dispositivo offline</div>
+    <div v-else class="threshold-bar-empty">{{ $t('iotMonitoring.noDataOffline') }}</div>
   </div>
 </template>
 

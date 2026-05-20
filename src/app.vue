@@ -3,6 +3,9 @@
   <div class="app-container">
     <header v-if="userRole" class="sidenav-wrapper">
       <div class="sidenav admin-sidenav">
+        <div class="sidenav-top-bar">
+          <language-switcher />
+        </div>
         <div class="user-info">
           <pv-avatar
             :image="DefaultAvatar"
@@ -11,7 +14,7 @@
             shape="circle"
           ></pv-avatar>
           <div class="info">
-            <p class="info" style="color: #064C58">Administrator</p>
+            <p class="info" style="color: #064C58">{{ $t('nav.administrator') }}</p>
             <p class="info">{{ currentUsername }}</p>
           </div>
         </div>
@@ -32,7 +35,7 @@
                   alt="icon"
                   style="width: 20px; height: 20px; margin-right: 8px"
                 />
-                {{ item.label }}
+                {{ $t(item.labelKey) }}
               </pv-button>
             </router-link>
           </div>
@@ -48,10 +51,10 @@
             >
               <img
                 :src="LibroReclamacionesIcon"
-                alt="Libro de Reclamaciones"
+                :alt="$t('nav.complaintsBook')"
                 class="complaints-icon"
               />
-              <span>Libro de Reclamaciones</span>
+              <span>{{ $t('nav.complaintsBook') }}</span>
             </a>
           </div>
           <div class="logout-container">
@@ -64,10 +67,10 @@
                 alt="Logo"
                 class="logout-icon"
               />
-              <span>Log out</span>
+              <span>{{ $t('nav.logout') }}</span>
             </pv-button>
           </div>
-          <div class="copyright-text">Copyright EduSpace team</div>
+          <div class="copyright-text">{{ $t('nav.copyright') }}</div>
         </div>
       </div>
     </header>
@@ -107,9 +110,11 @@ import PersonalManagementIcon from "./assets/admin/Personal_Management.svg";
 import DefaultAvatar from "./assets/default-avatar.png";
 import LogoSidebar from "./assets/Logo sidebar.png";
 import LibroReclamacionesIcon from "./assets/libro-de-reclamaciones.png";
+import LanguageSwitcher from "./shared/components/language-switcher.component.vue";
 
 export default {
   name: "app",
+  components: { LanguageSwitcher },
   data() {
     return {
       drawer: false,
@@ -131,37 +136,37 @@ export default {
     changeToolbar() {
       if (this.userRole === "RoleAdmin") {
         this.items = [
-          { label: "Home", to: "/dashboard-admin/home-admin", svg: HomeIcon },
+          { labelKey: "nav.home", to: "/dashboard-admin/home-admin", svg: HomeIcon },
           {
-            label: "Classrooms and Shared Spaces",
+            labelKey: "nav.classroomsAndSharedSpaces",
             to: "/dashboard-admin/classrooms-shared-spaces",
             svg: EnvironmentIcon,
           },
           {
-            label: "Meeting Management",
+            labelKey: "nav.meetingManagement",
             to: "/dashboard-admin/classroom-changes-meetings",
             svg: ClassroomIcon,
           },
           {
-            label: "IoT Monitoring",
+            labelKey: "nav.iotMonitoring",
             to: "/dashboard-admin/iot-monitoring",
             svg: WifiIcon,
           },
           {
-            label: "Teachers Management",
+            labelKey: "nav.teachersManagement",
             to: "/dashboard-admin/teachers",
             svg: PersonalManagementIcon,
           },
           {
-            label: "My Profile",
+            labelKey: "nav.myProfile",
             to: "/dashboard-admin/personal-data",
             svg: PersonalDIcon,
           },
         ];
       } else {
         this.items = [
-          { label: "Home", to: "/home" },
-          { label: "Login", to: "/login" },
+          { labelKey: "nav.home", to: "/home" },
+          { labelKey: "nav.login", to: "/login" },
         ];
       }
     },
@@ -169,16 +174,16 @@ export default {
       this.$confirm.require({
         target: event.currentTarget,
         group: "logout-group",
-        message: "Are you sure you want to log out?",
+        message: this.$t("nav.logoutConfirm"),
         icon: "pi pi-exclamation-circle",
         rejectProps: {
           icon: "pi pi-times",
-          label: "Cancel",
+          label: this.$t("common.cancel"),
           outlined: true,
         },
         acceptProps: {
           icon: "pi pi-check",
-          label: "Confirm",
+          label: this.$t("common.confirm"),
         },
         accept: () => {
           this.handleLogOut();
@@ -186,8 +191,8 @@ export default {
         reject: () => {
           this.$toast.add({
             severity: "info",
-            summary: "Cancelled",
-            detail: "Logout cancelled",
+            summary: this.$t("common.cancel"),
+            detail: this.$t("nav.logoutCancelled"),
             life: 3000,
           });
         },
@@ -223,6 +228,12 @@ export default {
     rgba(255, 255, 255, 1) 85%,
     rgba(147, 227, 241, 1) 100%
   );
+}
+
+.sidenav-top-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 8px;
 }
 
 .user-info {

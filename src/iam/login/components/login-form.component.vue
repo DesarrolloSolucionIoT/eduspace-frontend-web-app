@@ -25,12 +25,12 @@ export default {
 
 <template>
   <div class="login-form-container">
-    <h2 class="login-title">Sign in</h2>
+    <h2 class="login-title">{{ $t('iam.login.title') }}</h2>
     <form @submit.prevent="submitLogin" class="login-form">
-      <pv-input-text v-model="email" placeholder="Usuario o correo" required class="login-input" autocomplete="username" />
-      <pv-password v-model="password" placeholder="Password" toggleMask required class="login-input" inputClass="w-full" autocomplete="current-password" />
+      <pv-input-text v-model="email" :placeholder="$t('iam.login.emailPlaceholder')" required class="login-input" autocomplete="username" />
+      <pv-password v-model="password" :placeholder="$t('iam.login.passwordPlaceholder')" toggleMask required class="login-input" inputClass="w-full" autocomplete="current-password" />
       <div class="login-actions">
-        <pv-button :loading="loading" class="sign-in-button" label="SIGN IN" type="submit"/>
+        <pv-button :loading="loading" class="sign-in-button" :label="$t('iam.login.signInButton')" type="submit"/>
       </div>
     </form>
   </div>

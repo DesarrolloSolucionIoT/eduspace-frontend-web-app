@@ -52,17 +52,17 @@ export default {
       <!-- Loading -->
       <div v-if="state === 'loading'" class="state-content">
         <i class="pi pi-spin pi-spinner" style="font-size: 3rem; color: #34a7c1;"></i>
-        <h2 class="activate-title">Activando tu cuenta...</h2>
-        <p class="activate-description">Por favor espera un momento.</p>
+        <h2 class="activate-title">{{ $t('iam.activate.loading.title') }}</h2>
+        <p class="activate-description">{{ $t('iam.activate.loading.description') }}</p>
       </div>
 
       <!-- Success -->
       <div v-if="state === 'success'" class="state-content">
         <i class="pi pi-check-circle" style="font-size: 3rem; color: #48bb78;"></i>
-        <h2 class="activate-title">¡Cuenta activada!</h2>
-        <p class="activate-description">Ya puedes iniciar sesión con tus credenciales.</p>
+        <h2 class="activate-title">{{ $t('iam.activate.success.title') }}</h2>
+        <p class="activate-description">{{ $t('iam.activate.success.description') }}</p>
         <pv-button
-          label="Iniciar sesión"
+          :label="$t('iam.activate.signIn')"
           icon="pi pi-sign-in"
           class="activate-button"
           @click="goToLogin"
@@ -72,10 +72,10 @@ export default {
       <!-- Error: missing token -->
       <div v-if="state === 'error-missing-token'" class="state-content">
         <i class="pi pi-exclamation-triangle" style="font-size: 3rem; color: #f6ad55;"></i>
-        <h2 class="activate-title">Link inválido</h2>
-        <p class="activate-description">El link de activación es inválido o está incompleto.</p>
+        <h2 class="activate-title">{{ $t('iam.activate.errorMissingToken.title') }}</h2>
+        <p class="activate-description">{{ $t('iam.activate.errorMissingToken.description') }}</p>
         <pv-button
-          label="Volver al inicio de sesión"
+          :label="$t('iam.activate.backToLogin')"
           icon="pi pi-arrow-left"
           class="activate-button"
           severity="secondary"
@@ -86,10 +86,10 @@ export default {
       <!-- Error: expired token -->
       <div v-if="state === 'error-expired'" class="state-content">
         <i class="pi pi-clock" style="font-size: 3rem; color: #f6ad55;"></i>
-        <h2 class="activate-title">Link expirado</h2>
-        <p class="activate-description">El link expiró. Pídele a tu administrador que te envíe uno nuevo.</p>
+        <h2 class="activate-title">{{ $t('iam.activate.errorExpired.title') }}</h2>
+        <p class="activate-description">{{ $t('iam.activate.errorExpired.description') }}</p>
         <pv-button
-          label="Volver al inicio de sesión"
+          :label="$t('iam.activate.backToLogin')"
           icon="pi pi-arrow-left"
           class="activate-button"
           severity="secondary"
@@ -100,10 +100,10 @@ export default {
       <!-- Error: already used -->
       <div v-if="state === 'error-used'" class="state-content">
         <i class="pi pi-info-circle" style="font-size: 3rem; color: #63b3ed;"></i>
-        <h2 class="activate-title">Link ya utilizado</h2>
-        <p class="activate-description">Este link ya fue usado. Si ya activaste tu cuenta, puedes iniciar sesión.</p>
+        <h2 class="activate-title">{{ $t('iam.activate.errorUsed.title') }}</h2>
+        <p class="activate-description">{{ $t('iam.activate.errorUsed.description') }}</p>
         <pv-button
-          label="Iniciar sesión"
+          :label="$t('iam.activate.signIn')"
           icon="pi pi-sign-in"
           class="activate-button"
           @click="goToLogin"
@@ -113,10 +113,10 @@ export default {
       <!-- Error: invalid token -->
       <div v-if="state === 'error-invalid'" class="state-content">
         <i class="pi pi-times-circle" style="font-size: 3rem; color: #f56565;"></i>
-        <h2 class="activate-title">Link inválido</h2>
-        <p class="activate-description">El link de activación es inválido.</p>
+        <h2 class="activate-title">{{ $t('iam.activate.errorInvalid.title') }}</h2>
+        <p class="activate-description">{{ $t('iam.activate.errorInvalid.description') }}</p>
         <pv-button
-          label="Volver al inicio de sesión"
+          :label="$t('iam.activate.backToLogin')"
           icon="pi pi-arrow-left"
           class="activate-button"
           severity="secondary"

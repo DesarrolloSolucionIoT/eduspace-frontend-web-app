@@ -42,8 +42,8 @@ export default {
       if (!this.form.name || !this.form.kindOfResource || !this.form.classroomId) {
         this.$toast.add({
           severity: 'warn',
-          summary: 'Atención',
-          detail: 'Por favor completa todos los campos.',
+          summary: this.$t('classroomSpace.common.attention'),
+          detail: this.$t('classroomSpace.common.validation.fillAllFields'),
           life: 3000
         });
         return;
@@ -68,41 +68,41 @@ export default {
 <template>
   <div class="resource-create-form">
     <div class="form-header">
-      <h2>{{ isCreateMode ? 'Create Resource' : 'Edit Resource' }}</h2>
+      <h2>{{ isCreateMode ? $t('classroomSpace.resources.createSingular') : $t('classroomSpace.resources.editSingular') }}</h2>
     </div>
     <form @submit.prevent="save" class="form-grid">
       <div class="form-field">
-        <label for="name">Name:</label>
-        <pv-input-text id="name" v-model="form.name" placeholder="Enter resource name"/>
+        <label for="name">{{ $t('common.name') }}:</label>
+        <pv-input-text id="name" v-model="form.name" :placeholder="$t('classroomSpace.resources.namePlaceholder')"/>
       </div>
 
       <div class="form-field">
-        <label for="kind">Type of Resource:</label>
+        <label for="kind">{{ $t('classroomSpace.resources.typeLabel') }}:</label>
         <pv-select
             id="kind"
             v-model="form.kindOfResource"
             :options="resourceTypes"
-            placeholder="Select a type"
+            :placeholder="$t('classroomSpace.resources.selectTypePlaceholder')"
             class="w-full"
         />
       </div>
 
       <div class="form-field">
-        <label for="classroom">Assign to Classroom:</label>
+        <label for="classroom">{{ $t('classroomSpace.resources.assignToClassroom') }}:</label>
         <pv-select
             id="classroom"
             v-model="form.classroomId"
             :options="classroomOptions"
             optionLabel="label"
             optionValue="value"
-            placeholder="Select a classroom"
+            :placeholder="$t('classroomSpace.resources.selectClassroomPlaceholder')"
             class="w-full"
         />
       </div>
 
       <div class="form-actions">
-        <pv-button type="submit" label="Save" class="p-button-success"/>
-        <pv-button type="button" label="Cancel" class="p-button-secondary" @click="cancel"/>
+        <pv-button type="submit" :label="$t('common.save')" class="p-button-success"/>
+        <pv-button type="button" :label="$t('common.cancel')" class="p-button-secondary" @click="cancel"/>
       </div>
     </form>
   </div>

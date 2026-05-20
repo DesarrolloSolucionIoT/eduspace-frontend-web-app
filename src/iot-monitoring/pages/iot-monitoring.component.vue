@@ -3,77 +3,81 @@ import { IotMonitoringService } from '../services/iot-monitoring.service.js';
 import { IotSpace } from '../model/iot-space.entity.js';
 import SpaceSensorCard from '../components/space-sensor-card.component.vue';
 
-const SENSOR_META = {
-    occupancy: {
-        label: 'Ocupación',
-        icon: 'pi pi-users',
-        getMarkerPct(s) { return s.capacity ? (s.value / s.capacity) * 100 : 0; },
-        zones: [{ color: 'ok', from: 0, to: 75 }, { color: 'warn', from: 75, to: 90 }, { color: 'danger', from: 90, to: 100 }],
-        minLabel: '0',
-        maxLabel: (s) => `aforo ${s.capacity}`,
-        formatValue: (s) => s.value !== null ? `${s.value}` : '—',
-        formatUnit: (s) => s.capacity ? `/ ${s.capacity}` : '',
-    },
-    temperature: {
-        label: 'Temperatura',
-        icon: 'pi pi-sun',
-        getMarkerPct(s) { return ((s.value - 16) / (30 - 16)) * 100; },
-        zones: [{ color: 'warn', from: 0, to: 14 }, { color: 'ok', from: 14, to: 64 }, { color: 'warn', from: 64, to: 86 }, { color: 'danger', from: 86, to: 100 }],
-        minLabel: '16 °C',
-        maxLabel: () => '30 °C',
-        formatValue: (s) => s.value !== null ? `${s.value}` : '—',
-        formatUnit: () => '°C',
-    },
-    humidity: {
-        label: 'Humedad',
-        icon: 'pi pi-cloud',
-        getMarkerPct(s) { return ((s.value - 20) / (90 - 20)) * 100; },
-        zones: [{ color: 'warn', from: 0, to: 5 }, { color: 'ok', from: 5, to: 82 }, { color: 'warn', from: 82, to: 95 }, { color: 'danger', from: 95, to: 100 }],
-        minLabel: '20%',
-        maxLabel: () => '90%',
-        formatValue: (s) => s.value !== null ? `${s.value}` : '—',
-        formatUnit: () => '%',
-    },
-    luminosity: {
-        label: 'Luminosidad',
-        icon: 'pi pi-eye',
-        getMarkerPct(s) { return (s.value / 1500) * 100; },
-        zones: [{ color: 'warn', from: 0, to: 13 }, { color: 'ok', from: 13, to: 87 }, { color: 'warn', from: 87, to: 100 }],
-        minLabel: '0 lx',
-        maxLabel: () => '1500 lx',
-        formatValue: (s) => s.value !== null ? `${s.value}` : '—',
-        formatUnit: () => 'lx',
-    },
-    co2: {
-        label: 'CO₂',
-        icon: 'pi pi-chart-line',
-        getMarkerPct(s) { return ((s.value - 400) / (2000 - 400)) * 100; },
-        zones: [{ color: 'ok', from: 0, to: 38 }, { color: 'warn', from: 38, to: 69 }, { color: 'danger', from: 69, to: 100 }],
-        minLabel: '400',
-        maxLabel: () => '2000 ppm',
-        formatValue: (s) => s.value !== null ? s.value.toLocaleString('es-PE') : '—',
-        formatUnit: () => 'ppm',
-    },
-    energy: {
-        label: 'Consumo',
-        icon: 'pi pi-bolt',
-        getMarkerPct(s) { return (s.value / 4) * 100; },
-        zones: [{ color: 'ok', from: 0, to: 60 }, { color: 'warn', from: 60, to: 80 }, { color: 'danger', from: 80, to: 100 }],
-        minLabel: '0',
-        maxLabel: () => '4 kWh/h',
-        formatValue: (s) => s.value !== null ? s.value.toFixed(2) : '—',
-        formatUnit: () => 'kWh / h',
-    },
-};
+function buildSensorMeta(t) {
+    return {
+        occupancy: {
+            label: t('iotMonitoring.sensors.occupancy'),
+            icon: 'pi pi-users',
+            getMarkerPct(s) { return s.capacity ? (s.value / s.capacity) * 100 : 0; },
+            zones: [{ color: 'ok', from: 0, to: 75 }, { color: 'warn', from: 75, to: 90 }, { color: 'danger', from: 90, to: 100 }],
+            minLabel: '0',
+            maxLabel: (s) => `${t('iotMonitoring.capacity')} ${s.capacity}`,
+            formatValue: (s) => s.value !== null ? `${s.value}` : '—',
+            formatUnit: (s) => s.capacity ? `/ ${s.capacity}` : '',
+        },
+        temperature: {
+            label: t('iotMonitoring.sensors.temperature'),
+            icon: 'pi pi-sun',
+            getMarkerPct(s) { return ((s.value - 16) / (30 - 16)) * 100; },
+            zones: [{ color: 'warn', from: 0, to: 14 }, { color: 'ok', from: 14, to: 64 }, { color: 'warn', from: 64, to: 86 }, { color: 'danger', from: 86, to: 100 }],
+            minLabel: '16 °C',
+            maxLabel: () => '30 °C',
+            formatValue: (s) => s.value !== null ? `${s.value}` : '—',
+            formatUnit: () => '°C',
+        },
+        humidity: {
+            label: t('iotMonitoring.sensors.humidity'),
+            icon: 'pi pi-cloud',
+            getMarkerPct(s) { return ((s.value - 20) / (90 - 20)) * 100; },
+            zones: [{ color: 'warn', from: 0, to: 5 }, { color: 'ok', from: 5, to: 82 }, { color: 'warn', from: 82, to: 95 }, { color: 'danger', from: 95, to: 100 }],
+            minLabel: '20%',
+            maxLabel: () => '90%',
+            formatValue: (s) => s.value !== null ? `${s.value}` : '—',
+            formatUnit: () => '%',
+        },
+        luminosity: {
+            label: t('iotMonitoring.sensors.luminosity'),
+            icon: 'pi pi-eye',
+            getMarkerPct(s) { return (s.value / 1500) * 100; },
+            zones: [{ color: 'warn', from: 0, to: 13 }, { color: 'ok', from: 13, to: 87 }, { color: 'warn', from: 87, to: 100 }],
+            minLabel: '0 lx',
+            maxLabel: () => '1500 lx',
+            formatValue: (s) => s.value !== null ? `${s.value}` : '—',
+            formatUnit: () => 'lx',
+        },
+        co2: {
+            label: t('iotMonitoring.sensors.co2'),
+            icon: 'pi pi-chart-line',
+            getMarkerPct(s) { return ((s.value - 400) / (2000 - 400)) * 100; },
+            zones: [{ color: 'ok', from: 0, to: 38 }, { color: 'warn', from: 38, to: 69 }, { color: 'danger', from: 69, to: 100 }],
+            minLabel: '400',
+            maxLabel: () => '2000 ppm',
+            formatValue: (s) => s.value !== null ? s.value.toLocaleString('es-PE') : '—',
+            formatUnit: () => 'ppm',
+        },
+        energy: {
+            label: t('iotMonitoring.sensors.energy'),
+            icon: 'pi pi-bolt',
+            getMarkerPct(s) { return (s.value / 4) * 100; },
+            zones: [{ color: 'ok', from: 0, to: 60 }, { color: 'warn', from: 60, to: 80 }, { color: 'danger', from: 80, to: 100 }],
+            minLabel: '0',
+            maxLabel: () => '4 kWh/h',
+            formatValue: (s) => s.value !== null ? s.value.toFixed(2) : '—',
+            formatUnit: () => 'kWh / h',
+        },
+    };
+}
 
 const SENSOR_ORDER = ['occupancy', 'temperature', 'humidity', 'luminosity', 'co2', 'energy'];
 
-const CHART_TABS = [
-    { key: 'occupancy',   label: 'Ocupación',   color: '#6366f1' },
-    { key: 'temperature', label: 'Temperatura', color: '#38bdf8' },
-    { key: 'co2',         label: 'CO₂',         color: '#f59e0b' },
-    { key: 'humidity',    label: 'Humedad',     color: '#a78bfa' },
-];
+function buildChartTabs(t) {
+    return [
+        { key: 'occupancy',   label: t('iotMonitoring.sensors.occupancy'),   color: '#6366f1' },
+        { key: 'temperature', label: t('iotMonitoring.sensors.temperature'), color: '#38bdf8' },
+        { key: 'co2',         label: t('iotMonitoring.sensors.co2'),         color: '#f59e0b' },
+        { key: 'humidity',    label: t('iotMonitoring.sensors.humidity'),    color: '#a78bfa' },
+    ];
+}
 
 const RANGE_OPTIONS = [
     { label: '1h', value: '1h' },
@@ -110,8 +114,16 @@ function generateSeries(tab, space, N) {
     });
 }
 
-function makeTimeLabels(range) {
-    if (range === '7d') return ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+function makeTimeLabels(range, t) {
+    if (range === '7d') return [
+        t('iotMonitoring.weekdays.mon'),
+        t('iotMonitoring.weekdays.tue'),
+        t('iotMonitoring.weekdays.wed'),
+        t('iotMonitoring.weekdays.thu'),
+        t('iotMonitoring.weekdays.fri'),
+        t('iotMonitoring.weekdays.sat'),
+        t('iotMonitoring.weekdays.sun'),
+    ];
     if (range === '1h') return Array.from({ length: 12 }, (_, i) => `${i * 5}m`);
     const hours = range === '24h'
         ? ['00h', '03h', '06h', '09h', '12h', '15h', '18h', '21h', '24h']
@@ -132,12 +144,19 @@ export default {
             filterText: '',
             activeTab: 'occupancy',
             activeRange: '8h',
-            chartTabs: CHART_TABS,
             rangeOptions: RANGE_OPTIONS,
         };
     },
 
     computed: {
+        sensorMeta() {
+            return buildSensorMeta(this.$t.bind(this));
+        },
+
+        chartTabs() {
+            return buildChartTabs(this.$t.bind(this));
+        },
+
         filteredSpaces() {
             if (!this.filterText.trim()) return this.spaces;
             const q = this.filterText.toLowerCase();
@@ -156,10 +175,11 @@ export default {
 
         sensorList() {
             if (!this.selectedSpace) return [];
+            const meta = this.sensorMeta;
             return SENSOR_ORDER.map(key => {
                 const raw = this.selectedSpace.sensors?.[key];
                 const data = raw || { value: null, capacity: null, delta: '—', deltaStatus: 'neutral' };
-                return { key, meta: SENSOR_META[key], data };
+                return { key, meta: meta[key], data };
             });
         },
 
@@ -167,9 +187,10 @@ export default {
             if (!this.selectedSpace) return { labels: [], datasets: [] };
             const N = this.activeRange === '1h' ? 12 : this.activeRange === '7d' ? 7 : 96;
             const tab = this.activeTab;
-            const tabObj = CHART_TABS.find(t => t.key === tab) || CHART_TABS[0];
+            const tabs = this.chartTabs;
+            const tabObj = tabs.find(t => t.key === tab) || tabs[0];
             const values = generateSeries(tab, this.selectedSpace, N);
-            const labels = makeTimeLabels(this.activeRange);
+            const labels = makeTimeLabels(this.activeRange, this.$t.bind(this));
 
             const labelStep = Math.max(1, Math.floor(N / (labels.length - 1)));
             const fullLabels = Array.from({ length: N }, (_, i) => {
@@ -195,7 +216,8 @@ export default {
 
         chartOptions() {
             const tab = this.activeTab;
-            const tabObj = CHART_TABS.find(t => t.key === tab) || CHART_TABS[0];
+            const tabs = this.chartTabs;
+            const tabObj = tabs.find(t => t.key === tab) || tabs[0];
             return {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -262,14 +284,20 @@ export default {
         },
 
         statusLabel(status) {
-            return { ok: 'óptimo', warn: 'atención', danger: 'crítico', off: 'offline' }[status] || status;
+            const map = {
+                ok: this.$t('iotMonitoring.status.ok'),
+                warn: this.$t('iotMonitoring.status.warn'),
+                danger: this.$t('iotMonitoring.status.danger'),
+                off: this.$t('iotMonitoring.status.off'),
+            };
+            return map[status] || status;
         },
 
         rssiQuality(rssi) {
-            if (rssi === null || rssi === undefined) return 'sin señal';
-            if (rssi >= -60) return 'excelente';
-            if (rssi >= -70) return 'buena';
-            return 'débil';
+            if (rssi === null || rssi === undefined) return this.$t('iotMonitoring.rssi.none');
+            if (rssi >= -60) return this.$t('iotMonitoring.rssi.excellent');
+            if (rssi >= -70) return this.$t('iotMonitoring.rssi.good');
+            return this.$t('iotMonitoring.rssi.weak');
         },
     },
 
@@ -286,17 +314,17 @@ export default {
     <!-- Cabecera -->
     <div class="page-head">
       <div>
-        <h1 class="page-title">Monitoreo IoT</h1>
+        <h1 class="page-title">{{ $t('iotMonitoring.title') }}</h1>
         <div class="page-sub">
-          {{ onlineCount }} dispositivos online ·
-          <span :class="alertCount > 0 ? 'text-warn' : 'text-ok'">{{ alertCount }} alertas activas</span>
-          · datos simulados (Sprint 1)
+          {{ $t('iotMonitoring.devicesOnline', { count: onlineCount }) }} ·
+          <span :class="alertCount > 0 ? 'text-warn' : 'text-ok'">{{ $t('iotMonitoring.activeAlerts', { count: alertCount }) }}</span>
+          · {{ $t('iotMonitoring.simulatedData') }}
         </div>
       </div>
       <div class="head-actions">
-        <span class="live-pill"><span class="live-dot"></span> live · mock</span>
-        <pv-button label="Configurar umbrales" size="small" outlined />
-        <pv-button label="+ Vincular dispositivo" size="small" />
+        <span class="live-pill"><span class="live-dot"></span> {{ $t('iotMonitoring.liveMock') }}</span>
+        <pv-button :label="$t('iotMonitoring.configureThresholds')" size="small" outlined />
+        <pv-button :label="$t('iotMonitoring.linkDevice')" size="small" />
       </div>
     </div>
 
@@ -307,13 +335,13 @@ export default {
       <pv-card class="rooms-card">
         <template #content>
           <div class="rooms-header">
-            <span class="rooms-title">Espacios</span>
-            <span class="rooms-count">{{ spaces.length }} total</span>
+            <span class="rooms-title">{{ $t('iotMonitoring.spaces') }}</span>
+            <span class="rooms-count">{{ $t('iotMonitoring.totalCount', { count: spaces.length }) }}</span>
           </div>
           <div class="rooms-filter">
             <pv-input-text
               v-model="filterText"
-              placeholder="Filtrar A-203, LAB-22…"
+              :placeholder="$t('iotMonitoring.filterPlaceholder')"
               class="filter-input"
               size="small"
             />
@@ -336,7 +364,7 @@ export default {
               </span>
             </div>
             <div v-if="filteredSpaces.length === 0" class="rooms-empty">
-              Sin resultados para "{{ filterText }}"
+              {{ $t('iotMonitoring.noResults', { query: filterText }) }}
             </div>
           </div>
         </template>
@@ -362,7 +390,7 @@ export default {
                 {{ statusLabel(selectedSpace.status) }}
                 <span v-if="selectedSpace.status === 'warn'"> · {{ selectedSpace.meta }}</span>
               </span>
-              <pv-button label="Histórico" size="small" outlined class="ml-2" />
+              <pv-button :label="$t('iotMonitoring.history')" size="small" outlined class="ml-2" />
             </div>
           </div>
 
@@ -423,31 +451,31 @@ export default {
           <!-- Info del dispositivo -->
           <div class="device-footer">
             <div class="device-item">
-              <div class="device-key">Dispositivo</div>
+              <div class="device-key">{{ $t('iotMonitoring.device.device') }}</div>
               <div class="device-val">{{ selectedSpace.deviceCode }}</div>
             </div>
             <div class="device-item">
-              <div class="device-key">Firmware</div>
+              <div class="device-key">{{ $t('iotMonitoring.device.firmware') }}</div>
               <div class="device-val">{{ selectedSpace.firmware }}</div>
             </div>
             <div class="device-item">
-              <div class="device-key">RSSI</div>
+              <div class="device-key">{{ $t('iotMonitoring.device.rssi') }}</div>
               <div class="device-val" :class="{ 'val-ok': selectedSpace.rssi >= -65 }">
                 {{ selectedSpace.rssi }} dBm · {{ rssiQuality(selectedSpace.rssi) }}
               </div>
             </div>
             <div class="device-item">
-              <div class="device-key">Última lectura</div>
+              <div class="device-key">{{ $t('iotMonitoring.device.lastReading') }}</div>
               <div class="device-val" :class="{ 'val-ok': selectedSpace.status !== 'off' }">
-                {{ selectedSpace.lastReadingTime }} · hace {{ selectedSpace.lastReadingAgo }}
+                {{ selectedSpace.lastReadingTime }} · {{ $t('iotMonitoring.device.ago', { value: selectedSpace.lastReadingAgo }) }}
               </div>
             </div>
           </div>
 
           <!-- Log de eventos -->
           <div class="events-header">
-            <span class="events-title">Eventos recientes</span>
-            <span class="events-count">últimas 6 h</span>
+            <span class="events-title">{{ $t('iotMonitoring.events.title') }}</span>
+            <span class="events-count">{{ $t('iotMonitoring.events.window') }}</span>
           </div>
           <div class="events-list">
             <div v-for="(ev, i) in selectedSpace.events" :key="i" class="event-row">
@@ -457,7 +485,7 @@ export default {
               <span class="ev-val">{{ ev.value }}</span>
             </div>
             <div v-if="!selectedSpace.events || selectedSpace.events.length === 0" class="events-empty">
-              Sin eventos registrados
+              {{ $t('iotMonitoring.events.empty') }}
             </div>
           </div>
 
@@ -469,7 +497,7 @@ export default {
         <template #content>
           <div class="empty-state">
             <i class="pi pi-wifi" style="font-size: 3rem; color: #d1d5db;"></i>
-            <p>Selecciona un espacio para ver el detalle de sus sensores</p>
+            <p>{{ $t('iotMonitoring.emptyState') }}</p>
           </div>
         </template>
       </pv-card>

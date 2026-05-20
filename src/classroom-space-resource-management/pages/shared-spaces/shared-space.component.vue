@@ -46,9 +46,9 @@ export default {
 <template>
   <div class="shared-spaces-page">
     <div class="breadcrumb">
-      <h4>Classrooms and Shared Spaces</h4>
+      <h4>{{ $t('classroomSpace.common.breadcrumbRoot') }}</h4>
       <i class="pi pi-chevron-right"></i>
-      <h4>Shared Spaces</h4>
+      <h4>{{ $t('classroomSpace.sharedSpaces.title') }}</h4>
     </div>
 
     <div class="page-content">
@@ -59,12 +59,12 @@ export default {
               <i class="pi pi-users"></i>
             </div>
             <div class="add-card-text">
-              <h3>Add Shared Area</h3>
-              <p>Create a new common space</p>
+              <h3>{{ $t('classroomSpace.sharedSpaces.addTitle') }}</h3>
+              <p>{{ $t('classroomSpace.sharedSpaces.addSubtitle') }}</p>
             </div>
           </div>
           <pv-button
-              label="Add Shared Area"
+              :label="$t('classroomSpace.sharedSpaces.addTitle')"
               icon="pi pi-plus"
               severity="warning"
               @click="goToAdd"

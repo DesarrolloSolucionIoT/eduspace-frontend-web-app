@@ -32,21 +32,21 @@ export default {
       <div class="text-xl font-semibold mb-2">{{ shared_space.name }}</div>
       <div class="mb-2">
         <span class="font-medium text-600"
-          >Capacity: {{ shared_space.capacity }}</span
+          >{{ $t('classroomSpace.sharedSpaces.capacity') }}: {{ shared_space.capacity }}</span
         >
       </div>
       <div class="mb-2">
         <span class="font-medium text-600"
-          >Description: {{ shared_space.description }}</span
+          >{{ $t('common.description') }}: {{ shared_space.description }}</span
         >
       </div>
       <div class="flex align-items-center gap-2 mb-3">
         <i class="pi pi-box text-yellow-500"></i>
-        <span>equipment</span>
+        <span>{{ $t('classroomSpace.sharedSpaces.equipment') }}</span>
       </div>
       <div class="card-buttons">
-        <pv-button label="Edit" severity="info" text raised class="w-full" @click="editSharedSpace"/>
-        <pv-button label="Delete" severity="danger" text raised class="w-full" @click="deleteSharedSpace"/>
+        <pv-button :label="$t('common.edit')" severity="info" text raised class="w-full" @click="editSharedSpace"/>
+        <pv-button :label="$t('common.delete')" severity="danger" text raised class="w-full" @click="deleteSharedSpace"/>
       </div>
 
     </div>
