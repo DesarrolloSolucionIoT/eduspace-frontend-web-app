@@ -163,7 +163,7 @@ export default {
 
         <div class="form-field">
           <div class="input-container">
-            <pv-calendar
+            <pv-date-picker
               v-model="formData.birthdate"
               placeholder="Fecha de nacimiento"
               required
@@ -171,7 +171,8 @@ export default {
               @blur="validateField('birthdate', formData.birthdate)"
               :maxDate="new Date()"
               dateFormat="dd/mm/yy"
-              :showIcon="true"
+              showIcon
+              iconDisplay="input"
             />
             <small v-if="errors.birthdate" class="error-message">{{
               errors.birthdate
@@ -293,11 +294,11 @@ export default {
 }
 
 /* Force every PrimeVue input to fill its flex slot — by default
-   pv-input-text / pv-password / pv-calendar render at intrinsic width. */
+   pv-input-text / pv-password / pv-date-picker render at intrinsic width. */
 .form-field :deep(.p-inputtext),
 .form-field :deep(.p-password),
 .form-field :deep(.p-password-input),
-.form-field :deep(.p-calendar),
+.form-field :deep(.p-datepicker),
 .form-field :deep(.p-datepicker-input) {
   width: 100%;
 }

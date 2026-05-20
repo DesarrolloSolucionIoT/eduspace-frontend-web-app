@@ -45,7 +45,6 @@ import FullCalendar from "@fullcalendar/vue3"
 import router from "./router/index.js";
 import SelectButton from "primevue/selectbutton";
 import InputMask from "primevue/inputmask";
-import Calendar from "primevue/calendar";
 import DatePicker from "primevue/datepicker";
 import MultiSelect from "primevue/multiselect";
 import Password from "primevue/password";
@@ -93,7 +92,6 @@ app.component('pv-button', Button)
     .component('pv-multi-select', MultiSelect)
     .component('pv-date-picker', DatePicker)
     .component('pv-select', Select)
-    .component('pv-calendar', Calendar)
     .component('pv-input-mask', InputMask)
     .component('pv-select-button', SelectButton)
     .component('pv-file-upload', FileUpload)
