@@ -1,23 +1,29 @@
 # EduSpace — Frontend Web App
 
-[![Vue.js](https://img.shields.io/badge/Vue.js-3.x-4FC08D?logo=vue.js)](https://vuejs.org/)
-[![PrimeVue](https://img.shields.io/badge/PrimeVue-4.x-41B883)](https://primevue.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?logo=vite)](https://vitejs.dev/)
-[![Chart.js](https://img.shields.io/badge/Chart.js-4.x-FF6384?logo=chartdotjs)](https://www.chartjs.org/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+Admin web application for **EduSpace**, a classroom management platform developed as an academic IoT project. Deployed on Vercel; backend is a .NET API on Azure Container Apps (Brazil South).
 
-Admin web dashboard for **EduSpace**, the school management platform. Built with Vue 3 (Options API) and PrimeVue 4. Used by administrators to manage classrooms, shared spaces, resources, meetings, teachers, incident reports, and real-time IoT sensor monitoring.
+Web access is admin-only. Teachers and other roles use the mobile app — the web app displays a warning toast when a non-admin JWT is returned.
 
-> Web access is **admin-only**. Teachers and other roles use the mobile app.
+## Documentation
 
-## Features
+- `PROJECT.md` — exhaustive reference: every service method, every route, every guard rule, every known issue. Read this before touching any feature. It supersedes this README where they conflict.
+- `CLAUDE.md` — Vue/Options API conventions for this repo and AI-assistant guidance.
+- `../CLAUDE.md` — workspace overview, sub-project map, cross-project decisions.
 
-- **Admin Dashboard** — institutional overview with IoT KPIs, floor map, alerts feed and telemetry charts
-- **IoT Monitoring** — real-time sensor detail per space: occupancy, temperature, humidity, luminosity, CO₂ and energy consumption with threshold bars and interactive Chart.js graphs
-- **Classrooms, Shared Spaces & Resources** — CRUD and assignment
-- **Meetings** — schedule and coordinate meetings with teachers
-- **Teachers (Personal Data)** — register, edit, delete teacher profiles with constraint validation and PII masking
-- **Two-factor sign-in** — password + 6-digit email code
+## Tech Stack
+
+| Layer | Library / Version |
+|-------|-------------------|
+| Framework | Vue 3 (Options API exclusively) |
+| Build | Vite 6 |
+| UI components | PrimeVue 4 (Aura preset) |
+| State | Vuex 4 |
+| Routing | Vue Router 4 |
+| HTTP | Axios 1.7 |
+| Calendar | FullCalendar 6 (Vue 3 adapter) |
+| Charts | Chart.js 4 (via `<pv-chart>`) |
+
+No test framework is installed. No i18n library is installed. All UI strings are hardcoded Spanish.
 
 ## Quick Start
 
@@ -25,9 +31,9 @@ Admin web dashboard for **EduSpace**, the school management platform. Built with
 
 - Node.js 18+
 - npm 9+
-- Backend API running (see `eduspace-platform`)
+- Backend API running (see `../eduspace-platform/`)
 
-### Install & Run
+### Install and Run
 
 ```bash
 git clone https://github.com/DesarrolloSolucionIoT/eduspace-frontend-web-app.git
@@ -40,13 +46,17 @@ App runs at `http://localhost:5173`.
 
 ### Environment
 
-Create a `.env` file at the repo root:
+Create `.env.local` at the repo root:
 
 ```env
-VITE_API_BASE_URL=http://localhost:5204/api/v1
+VITE_API_BASE_URL=https://localhost:7238/api/v1
 ```
 
-If the variable is missing, Axios calls go to `undefined/...` silently — set it.
+If the variable is missing, Axios falls back to `/api/v1`. In local dev this hits the Vite dev server with no proxy configured — all API calls return 404. The variable is required for local development.
+
+In production (Vercel), `VITE_API_BASE_URL` is intentionally absent. Calls go to `/api/v1`, which `vercel.json` rewrites to the Azure backend, avoiding CORS issues.
+
+A committed `.env.example` contains the local value for reference.
 
 ### Scripts
 
@@ -57,129 +67,160 @@ If the variable is missing, Axios calls go to `undefined/...` silently — set i
 | `npm run preview` | Serve the built output |
 | `npm run lint` | ESLint with `--fix` over `.vue`, `.js`, `.jsx` |
 
-No test runner is configured.
+There is no `test` script. No test runner is configured.
 
 ## Project Structure
 
-DDD-aligned folders mirror the backend bounded contexts.
+DDD-aligned bounded contexts mirror the backend.
 
 ```
 src/
-├── iam/                                    # Sign-in + 2FA verify-code
+├── iam/                                    # Authentication (sign-in, activation, registration)
+│   ├── login/
+│   │   ├── components/login-form.component.vue
+│   │   └── pages/activate.component.vue    # /activate — reads ?token from email link
+│   ├── register/
+│   │   ├── components/register-form.component.vue
+│   │   ├── pages/register.component.vue    # dead code — not routed
+│   │   └── services/register.services.js
+│   ├── shared/pages/auth-split-screen.component.vue  # actual /login + /register page
 │   ├── model/
-│   ├── pages/
 │   └── services/
-├── dashboard-admin/                        # Admin home dashboard
-│   └── pages/
-├── classroom-space-resource-management/    # Classrooms, spaces, resources
+│       ├── authentication.service.js       # used by Vuex action and activate page
+│       ├── authentication.guard.js         # dead code — never imported
+│       └── authentication.interceptor.js   # dead code — never imported
+├── dashboard-admin/pages/                  # Admin dashboard pages (no domain-level model/services)
+│   ├── home-admin.component.vue
+│   ├── personal-data.component.vue
+│   ├── teachers-management.component.vue
+│   ├── classroom-changes-meetings.component.vue
+│   └── classrooms-shared-spaces.component.vue
+├── classroom-space-resource-management/    # Classrooms, shared spaces, resources — CRUD
 │   ├── components/
 │   ├── model/
 │   ├── pages/
 │   └── services/
-├── meeting-management/                     # Meetings
+├── meeting-management/                     # Meetings — CRUD + teacher assignment
 │   ├── components/
 │   ├── model/
 │   ├── pages/
 │   └── services/
-├── personal-data/                          # Teachers (admin-managed)
+├── personal-data/                          # Teacher profiles — admin-managed
 │   ├── components/
 │   ├── model/
 │   └── services/
-├── iot-monitoring/                         # IoT sensor monitoring
+├── profiles/                               # Stub — administrator.service.js only, no pages/routes
+├── iot-monitoring/                         # IoT sensor monitoring — mock data only
+│   ├── components/space-sensor-card.component.vue
+│   ├── model/iot-space.entity.js
+│   ├── pages/iot-monitoring.component.vue
+│   └── services/
+│       ├── iot-monitoring.service.js       # reads db.json, zero HTTP calls
+│       └── db.json                         # 20 hardcoded spaces — Sprint 1 mock
+├── public/pages/home.component.vue         # Placeholder landing, no auth required
+├── shared/
 │   ├── components/
-│   │   └── space-sensor-card.component.vue
-│   ├── model/
-│   │   └── iot-space.entity.js
 │   ├── pages/
-│   │   └── iot-monitoring.component.vue
-│   └── services/
-│       ├── iot-monitoring.service.js
-│       └── db.json                         # Mock sensor data (Sprint 1)
-├── profiles/                               # (stub — service only)
-├── shared/                                 # Cross-cutting code
-│   ├── components/
-│   ├── services/http-common.js
-│   └── utils/                              # date utils, VO unwrapper
-├── store/modules/user.js                   # Vuex auth state
-├── router/index.js                         # Lazy-loaded routes + guard
-├── app.vue
-├── main.js
-└── style.css
+│   │   └── not-found.component.vue         # 404 catch-all — shows path, routes to login or home-admin
+│   ├── services/
+│   │   ├── http-common.js                  # single Axios instance + interceptors
+│   │   └── classroom.service.js            # shared aggregate, used by multiple domains
+│   └── utils/
+│       ├── value-object-unwrapper.js
+│       └── date-utils.js
+├── store/
+│   ├── index.js
+│   └── modules/user.js                     # Vuex auth state (namespaced)
+├── router/index.js                         # all routes + beforeEach guard (inline)
+├── app.vue                                 # sidenav shell + router-view
+└── main.js                                 # bootstrap, plugin registration, global components
 ```
 
 ## Architecture
 
-### Conventions
+### API style
 
-- **Options API only** — no `<script setup>` / Composition API.
-- All user-facing strings are **Spanish** (no i18n library installed).
-- Component files use the `.component.vue` suffix.
-- PrimeVue is globally registered with the `pv-` prefix (`<pv-button>`, `<pv-chart>`, `<pv-data-table>`, `<pv-dialog>`).
-- Routes are **lazy-loaded** via dynamic `import()` for code splitting.
-- JWT + user blob persist in `localStorage` (academic project — known XSS tradeoff).
-- Each bounded context follows the structure: `components/`, `model/`, `pages/`, `services/`.
-- Template root must be a **single element** — Vue's `<Transition mode="out-in">` in `app.vue` cannot animate fragment components.
+Options API only. Every component uses `export default { data(), computed, methods, created(), watch }`. There is no `<script setup>`, no `setup()` function, no Composition API anywhere in the codebase.
+
+### PrimeVue conventions
+
+All PrimeVue components are globally registered with the `pv-` prefix (`<pv-button>`, `<pv-data-table>`, `<pv-dialog>`, `<pv-chart>`, etc.). FullCalendar is registered as `<fc-calendar>`. Never use raw PascalCase component names in templates. Theme: Aura preset, dark mode disabled. `this.$toast`, `this.$confirm`, and `this.$dialog` are globally available.
 
 ### Auth flow
 
-1. `POST /authentication/sign-in` with email + password.
-2. Backend emails a 6-digit code (10 min expiry).
-3. `POST /authentication/verify-code` exchanges the code for a JWT (7-day).
-4. Token + user are stored in `localStorage` and Vuex.
-5. The Axios request interceptor injects `Authorization: Bearer <token>`; the response interceptor signs the user out and redirects to `/login` on `401`.
+1. User submits username + password in `AuthSplitScreen` (the only reachable login page, at `/login`).
+2. Vuex action calls `AuthenticationService.signIn()` → `POST /authentication/sign-in`.
+3. If the account is not yet activated, the backend returns `403` with `{ code: 'AccountNotActivated' }`. No JWT is issued. The component shows a toast instructing the user to check their email.
+4. On valid credentials for an activated account, the backend returns `200` with `{ id, profileId, role, token, username, profile, classrooms, meetings }`. A JWT is issued immediately — there is no second step.
+5. The Vuex action validates `profileId`, `role`, and `token`, writes them to `localStorage`, and commits the mutations.
+6. `RoleAdmin` users are redirected to `/dashboard-admin/home-admin`. Non-admin roles receive a toast and are not redirected.
 
-Only the `RoleAdmin` role is allowed past the guard — other roles are signed out.
+Account activation is a separate pre-requisite:
+- Backend emails an activation link like `/activate?token=<uuid>`.
+- `ActivateComponent` reads the `?token` query param and calls `POST /authentication/activate` with body `{ token }`.
+- On success the account is enabled; no JWT is returned. The user must then sign in manually.
 
 ### HTTP layer
 
-`src/shared/services/http-common.js` is the single Axios instance. It centralizes:
-- Token injection
-- Error extraction (`data.detail` / `data.errors` / `data.title` / `data.message`)
-- Auto sign-out on `401`
+`src/shared/services/http-common.js` is the single Axios instance. Every service file imports from it.
+
+- Request interceptor: reads `store.getters["user/userToken"]` and injects `Authorization: Bearer <token>`.
+- Response interceptor: extracts a user-facing Spanish message from `data.detail` → `data.errors` → `data.title` → `data.message`, attaches it as `error.userMessage`. On `401`, dispatches `user/signOut` and pushes to `/login` with a "Sesión expirada" message.
 
 ### Backend value-object unwrapping
 
-The .NET backend serializes value objects as `{ value: X }`. Use `shared/utils/value-object-unwrapper.js` to flatten responses before binding to the UI — this is the most common source of `[object Object]` bugs.
+The .NET backend serializes value objects as `{ value: X }`. Use `shared/utils/value-object-unwrapper.js` to flatten responses before binding to the UI. Missing this is the most common cause of `[object Object]` in templates.
 
 ```js
-import { unwrapValueObjects } from '@/shared/utils/value-object-unwrapper.js';
+import { unwrapValueObjects } from '../../shared/utils/value-object-unwrapper.js';
 const items = unwrapValueObjects(response.data || []);
 ```
 
-### IoT Monitoring module
-
-The `iot-monitoring/` bounded context implements the sensor monitoring layer:
-
-- **`IotSpace` entity** — models a monitored space with sensors, events, device metadata and computed getters (`isOnline`, `hasAlert`, `buildingPrefix`).
-- **`IotMonitoringService`** — `getSpaces()`, `getSpaceById()`, `getAlerts()`. Currently backed by `db.json` (21 mock spaces with full sensor data). Swap to real HTTP calls in Sprint 2.
-- **`SpaceSensorCard` component** — renders a single sensor (value, delta, threshold bar) as a reusable business component.
-- **`IotMonitoringPage`** — full monitoring page: space list, 6-sensor detail grid, interactive Chart.js line chart with tab/range selectors, occupancy strip, device footer and event log.
-- **Dashboard widgets** — `home-admin` imports the same service and renders: KPI strip (sparklines), floor map, alerts feed, aggregated telemetry chart, building utilization bars, sensor health table and breakdowns table.
-
-Charts use **Chart.js 4** via PrimeVue's `<pv-chart>` wrapper. Requires `chart.js` to be installed (`npm install` handles this).
+Note: `vite.config.js` does not configure a `@` path alias. All imports use relative paths.
 
 ### State
 
-Single Vuex module (`store/modules/user.js`) holds `user`, `id`, `role`, `token`, and `isAuthenticated`. State is rehydrated from `localStorage` on boot.
+Single Vuex module (`store/modules/user.js`, namespaced). Holds `user`, `id` (= `profileId`, not `accountId`), `role`, `token`, and `isAuthenticated`. Rehydrated from `localStorage` on every page load. No token refresh exists — expired tokens trigger auto-signout via the 401 interceptor.
 
-### UI
+### Routing
 
-- **Theme**: PrimeVue Aura preset, dark mode disabled.
-- **Services**: `this.$toast`, `this.$confirm`, `this.$dialog` are available globally.
-- **Calendar**: FullCalendar Vue 3 integration.
-- **Charts**: Chart.js 4 via `<pv-chart>` (line charts for telemetry, sparklines for KPIs).
+All routes are lazy-loaded via dynamic `import()`. The `beforeEach` guard reads `isAuthenticated` and `userRole` from Vuex. Only `RoleAdmin` can access `/dashboard-admin/*` routes. A catch-all `/:pathMatch(.*)*` route renders `src/shared/pages/not-found.component.vue`, showing the unmatched path and a button that routes to `home-admin` (if authenticated as admin) or `login`.
 
-## Library docs
+### Vercel deployment
+
+`vercel.json` defines two rules:
+1. `/api/:path*` rewrites to the Azure Container Apps backend (Brazil South). This is the production API proxy.
+2. `/(.*)` rewrites to `/index.html` for SPA client-side routing.
+
+## Known Issues and Dead Code
+
+### Dead code
+
+- `src/iam/register/pages/register.component.vue` — not routed. `/register` resolves to `auth-split-screen.component.vue`. Dead code candidate.
+- `src/iam/services/authentication.guard.js` — exports `authenticationGuard` but is never imported. The real guard is inline in `router/index.js`.
+- `src/iam/services/authentication.interceptor.js` — never imported. If it were, it would add a duplicate request interceptor to the Axios instance.
+
+### Stub module
+
+- `src/profiles/` contains only `services/administrator.service.js`. No model, no pages, no routes. The service is used by `dashboard-admin` pages directly.
+
+### Mock-only module
+
+- `src/iot-monitoring/` makes zero HTTP calls. `IotMonitoringService` reads `db.json` (20 hardcoded spaces) and wraps results in `Promise.resolve()`. Real ESP32/Edge API integration is deferred to Sprint 2.
+- `home-admin.component.vue` hardcodes `MOCK_BREAKDOWNS` (5 entries) as a `const` inside the component — not sourced from any service.
+
+### Other known debt
+
+- No token refresh — expired JWT causes immediate signout on next API call.
+- JWT stored in `localStorage` (XSS risk — intentional for this academic project, do not change without team agreement).
+- ESLint has no CI or pre-commit hook — run `npm run lint` manually before committing.
+- `dashboard-teacher/`, `reservation-management/`, and `breakdown-report-management/` do not exist in the frontend codebase. Any documentation referencing them is incorrect.
+- `data-meet.component.vue` has a string interpolation bug: confirmation messages use single-quoted strings with `${this.title.plural}` — the variable is never evaluated.
+- `index.html` title is "Vite + Vue" — the router guard corrects `document.title` after first navigation, but the initial paint shows the wrong title.
+
+## Library Docs
 
 Before touching PrimeVue, Vue Router, Vuex, Axios, FullCalendar, Chart.js, or Vite APIs, use Context7 (`resolve-library-id` → `query-docs`). Training data is often stale relative to PrimeVue 4 / Vue Router 4 / Vite 6.
-
-## Known debt
-
-- `src/iam/services/authentication.guard.js` — never imported; the real guard is inline in `router/index.js`.
-- `src/profiles/` — service-only stub, no pages or routes.
-- No 404 / catch-all route — unknown paths render blank.
-- ESLint has no CI or pre-commit hook — run `npm run lint` manually before committing.
-- IoT data is mocked via `db.json` — real ESP32/Edge API integration deferred to Sprint 2.
 
 ## Contributing
 
