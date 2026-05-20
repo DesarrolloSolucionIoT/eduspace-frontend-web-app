@@ -16,16 +16,20 @@ class RegisterService {
       );
       return new SignUpResponse(response.data);
     } catch (error) {
-      // Handle specific validation errors from server
-      if (error.response && error.response.status === 400) {
-        throw new Error(
-          "Error de validación: " +
-            (error.response.data.message || "Datos inválidos")
-        );
+      // http-common.js already extracts ProblemDetails / ValidationProblemDetails
+      // (detail, errors, title, message) into error.userMessage. Use it so the
+      // user sees the real backend reason instead of a generic fallback.
+      const detail =
+        error.userMessage ||
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        error.message ||
+        "Error desconocido";
+
+      if (error.response?.status === 400) {
+        throw new Error("Error de validación: " + detail);
       }
-      throw new Error(
-        "Error al registrar: " + (error.message || "Error desconocido")
-      );
+      throw new Error("Error al registrar: " + detail);
     }
   }
 }
