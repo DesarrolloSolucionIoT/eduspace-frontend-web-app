@@ -53,14 +53,14 @@ export default {
       <div v-if="state === 'loading'" class="state-content">
         <i class="pi pi-spin pi-spinner" style="font-size: 3rem; color: #34a7c1;"></i>
         <h2 class="activate-title">Activando tu cuenta...</h2>
-        <p class="activate-description">Por favor esperá un momento.</p>
+        <p class="activate-description">Por favor espera un momento.</p>
       </div>
 
       <!-- Success -->
       <div v-if="state === 'success'" class="state-content">
         <i class="pi pi-check-circle" style="font-size: 3rem; color: #48bb78;"></i>
         <h2 class="activate-title">¡Cuenta activada!</h2>
-        <p class="activate-description">Ya podés iniciar sesión con tus credenciales.</p>
+        <p class="activate-description">Ya puedes iniciar sesión con tus credenciales.</p>
         <pv-button
           label="Iniciar sesión"
           icon="pi pi-sign-in"
@@ -87,7 +87,7 @@ export default {
       <div v-if="state === 'error-expired'" class="state-content">
         <i class="pi pi-clock" style="font-size: 3rem; color: #f6ad55;"></i>
         <h2 class="activate-title">Link expirado</h2>
-        <p class="activate-description">El link expiró. Pedile a tu administrador que te envíe uno nuevo.</p>
+        <p class="activate-description">El link expiró. Pídele a tu administrador que te envíe uno nuevo.</p>
         <pv-button
           label="Volver al inicio de sesión"
           icon="pi pi-arrow-left"
@@ -101,7 +101,7 @@ export default {
       <div v-if="state === 'error-used'" class="state-content">
         <i class="pi pi-info-circle" style="font-size: 3rem; color: #63b3ed;"></i>
         <h2 class="activate-title">Link ya utilizado</h2>
-        <p class="activate-description">Este link ya fue usado. Si ya activaste tu cuenta, podés iniciar sesión.</p>
+        <p class="activate-description">Este link ya fue usado. Si ya activaste tu cuenta, puedes iniciar sesión.</p>
         <pv-button
           label="Iniciar sesión"
           icon="pi pi-sign-in"
@@ -132,7 +132,12 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  /* Escape the 20px padding that .main-content adds on all sides AND its
+     align-items: center (which would otherwise shrink us to content width)
+     so the gray background covers the entire visible area edge-to-edge. */
+  align-self: stretch;
+  min-height: calc(100vh - 40px);
+  margin: -20px;
   padding: 20px;
   background-color: #f7fafc;
 }

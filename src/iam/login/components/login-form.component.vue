@@ -28,7 +28,7 @@ export default {
     <h2 class="login-title">Sign in</h2>
     <form @submit.prevent="submitLogin" class="login-form-grid">
       <div class="login-inputs">
-        <pv-input-text v-model="email" placeholder="Email" required class="login-input" />
+        <pv-input-text v-model="email" placeholder="Usuario o correo" required class="login-input" />
         <pv-password v-model="password" placeholder="Password" toggleMask required class="login-input" />
       </div>
       <div class="login-actions">
@@ -89,8 +89,13 @@ export default {
   width: 150px;
 }
 
-.sign-in-button:hover {
+.sign-in-button:hover,
+.sign-in-button:focus,
+.sign-in-button:active {
   background: linear-gradient(to right, #2fa1b4, #41b8b8);
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .login-input {

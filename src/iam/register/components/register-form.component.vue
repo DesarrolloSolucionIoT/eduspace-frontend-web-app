@@ -127,8 +127,8 @@ export default {
           const email = this.formData.email;
           this.$toast.add({
             severity: 'info',
-            summary: 'Revisá tu correo',
-            detail: `Te enviamos un correo a ${email}. Hacé click en el link para activar tu cuenta.`,
+            summary: 'Revisa tu correo',
+            detail: `Te enviamos un correo a ${email}. Haz clic en el link para activar tu cuenta.`,
             life: 8000
           });
           this.$router.push({ name: 'login' });
@@ -138,28 +138,16 @@ export default {
         }
       }
     },
-    goToLogin() {
-      this.$router.push("/login");
-    },
   },
 };
 </script>
 
 <template>
-  <div class="register-container">
-    <!-- Left Side -->
-    <div class="left-side">
-      <h2>Welcome Back!</h2>
-      <p>To keep connected with us please login with your personal info</p>
-      <pv-button label="SIGN IN" class="sign-in-button" @click="goToLogin" />
-    </div>
+  <div class="register-panel">
+    <h2>Create Account</h2>
 
-    <!-- Right Side (Form) -->
-    <div class="right-side">
-      <h2>Create Account</h2>
-
-      <!-- Registration Form -->
-      <form @submit.prevent="submitForm" class="register-form">
+    <!-- Registration Form -->
+    <form @submit.prevent="submitForm" class="register-form">
         <div class="form-field">
           <pv-input-text
             v-model="formData.firstName"
@@ -259,53 +247,27 @@ export default {
 
         <pv-button type="submit" label="SIGN UP" class="sign-up-button" />
       </form>
-    </div>
   </div>
 </template>
 
 <style scoped>
-/* Estilos del componente de registro */
-.register-container {
-  display: flex;
-  width: 100%;
-  height: 100vh;
-  align-items: center;
-  justify-content: center;
-}
-
-.left-side,
-.right-side {
-  padding: 40px;
+/* Form-only styles — the split-screen layout is owned by auth-split-screen */
+.register-panel {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  width: 100%;
+  max-width: 480px;
 }
 
-.left-side {
-  background: linear-gradient(to bottom, #34a7c1, #fad961);
-  color: white;
-  height: 50%;
-  width: 50%;
-  border-radius: 15px 0 0 15px;
-  text-align: center;
-}
-
-.right-side {
-  width: 50%;
-  height: 50%;
-  background-color: white;
-  border-radius: 0 15px 15px 0;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
+.register-panel h2 {
   font-size: 2em;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.75em;
+  color: #2d3748;
 }
 
-p {
-  margin-bottom: 1.5em;
+.register-form {
+  width: 100%;
 }
 
 .form-field {
@@ -327,20 +289,24 @@ p {
   min-height: 1.2em;
 }
 
-.sign-up-button,
-.submit-button {
+.sign-up-button {
   margin-top: 20px;
-  background-color: #00bcd4;
+  background: linear-gradient(to right, #34a7c1, #4ad4d4);
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 25px;
   cursor: pointer;
+  font-size: 1em;
+  width: 150px;
 }
 
 .sign-up-button:hover,
-.submit-button:hover {
-  background-color: #0097a7;
+.sign-up-button:focus,
+.sign-up-button:active {
+  background: linear-gradient(to right, #2fa1b4, #41b8b8);
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
-
 </style>
