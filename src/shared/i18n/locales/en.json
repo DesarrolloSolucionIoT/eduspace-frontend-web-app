@@ -229,8 +229,6 @@
       "detailedView": "Detailed view →",
       "kpiAvgOccupancy": "Average occupancy",
       "vsLastWeek": "vs last week",
-      "kpiEnergy": "Energy consumption",
-      "vsLastQuarter": "vs last quarter",
       "kpiOpenAlerts": "Open alerts",
       "active": "active",
       "last24h": "last 24 h",
@@ -418,10 +416,7 @@
     "sensors": {
       "occupancy": "Occupancy",
       "temperature": "Temperature",
-      "humidity": "Humidity",
-      "luminosity": "Luminosity",
-      "co2": "CO₂",
-      "energy": "Consumption"
+      "humidity": "Humidity"
     },
     "status": {
       "ok": "optimal",

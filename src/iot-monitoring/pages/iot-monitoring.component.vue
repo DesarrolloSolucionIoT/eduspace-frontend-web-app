@@ -3,17 +3,29 @@ import { IotMonitoringService } from '../services/iot-monitoring.service.js';
 import { IotSpace } from '../model/iot-space.entity.js';
 import SpaceSensorCard from '../components/space-sensor-card.component.vue';
 
-function buildSensorMeta(t) {
+function buildSensorMeta(t, space) {
+    const isLive = space?.isLive ?? false;
     return {
         occupancy: {
             label: t('iotMonitoring.sensors.occupancy'),
             icon: 'pi pi-users',
-            getMarkerPct(s) { return s.capacity ? (s.value / s.capacity) * 100 : 0; },
-            zones: [{ color: 'ok', from: 0, to: 75 }, { color: 'warn', from: 75, to: 90 }, { color: 'danger', from: 90, to: 100 }],
-            minLabel: '0',
-            maxLabel: (s) => `${t('iotMonitoring.capacity')} ${s.capacity}`,
-            formatValue: (s) => s.value !== null ? `${s.value}` : '—',
-            formatUnit: (s) => s.capacity ? `/ ${s.capacity}` : '',
+            // Live mode: bool (0=libre, 1=ocupado) — bar shows 0% or 100%
+            // Mock mode: numeric count vs capacity
+            getMarkerPct(s) {
+                if (isLive) return s.value ? 100 : 0;
+                return s.capacity ? (s.value / s.capacity) * 100 : 0;
+            },
+            zones: isLive
+                ? [{ color: 'ok', from: 0, to: 50 }, { color: 'warn', from: 50, to: 100 }]
+                : [{ color: 'ok', from: 0, to: 75 }, { color: 'warn', from: 75, to: 90 }, { color: 'danger', from: 90, to: 100 }],
+            minLabel: isLive ? 'Libre' : '0',
+            maxLabel: (s) => isLive ? 'Ocupado' : `${t('iotMonitoring.capacity')} ${s.capacity}`,
+            formatValue: (s) => {
+                if (s.value === null) return '—';
+                if (isLive) return s.occupancyPresent ? 'Ocupado' : 'Libre';
+                return `${s.value}`;
+            },
+            formatUnit: (s) => isLive ? '' : (s.capacity ? `/ ${s.capacity}` : ''),
         },
         temperature: {
             label: t('iotMonitoring.sensors.temperature'),
@@ -35,46 +47,15 @@ function buildSensorMeta(t) {
             formatValue: (s) => s.value !== null ? `${s.value}` : '—',
             formatUnit: () => '%',
         },
-        luminosity: {
-            label: t('iotMonitoring.sensors.luminosity'),
-            icon: 'pi pi-eye',
-            getMarkerPct(s) { return (s.value / 1500) * 100; },
-            zones: [{ color: 'warn', from: 0, to: 13 }, { color: 'ok', from: 13, to: 87 }, { color: 'warn', from: 87, to: 100 }],
-            minLabel: '0 lx',
-            maxLabel: () => '1500 lx',
-            formatValue: (s) => s.value !== null ? `${s.value}` : '—',
-            formatUnit: () => 'lx',
-        },
-        co2: {
-            label: t('iotMonitoring.sensors.co2'),
-            icon: 'pi pi-chart-line',
-            getMarkerPct(s) { return ((s.value - 400) / (2000 - 400)) * 100; },
-            zones: [{ color: 'ok', from: 0, to: 38 }, { color: 'warn', from: 38, to: 69 }, { color: 'danger', from: 69, to: 100 }],
-            minLabel: '400',
-            maxLabel: () => '2000 ppm',
-            formatValue: (s) => s.value !== null ? s.value.toLocaleString('es-PE') : '—',
-            formatUnit: () => 'ppm',
-        },
-        energy: {
-            label: t('iotMonitoring.sensors.energy'),
-            icon: 'pi pi-bolt',
-            getMarkerPct(s) { return (s.value / 4) * 100; },
-            zones: [{ color: 'ok', from: 0, to: 60 }, { color: 'warn', from: 60, to: 80 }, { color: 'danger', from: 80, to: 100 }],
-            minLabel: '0',
-            maxLabel: () => '4 kWh/h',
-            formatValue: (s) => s.value !== null ? s.value.toFixed(2) : '—',
-            formatUnit: () => 'kWh / h',
-        },
     };
 }
 
-const SENSOR_ORDER = ['occupancy', 'temperature', 'humidity', 'luminosity', 'co2', 'energy'];
+const SENSOR_ORDER = ['occupancy', 'temperature', 'humidity'];
 
 function buildChartTabs(t) {
     return [
         { key: 'occupancy',   label: t('iotMonitoring.sensors.occupancy'),   color: '#6366f1' },
         { key: 'temperature', label: t('iotMonitoring.sensors.temperature'), color: '#38bdf8' },
-        { key: 'co2',         label: t('iotMonitoring.sensors.co2'),         color: '#f59e0b' },
         { key: 'humidity',    label: t('iotMonitoring.sensors.humidity'),    color: '#a78bfa' },
     ];
 }
@@ -101,10 +82,6 @@ function generateSeries(tab, space, N) {
         if (tab === 'temperature') {
             const base = space.sensors?.temperature?.value || 22;
             return +(base - 3 + 5 * Math.sin(t * Math.PI * 2.4 + 0.3) + 1.2 * Math.sin(i / 4)).toFixed(1);
-        }
-        if (tab === 'co2') {
-            const base = space.sensors?.co2?.value || 700;
-            return Math.round(420 + (base - 420) * Math.max(0, Math.sin(t * Math.PI * 1.8 - 0.2)) + 40 * Math.sin(i / 6));
         }
         if (tab === 'humidity') {
             const base = space.sensors?.humidity?.value || 55;
@@ -150,7 +127,11 @@ export default {
 
     computed: {
         sensorMeta() {
-            return buildSensorMeta(this.$t.bind(this));
+            return buildSensorMeta(this.$t.bind(this), this.selectedSpace);
+        },
+
+        isLiveData() {
+            return this.selectedSpace?.isLive ?? false;
         },
 
         chartTabs() {
@@ -318,11 +299,14 @@ export default {
         <div class="page-sub">
           {{ $t('iotMonitoring.devicesOnline', { count: onlineCount }) }} ·
           <span :class="alertCount > 0 ? 'text-warn' : 'text-ok'">{{ $t('iotMonitoring.activeAlerts', { count: alertCount }) }}</span>
-          · {{ $t('iotMonitoring.simulatedData') }}
+          · <span :class="isLiveData ? 'text-ok' : ''">{{ isLiveData ? 'Datos en tiempo real' : $t('iotMonitoring.simulatedData') }}</span>
         </div>
       </div>
       <div class="head-actions">
-        <span class="live-pill"><span class="live-dot"></span> {{ $t('iotMonitoring.liveMock') }}</span>
+        <span class="live-pill" :class="{ 'live-pill-mock': !isLiveData }">
+          <span class="live-dot" :class="{ 'live-dot-mock': !isLiveData }"></span>
+          {{ isLiveData ? 'En vivo · Platform API' : $t('iotMonitoring.liveMock') }}
+        </span>
         <pv-button :label="$t('iotMonitoring.configureThresholds')" size="small" outlined />
         <pv-button :label="$t('iotMonitoring.linkDevice')" size="small" />
       </div>
@@ -566,6 +550,17 @@ export default {
   border-radius: 50%;
   background: #22c55e;
   animation: pulse 1.5s infinite;
+}
+
+.live-pill-mock {
+  background: #f9fafb;
+  border-color: #e5e7eb;
+  color: #6b7280;
+}
+
+.live-dot-mock {
+  background: #9ca3af;
+  animation: none;
 }
 
 @keyframes pulse {

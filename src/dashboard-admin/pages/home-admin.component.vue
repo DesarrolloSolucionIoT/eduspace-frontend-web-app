@@ -78,12 +78,6 @@ export default {
       }, 0);
       return (sum / online.length).toFixed(1);
     },
-    iotTotalEnergy() {
-      return this.iotSpaces
-        .filter(s => s.sensors?.energy?.value !== null)
-        .reduce((acc, s) => acc + (s.sensors.energy.value || 0), 0)
-        .toFixed(1);
-    },
     iotAlertsFeed() {
       return this.iotSpaces
         .filter(s => s.status === 'warn' || s.status === 'danger')
@@ -215,7 +209,6 @@ export default {
       });
       return [
         makeDs(makeSpark(28, 50, 80, 4), '#6366f1'),
-        makeDs(makeSpark(28, 280, 380, 5).map((v, i) => v - i * 1.4), '#38bdf8'),
         makeDs(makeSpark(28, 2, 9, 3), '#f59e0b'),
         makeDs(makeSpark(28, 8, 18, 4).map((v, i) => v - i * 0.05), '#22c55e'),
       ];
@@ -492,19 +485,11 @@ export default {
         </div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">{{ $t('dashboardAdmin.iot.kpiEnergy') }}</div>
-        <div class="kpi-value">{{ iotTotalEnergy }}<span class="kpi-unit">kWh / h</span></div>
-        <div class="kpi-delta kpi-down">▼ 24.1% <span class="kpi-muted">{{ $t('dashboardAdmin.iot.vsLastQuarter') }}</span></div>
-        <div class="kpi-spark">
-          <pv-chart type="line" :data="kpiSparkData[1]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
-        </div>
-      </div>
-      <div class="kpi-card">
         <div class="kpi-label">{{ $t('dashboardAdmin.iot.kpiOpenAlerts') }}</div>
         <div class="kpi-value kpi-warn">{{ iotAlertCount }}<span class="kpi-unit">{{ $t('dashboardAdmin.iot.active') }}</span></div>
         <div class="kpi-delta" style="color: #f59e0b;">▲ 2 <span class="kpi-muted">{{ $t('dashboardAdmin.iot.last24h') }}</span></div>
         <div class="kpi-spark">
-          <pv-chart type="line" :data="kpiSparkData[2]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
+          <pv-chart type="line" :data="kpiSparkData[1]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
         </div>
       </div>
       <div class="kpi-card">
@@ -512,7 +497,7 @@ export default {
         <div class="kpi-value">{{ iotOnlineCount }}<span class="kpi-unit">/ {{ iotSpaces.length }}</span></div>
         <div class="kpi-delta kpi-up">▼ 3.1 min <span class="kpi-muted">{{ $t('dashboardAdmin.iot.mttr') }}</span></div>
         <div class="kpi-spark">
-          <pv-chart type="line" :data="kpiSparkData[3]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
+          <pv-chart type="line" :data="kpiSparkData[2]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
         </div>
       </div>
     </div>

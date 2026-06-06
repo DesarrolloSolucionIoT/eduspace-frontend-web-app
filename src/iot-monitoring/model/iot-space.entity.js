@@ -14,6 +14,7 @@ export class IotSpace {
         lastReadingAgo = '',
         sensors = {},
         events = [],
+        isLive = false,
     }) {
         this.id = id;
         this.name = name;
@@ -29,6 +30,7 @@ export class IotSpace {
         this.lastReadingAgo = lastReadingAgo;
         this.sensors = sensors;
         this.events = events;
+        this.isLive = isLive;
     }
 
     get isOnline() {
@@ -40,6 +42,16 @@ export class IotSpace {
     }
 
     get buildingPrefix() {
-        return this.id.split('-')[0];
+        return String(this.id).split('-')[0];
+    }
+
+    get occupancyLabel() {
+        const occ = this.sensors?.occupancy;
+        if (!occ || occ.value === null) return '—';
+        // Real data: PIR bool (occupancyPresent)
+        if (this.isLive) return occ.occupancyPresent ? 'Ocupado' : 'Libre';
+        // Mock data: numeric count
+        if (occ.capacity) return `${occ.value} / ${occ.capacity}`;
+        return String(occ.value);
     }
 }
