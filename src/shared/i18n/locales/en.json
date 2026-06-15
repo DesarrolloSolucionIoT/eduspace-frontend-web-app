@@ -52,7 +52,8 @@
       "title": "Sign in",
       "emailPlaceholder": "Username or email",
       "passwordPlaceholder": "Password",
-      "signInButton": "SIGN IN"
+      "signInButton": "SIGN IN",
+      "forgotPassword": "Forgot your password?"
     },
     "register": {
       "title": "Create account",
@@ -79,6 +80,36 @@
         "checkEmailSummary": "Check your email",
         "checkEmailDetail": "We sent an email to {email}. Click the link to activate your account."
       }
+    },
+    "forgotPassword": {
+      "title": "Recover password",
+      "emailPlaceholder": "Email address",
+      "submitButton": "SEND LINK",
+      "backToLogin": "Back to sign in",
+      "toastSummary": "Request sent",
+      "genericMessage": "If the email is registered, we will send you a link to reset your password."
+    },
+    "resetPassword": {
+      "title": "Reset password",
+      "newPasswordPlaceholder": "New password",
+      "confirmPasswordPlaceholder": "Confirm password",
+      "submitButton": "RESET PASSWORD",
+      "passwordMismatch": "Passwords do not match.",
+      "loading": "Resetting password...",
+      "successTitle": "Password reset!",
+      "successDescription": "Your password has been updated successfully. You can now sign in.",
+      "backToLogin": "Sign in",
+      "errorExpiredTitle": "Link expired",
+      "errorExpiredDescription": "The password reset link has expired. Please request a new one.",
+      "errorUsedTitle": "Link already used",
+      "errorUsedDescription": "This link has already been used. If you already reset your password, you can sign in.",
+      "errorInvalidTitle": "Invalid link",
+      "errorInvalidDescription": "The password reset link is invalid.",
+      "errorMissingTokenTitle": "Incomplete link",
+      "errorMissingTokenDescription": "The password reset link is invalid or incomplete.",
+      "errorServerTitle": "Something went wrong",
+      "errorServerDescription": "We couldn't process your request right now. Please try again.",
+      "retry": "Retry"
     },
     "activate": {
       "signIn": "Sign in",
