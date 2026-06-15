@@ -52,7 +52,8 @@
       "title": "Iniciar sesión",
       "emailPlaceholder": "Usuario o correo",
       "passwordPlaceholder": "Contraseña",
-      "signInButton": "INICIAR SESIÓN"
+      "signInButton": "INICIAR SESIÓN",
+      "forgotPassword": "¿Olvidaste tu contraseña?"
     },
     "register": {
       "title": "Crear cuenta",
@@ -79,6 +80,36 @@
         "checkEmailSummary": "Revisa tu correo",
         "checkEmailDetail": "Te enviamos un correo a {email}. Haz clic en el link para activar tu cuenta."
       }
+    },
+    "forgotPassword": {
+      "title": "Recuperar contraseña",
+      "emailPlaceholder": "Correo electrónico",
+      "submitButton": "ENVIAR ENLACE",
+      "backToLogin": "Volver al inicio de sesión",
+      "toastSummary": "Solicitud enviada",
+      "genericMessage": "Si el correo está registrado, te enviamos un enlace para restablecer tu contraseña."
+    },
+    "resetPassword": {
+      "title": "Restablecer contraseña",
+      "newPasswordPlaceholder": "Nueva contraseña",
+      "confirmPasswordPlaceholder": "Confirmar contraseña",
+      "submitButton": "RESTABLECER CONTRASEÑA",
+      "passwordMismatch": "Las contraseñas no coinciden.",
+      "loading": "Restableciendo contraseña...",
+      "successTitle": "¡Contraseña restablecida!",
+      "successDescription": "Tu contraseña fue actualizada correctamente. Ya puedes iniciar sesión.",
+      "backToLogin": "Iniciar sesión",
+      "errorExpiredTitle": "Enlace expirado",
+      "errorExpiredDescription": "El enlace para restablecer la contraseña expiró. Solicita uno nuevo.",
+      "errorUsedTitle": "Enlace ya utilizado",
+      "errorUsedDescription": "Este enlace ya fue usado. Si ya restableciste tu contraseña, puedes iniciar sesión.",
+      "errorInvalidTitle": "Enlace inválido",
+      "errorInvalidDescription": "El enlace para restablecer la contraseña es inválido.",
+      "errorMissingTokenTitle": "Enlace incompleto",
+      "errorMissingTokenDescription": "El enlace de restablecimiento es inválido o está incompleto.",
+      "errorServerTitle": "Algo salió mal",
+      "errorServerDescription": "No pudimos procesar tu solicitud en este momento. Por favor intenta nuevamente.",
+      "retry": "Reintentar"
     },
     "activate": {
       "signIn": "Iniciar sesión",
