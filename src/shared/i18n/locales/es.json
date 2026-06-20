@@ -434,58 +434,40 @@
     "title": "Monitoreo IoT",
     "devicesOnline": "{count} dispositivos online",
     "activeAlerts": "{count} alertas activas",
-    "simulatedData": "datos simulados (Sprint 1)",
-    "liveMock": "live · mock",
-    "configureThresholds": "Configurar umbrales",
-    "linkDevice": "+ Vincular dispositivo",
+    "refresh": "Actualizar",
     "spaces": "Espacios",
     "totalCount": "{count} total",
-    "filterPlaceholder": "Filtrar A-203, LAB-22…",
+    "filterPlaceholder": "Filtrar por aula o zona…",
     "noResults": "Sin resultados para \"{query}\"",
-    "history": "Histórico",
+    "noSpaces": "Aún no hay lecturas de sensores registradas",
+    "noHistory": "Sin historial en este rango",
     "emptyState": "Selecciona un espacio para ver el detalle de sus sensores",
     "noDataOffline": "sin datos · dispositivo offline",
-    "capacity": "aforo",
+    "loadError": "No se pudieron cargar los datos de monitoreo",
     "sensors": {
       "occupancy": "Ocupación",
       "temperature": "Temperatura",
-      "humidity": "Humedad",
-      "luminosity": "Luminosidad",
-      "co2": "CO₂",
-      "energy": "Consumo"
+      "humidity": "Humedad"
+    },
+    "occupancy": {
+      "occupied": "Ocupado",
+      "free": "Libre"
+    },
+    "delta": {
+      "inRange": "en rango",
+      "alert": "fuera de umbral",
+      "noData": "sin datos"
     },
     "status": {
       "ok": "óptimo",
       "warn": "atención",
-      "danger": "crítico",
       "off": "offline"
-    },
-    "rssi": {
-      "none": "sin señal",
-      "excellent": "excelente",
-      "good": "buena",
-      "weak": "débil"
-    },
-    "weekdays": {
-      "mon": "Lun",
-      "tue": "Mar",
-      "wed": "Mié",
-      "thu": "Jue",
-      "fri": "Vie",
-      "sat": "Sáb",
-      "sun": "Dom"
     },
     "device": {
       "device": "Dispositivo",
-      "firmware": "Firmware",
-      "rssi": "RSSI",
+      "zone": "Zona",
       "lastReading": "Última lectura",
       "ago": "hace {value}"
-    },
-    "events": {
-      "title": "Eventos recientes",
-      "window": "últimas 6 h",
-      "empty": "Sin eventos registrados"
     }
   },
   "personalData": {
