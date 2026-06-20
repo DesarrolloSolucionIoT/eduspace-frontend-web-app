@@ -71,7 +71,7 @@
         "address": "Dirección"
       },
       "errors": {
-        "email": "Ingrese un email válido (ejemplo: usuario@dominio.com)",
+        "email": "Ingrese un email válido (ejemplo: usuario{'@'}dominio.com)",
         "dni": "El DNI debe tener exactamente 8 dígitos",
         "phone": "El teléfono debe tener 9 dígitos y comenzar con 9 (ej: 987654321)",
         "birthdate": "Debe ser mayor de 18 años"
@@ -256,11 +256,16 @@
     },
     "iot": {
       "sectionTitle": "Monitoreo IoT — Campus",
-      "sectionSub": "datos simulados · Sprint 1",
+      "sectionSub": "datos en vivo · Sprint 1",
       "detailedView": "Vista detallada →",
       "kpiAvgOccupancy": "Ocupación promedio",
       "vsLastWeek": "vs semana ant.",
       "kpiEnergy": "Consumo eléctrico",
+      "kpiAvgTemp": "Temperatura promedio",
+      "avgHumidity": "Humedad prom. {value}%",
+      "acrossOnline": "en {count} espacios online",
+      "alertSpaces": "{count} espacios en alerta",
+      "totalSpaces": "{count} espacios totales",
       "vsLastQuarter": "vs trim. ant.",
       "kpiOpenAlerts": "Alertas abiertas",
       "active": "activas",
@@ -279,20 +284,26 @@
       "legendOff": "sin uso",
       "activeAlerts": "Alertas activas",
       "noAlerts": "Sin alertas activas",
-      "telemetryTitle": "Telemetría agregada — últimas 24 h",
+      "telemetryTitle": "Telemetría agregada — en vivo",
+      "noTelemetry": "Sin lecturas para graficar todavía",
       "occupancy": "Ocupación",
       "temperature": "Temperatura",
-      "buildingUsageTitle": "Uso por edificio · últimos 7 días",
+      "humidity": "Humedad",
+      "buildingUsageTitle": "Uso por edificio",
       "sensorHealthTitle": "Salud de sensores",
       "onlineOffline": "{online} online · {offline} offline",
       "colDevice": "Device",
       "colSpace": "Espacio",
       "colType": "Tipo",
       "colReading": "Lectura",
-      "colUptime": "Uptime",
+      "colUptime": "Estado",
       "colTechnician": "Técnico",
       "colStatus": "Estado",
-      "recentBreakdowns": "Averías recientes"
+      "colResource": "Recurso",
+      "colDate": "Fecha",
+      "recentBreakdowns": "Averías recientes",
+      "recentReports": "Reportes recientes",
+      "noReports": "Sin reportes"
     }
   },
   "classroomSpace": {
@@ -479,7 +490,7 @@
       "lastName": "Apellido",
       "lastNamePlaceholder": "Ingrese el apellido",
       "email": "Correo Electrónico",
-      "emailPlaceholder": "ejemplo@dominio.com",
+      "emailPlaceholder": "ejemplo{'@'}dominio.com",
       "phone": "Teléfono",
       "phonePlaceholder": "987654321",
       "dni": "DNI",
@@ -494,7 +505,7 @@
       "updateTeacher": "Actualizar Docente"
     },
     "validation": {
-      "emailInvalid": "Ingrese un correo válido (ej.: usuario@dominio.com)",
+      "emailInvalid": "Ingrese un correo válido (ej.: usuario{'@'}dominio.com)",
       "dniInvalid": "El DNI debe tener exactamente 8 dígitos",
       "phoneInvalid": "El teléfono debe tener 9 dígitos y comenzar con 9"
     },
