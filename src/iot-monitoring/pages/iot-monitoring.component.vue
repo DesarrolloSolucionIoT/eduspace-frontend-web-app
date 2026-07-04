@@ -3,11 +3,20 @@ import { IotMonitoringService } from '../services/iot-monitoring.service.js';
 import { IotSpace } from '../model/iot-space.entity.js';
 import SpaceSensorCard from '../components/space-sensor-card.component.vue';
 
-// Display ranges for temperature / humidity bars. These are presentation hints
-// only — the authoritative alert decision (alertLedState) is computed by the Edge
-// API against per-zone thresholds that the platform does not expose.
+// Display ranges for temperature / humidity bars.
 const TEMP_RANGE = { min: 16, max: 30 };
 const HUM_RANGE = { min: 20, max: 90 };
+
+// Alert thresholds mirrored from the Edge API's zone config
+// (eduspace-edge-api src/shared/threshold_config.py), which is what actually
+// computes alertLedState. Keep in sync manually until an endpoint exposes them.
+const TEMP_ALERT = { min: 18, max: 27 };
+const HUM_ALERT = { min: 30, max: 60 };
+
+// Percent position of a value within a display range, for the zone bars.
+function rangePct(value, range) {
+    return ((value - range.min) / (range.max - range.min)) * 100;
+}
 
 function buildSensorMeta(t) {
     return {
@@ -26,8 +35,12 @@ function buildSensorMeta(t) {
         temperature: {
             label: t('iotMonitoring.sensors.temperature'),
             icon: 'pi pi-sun',
-            getMarkerPct(s) { return ((s.value - TEMP_RANGE.min) / (TEMP_RANGE.max - TEMP_RANGE.min)) * 100; },
-            zones: [{ color: 'warn', from: 0, to: 10 }, { color: 'ok', from: 10, to: 80 }, { color: 'warn', from: 80, to: 100 }],
+            getMarkerPct(s) { return rangePct(s.value, TEMP_RANGE); },
+            zones: [
+                { color: 'warn', from: 0, to: rangePct(TEMP_ALERT.min, TEMP_RANGE) },
+                { color: 'ok', from: rangePct(TEMP_ALERT.min, TEMP_RANGE), to: rangePct(TEMP_ALERT.max, TEMP_RANGE) },
+                { color: 'warn', from: rangePct(TEMP_ALERT.max, TEMP_RANGE), to: 100 },
+            ],
             minLabel: `${TEMP_RANGE.min} °C`,
             maxLabel: () => `${TEMP_RANGE.max} °C`,
             formatValue: (s) => s.value !== null ? s.value.toFixed(1) : '—',
@@ -36,8 +49,12 @@ function buildSensorMeta(t) {
         humidity: {
             label: t('iotMonitoring.sensors.humidity'),
             icon: 'pi pi-cloud',
-            getMarkerPct(s) { return ((s.value - HUM_RANGE.min) / (HUM_RANGE.max - HUM_RANGE.min)) * 100; },
-            zones: [{ color: 'warn', from: 0, to: 10 }, { color: 'ok', from: 10, to: 85 }, { color: 'warn', from: 85, to: 100 }],
+            getMarkerPct(s) { return rangePct(s.value, HUM_RANGE); },
+            zones: [
+                { color: 'warn', from: 0, to: rangePct(HUM_ALERT.min, HUM_RANGE) },
+                { color: 'ok', from: rangePct(HUM_ALERT.min, HUM_RANGE), to: rangePct(HUM_ALERT.max, HUM_RANGE) },
+                { color: 'warn', from: rangePct(HUM_ALERT.max, HUM_RANGE), to: 100 },
+            ],
             minLabel: `${HUM_RANGE.min}%`,
             maxLabel: () => `${HUM_RANGE.max}%`,
             formatValue: (s) => s.value !== null ? `${Math.round(s.value)}` : '—',
@@ -139,9 +156,15 @@ export default {
             if (!this.selectedSpace) return [];
             const s = this.selectedSpace;
             const meta = this.sensorMeta;
-            // alertLedState is a combined temp/humidity breach flag; surface it on
-            // both environmental sensors since the backend does not attribute it.
-            const envStatus = s.status === 'warn' ? 'warn' : (s.status === 'off' ? 'neutral' : 'ok');
+            // alertLedState is a combined temp/humidity breach flag, so each
+            // sensor's status is attributed locally against the mirrored edge
+            // thresholds; alertLedState still drives the space-level status.
+            const sensorStatus = (value, alert) => {
+                if (s.status === 'off' || value === null || value === undefined) return 'neutral';
+                return (value < alert.min || value > alert.max) ? 'warn' : 'ok';
+            };
+            const tempStatus = sensorStatus(s.temperature, TEMP_ALERT);
+            const humStatus = sensorStatus(s.humidity, HUM_ALERT);
             const data = {
                 occupancy: {
                     value: s.occupancyPresent === null ? null : (s.occupancyPresent ? 1 : 0),
@@ -152,13 +175,13 @@ export default {
                 },
                 temperature: {
                     value: s.temperature,
-                    delta: this.deltaLabel(s.temperature, envStatus),
-                    deltaStatus: envStatus,
+                    delta: this.deltaLabel(s.temperature, tempStatus),
+                    deltaStatus: tempStatus,
                 },
                 humidity: {
                     value: s.humidity,
-                    delta: this.deltaLabel(s.humidity, envStatus),
-                    deltaStatus: envStatus,
+                    delta: this.deltaLabel(s.humidity, humStatus),
+                    deltaStatus: humStatus,
                 },
             };
             return SENSOR_ORDER.map(key => ({ key, meta: meta[key], data: data[key] }));
