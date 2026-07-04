@@ -70,8 +70,15 @@ function metricValue(tab, point) {
     return 0;
 }
 
-function formatPointLabel(iso, windowMs) {
-    const d = new Date(iso);
+// Cap the number of plotted points so wide windows (7d of readings every few
+// seconds) stay responsive; readings are averaged into time buckets.
+const MAX_CHART_POINTS = 300;
+// A gap larger than this breaks the line, so separate sensing sessions are not
+// bridged by a misleading straight segment.
+const GAP_BREAK_MS = 15 * 60e3;
+
+function formatPointLabel(ms, windowMs) {
+    const d = new Date(ms);
     if (windowMs >= 7 * 24 * 3600e3) {
         return d.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit' });
     }
@@ -92,6 +99,7 @@ export default {
             activeTab: 'temperature',
             activeRange: RANGE_OPTIONS[1].value,
             rangeOptions: RANGE_OPTIONS,
+            nowTick: Date.now(),
             loading: false,
             loadError: null,
         };
@@ -151,30 +159,65 @@ export default {
             return SENSOR_ORDER.map(key => ({ key, meta: meta[key], data: data[key] }));
         },
 
+        // Window anchored to "now" (refreshed on each load), so the selected
+        // range means real elapsed time: with little recent data most of the
+        // window renders empty instead of stretching the points to full width.
+        windowBounds() {
+            const to = Math.max(this.nowTick, Date.now());
+            return { from: to - this.activeRange, to };
+        },
+
         windowedHistory() {
             if (!this.selectedSpace?.history?.length) return [];
-            const history = this.selectedSpace.history.filter(p => p.recordedAt);
-            if (!history.length) return [];
-            // Anchor the window to the most recent reading so the latest data is
-            // always visible even if it is not "now".
-            const anchor = new Date(history[history.length - 1].recordedAt).getTime();
-            const from = anchor - this.activeRange;
-            return history.filter(p => new Date(p.recordedAt).getTime() >= from);
+            const { from, to } = this.windowBounds;
+            return this.selectedSpace.history
+                .filter(p => p.recordedAt)
+                .map(p => ({ ...p, _t: new Date(p.recordedAt).getTime() }))
+                .filter(p => p._t >= from && p._t <= to);
+        },
+
+        chartPoints() {
+            const points = this.windowedHistory;
+            if (!points.length) return [];
+            const tab = this.activeTab;
+            const bucketMs = Math.max(1000, Math.floor(this.activeRange / MAX_CHART_POINTS));
+            const buckets = new Map();
+            for (const p of points) {
+                const v = metricValue(tab, p);
+                if (v === null || v === undefined) continue;
+                const key = Math.floor(p._t / bucketMs);
+                const b = buckets.get(key);
+                if (b) { b.sum += v; b.count += 1; b.max = Math.max(b.max, v); }
+                else buckets.set(key, { t: key * bucketMs + bucketMs / 2, sum: v, count: 1, max: v });
+            }
+            const series = [...buckets.values()]
+                .sort((a, b) => a.t - b.t)
+                // Occupancy buckets report "was there presence", not an average.
+                .map(b => ({ x: b.t, y: tab === 'occupancy' ? b.max : b.sum / b.count }));
+            // Adjacent buckets sit bucketMs apart, so the break threshold must
+            // scale with the bucket size on wide windows.
+            const gapMs = Math.max(GAP_BREAK_MS, 2 * bucketMs);
+            const out = [];
+            for (let i = 0; i < series.length; i++) {
+                if (i > 0 && series[i].x - series[i - 1].x > gapMs) {
+                    out.push({ x: (series[i - 1].x + series[i].x) / 2, y: null });
+                }
+                out.push(series[i]);
+            }
+            return out;
         },
 
         chartData() {
-            const points = this.windowedHistory;
-            if (!points.length) return { labels: [], datasets: [] };
             const tab = this.activeTab;
             const tabObj = this.chartTabs.find(t => t.key === tab) || this.chartTabs[0];
             return {
-                labels: points.map(p => formatPointLabel(p.recordedAt, this.activeRange)),
                 datasets: [{
                     label: tabObj.label,
-                    data: points.map(p => metricValue(tab, p)),
+                    data: this.chartPoints,
                     borderColor: tabObj.color,
                     backgroundColor: tabObj.color + '22',
                     fill: true,
+                    spanGaps: false,
                     tension: tab === 'occupancy' ? 0 : 0.4,
                     stepped: tab === 'occupancy',
                     pointRadius: 0,
@@ -186,6 +229,9 @@ export default {
 
         chartOptions() {
             const tabObj = this.chartTabs.find(t => t.key === this.activeTab) || this.chartTabs[0];
+            const { from, to } = this.windowBounds;
+            const windowMs = this.activeRange;
+            const isOccupancy = this.activeTab === 'occupancy';
             return {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -193,16 +239,27 @@ export default {
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        mode: 'index',
+                        mode: 'nearest',
+                        axis: 'x',
                         intersect: false,
                         callbacks: {
-                            title: (items) => items[0]?.label || '',
-                            label: (item) => ` ${tabObj.label}: ${item.raw}`,
+                            title: (items) => items[0]
+                                ? new Date(items[0].parsed.x).toLocaleString('es-PE', { hour12: false })
+                                : '',
+                            label: (item) => item.parsed.y === null
+                                ? ''
+                                : ` ${tabObj.label}: ${Math.round(item.parsed.y * 10) / 10}`,
                         },
                     },
                 },
                 scales: {
                     x: {
+                        // Linear time axis pinned to the selected window, so
+                        // switching 1h/8h/24h/7d visibly rescales the chart and
+                        // stretches sparse data over the real elapsed time.
+                        type: 'linear',
+                        min: from,
+                        max: to,
                         grid: { color: '#f3f4f6' },
                         ticks: {
                             font: { family: 'monospace', size: 10 },
@@ -210,6 +267,7 @@ export default {
                             maxTicksLimit: 9,
                             maxRotation: 0,
                             autoSkip: true,
+                            callback: (value) => formatPointLabel(value, windowMs),
                         },
                     },
                     y: {
@@ -217,7 +275,9 @@ export default {
                         ticks: {
                             font: { family: 'monospace', size: 10 },
                             color: '#9ca3af',
+                            ...(isOccupancy ? { stepSize: 1 } : {}),
                         },
+                        ...(isOccupancy ? { min: 0, max: 1 } : {}),
                     },
                 },
             };
@@ -233,6 +293,7 @@ export default {
         async loadSpaces() {
             this.loading = true;
             this.loadError = null;
+            this.nowTick = Date.now();
             try {
                 const response = await this.service.getSpaces();
                 this.spaces = (response.data || []).map(raw => new IotSpace(raw));
@@ -407,7 +468,7 @@ export default {
           <!-- Gráfico interactivo (Chart.js via pv-chart) -->
           <div class="chart-area">
             <pv-chart
-              v-if="chartData.labels.length"
+              v-if="selectedSpace.history && selectedSpace.history.length"
               type="line"
               :data="chartData"
               :options="chartOptions"
