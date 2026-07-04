@@ -904,6 +904,9 @@ export default {
   border-radius: 12px;
   padding: 18px 20px 12px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  /* Allow the card to shrink below the sparkline canvas' intrinsic 300px
+     width; otherwise the 4-column strip overflows the viewport. */
+  min-width: 0;
 }
 .kpi-label  { font-size: 12px; color: #6b7280; margin-bottom: 6px; }
 .kpi-value  { font-size: 28px; font-weight: 700; font-family: monospace; color: #111827; line-height: 1.1; }
@@ -913,7 +916,8 @@ export default {
 .kpi-up     { color: #16a34a; }
 .kpi-down   { color: #2563eb; }
 .kpi-muted  { color: #9ca3af; font-weight: 400; }
-.kpi-spark  { margin-top: 8px; }
+.kpi-spark  { margin-top: 8px; min-width: 0; overflow: hidden; }
+.kpi-spark :deep(canvas) { max-width: 100%; }
 
 /* Overview row: floor map + alerts */
 .overview-row {
