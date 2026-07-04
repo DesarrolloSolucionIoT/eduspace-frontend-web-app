@@ -823,6 +823,10 @@ export default {
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  /* Reserve the scrollbar space on both sides so the inner cards stay
+     visually centered whether or not the card scrolls. */
+  scrollbar-gutter: stable both-edges;
+  scrollbar-width: thin;
 }
 .scrollable-card:hover { transform: translateY(-4px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); }
 .teachers-card { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); }
@@ -834,8 +838,10 @@ export default {
 .meet-card .header-icon     { color: #388e3c; }
 .reports-card .header-icon  { color: #7b1fa2; }
 .card-title { margin: 0; font-size: 20px; font-weight: 600; color: #333; }
-.teacher-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; padding: 16px; }
-.cards-grid   { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; padding: 16px; }
+/* min(Npx, 100%) keeps the tracks from overflowing the card when the
+   available width is below the ideal column size. */
+.teacher-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: 16px; padding: 16px; }
+.cards-grid   { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 16px; padding: 16px; }
 .empty-state  { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: #666; }
 .empty-icon   { font-size: 48px; color: #bbb; margin-bottom: 16px; }
 .empty-state p { font-size: 16px; margin: 0; }
