@@ -56,6 +56,10 @@ function buildChartTabs(t) {
     ];
 }
 
+// Auto-refresh cadence. The edge pushes every ~5s, but each refresh re-fetches
+// the full (unpaginated) reading list, so 15s balances freshness and load.
+const REFRESH_INTERVAL_MS = 15e3;
+
 const RANGE_OPTIONS = [
     { label: '1h', value: 3600e3 },
     { label: '8h', value: 8 * 3600e3 },
@@ -102,6 +106,7 @@ export default {
             nowTick: Date.now(),
             loading: false,
             loadError: null,
+            refreshTimer: null,
         };
     },
 
@@ -290,8 +295,8 @@ export default {
     },
 
     methods: {
-        async loadSpaces() {
-            this.loading = true;
+        async loadSpaces({ silent = false } = {}) {
+            if (!silent) this.loading = true;
             this.loadError = null;
             this.nowTick = Date.now();
             try {
@@ -336,6 +341,15 @@ export default {
     async mounted() {
         this.service = new IotMonitoringService();
         await this.loadSpaces();
+        this.refreshTimer = setInterval(() => {
+            // Skip when the tab is hidden or a (manual) load is in flight.
+            if (document.hidden || this.loading) return;
+            this.loadSpaces({ silent: true });
+        }, REFRESH_INTERVAL_MS);
+    },
+
+    beforeUnmount() {
+        clearInterval(this.refreshTimer);
     },
 };
 </script>
