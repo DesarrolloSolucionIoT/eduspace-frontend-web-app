@@ -3,11 +3,20 @@ import { IotMonitoringService } from '../services/iot-monitoring.service.js';
 import { IotSpace } from '../model/iot-space.entity.js';
 import SpaceSensorCard from '../components/space-sensor-card.component.vue';
 
-// Display ranges for temperature / humidity bars. These are presentation hints
-// only — the authoritative alert decision (alertLedState) is computed by the Edge
-// API against per-zone thresholds that the platform does not expose.
+// Display ranges for temperature / humidity bars.
 const TEMP_RANGE = { min: 16, max: 30 };
 const HUM_RANGE = { min: 20, max: 90 };
+
+// Alert thresholds mirrored from the Edge API's zone config
+// (eduspace-edge-api src/shared/threshold_config.py), which is what actually
+// computes alertLedState. Keep in sync manually until an endpoint exposes them.
+const TEMP_ALERT = { min: 18, max: 27 };
+const HUM_ALERT = { min: 30, max: 60 };
+
+// Percent position of a value within a display range, for the zone bars.
+function rangePct(value, range) {
+    return ((value - range.min) / (range.max - range.min)) * 100;
+}
 
 function buildSensorMeta(t) {
     return {
@@ -26,8 +35,12 @@ function buildSensorMeta(t) {
         temperature: {
             label: t('iotMonitoring.sensors.temperature'),
             icon: 'pi pi-sun',
-            getMarkerPct(s) { return ((s.value - TEMP_RANGE.min) / (TEMP_RANGE.max - TEMP_RANGE.min)) * 100; },
-            zones: [{ color: 'warn', from: 0, to: 10 }, { color: 'ok', from: 10, to: 80 }, { color: 'warn', from: 80, to: 100 }],
+            getMarkerPct(s) { return rangePct(s.value, TEMP_RANGE); },
+            zones: [
+                { color: 'warn', from: 0, to: rangePct(TEMP_ALERT.min, TEMP_RANGE) },
+                { color: 'ok', from: rangePct(TEMP_ALERT.min, TEMP_RANGE), to: rangePct(TEMP_ALERT.max, TEMP_RANGE) },
+                { color: 'warn', from: rangePct(TEMP_ALERT.max, TEMP_RANGE), to: 100 },
+            ],
             minLabel: `${TEMP_RANGE.min} °C`,
             maxLabel: () => `${TEMP_RANGE.max} °C`,
             formatValue: (s) => s.value !== null ? s.value.toFixed(1) : '—',
@@ -36,8 +49,12 @@ function buildSensorMeta(t) {
         humidity: {
             label: t('iotMonitoring.sensors.humidity'),
             icon: 'pi pi-cloud',
-            getMarkerPct(s) { return ((s.value - HUM_RANGE.min) / (HUM_RANGE.max - HUM_RANGE.min)) * 100; },
-            zones: [{ color: 'warn', from: 0, to: 10 }, { color: 'ok', from: 10, to: 85 }, { color: 'warn', from: 85, to: 100 }],
+            getMarkerPct(s) { return rangePct(s.value, HUM_RANGE); },
+            zones: [
+                { color: 'warn', from: 0, to: rangePct(HUM_ALERT.min, HUM_RANGE) },
+                { color: 'ok', from: rangePct(HUM_ALERT.min, HUM_RANGE), to: rangePct(HUM_ALERT.max, HUM_RANGE) },
+                { color: 'warn', from: rangePct(HUM_ALERT.max, HUM_RANGE), to: 100 },
+            ],
             minLabel: `${HUM_RANGE.min}%`,
             maxLabel: () => `${HUM_RANGE.max}%`,
             formatValue: (s) => s.value !== null ? `${Math.round(s.value)}` : '—',
@@ -56,6 +73,10 @@ function buildChartTabs(t) {
     ];
 }
 
+// Auto-refresh cadence. The edge pushes every ~5s, but each refresh re-fetches
+// the full (unpaginated) reading list, so 15s balances freshness and load.
+const REFRESH_INTERVAL_MS = 15e3;
+
 const RANGE_OPTIONS = [
     { label: '1h', value: 3600e3 },
     { label: '8h', value: 8 * 3600e3 },
@@ -70,8 +91,15 @@ function metricValue(tab, point) {
     return 0;
 }
 
-function formatPointLabel(iso, windowMs) {
-    const d = new Date(iso);
+// Cap the number of plotted points so wide windows (7d of readings every few
+// seconds) stay responsive; readings are averaged into time buckets.
+const MAX_CHART_POINTS = 300;
+// A gap larger than this breaks the line, so separate sensing sessions are not
+// bridged by a misleading straight segment.
+const GAP_BREAK_MS = 15 * 60e3;
+
+function formatPointLabel(ms, windowMs) {
+    const d = new Date(ms);
     if (windowMs >= 7 * 24 * 3600e3) {
         return d.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit' });
     }
@@ -92,8 +120,10 @@ export default {
             activeTab: 'temperature',
             activeRange: RANGE_OPTIONS[1].value,
             rangeOptions: RANGE_OPTIONS,
+            nowTick: Date.now(),
             loading: false,
             loadError: null,
+            refreshTimer: null,
         };
     },
 
@@ -126,9 +156,15 @@ export default {
             if (!this.selectedSpace) return [];
             const s = this.selectedSpace;
             const meta = this.sensorMeta;
-            // alertLedState is a combined temp/humidity breach flag; surface it on
-            // both environmental sensors since the backend does not attribute it.
-            const envStatus = s.status === 'warn' ? 'warn' : (s.status === 'off' ? 'neutral' : 'ok');
+            // alertLedState is a combined temp/humidity breach flag, so each
+            // sensor's status is attributed locally against the mirrored edge
+            // thresholds; alertLedState still drives the space-level status.
+            const sensorStatus = (value, alert) => {
+                if (s.status === 'off' || value === null || value === undefined) return 'neutral';
+                return (value < alert.min || value > alert.max) ? 'warn' : 'ok';
+            };
+            const tempStatus = sensorStatus(s.temperature, TEMP_ALERT);
+            const humStatus = sensorStatus(s.humidity, HUM_ALERT);
             const data = {
                 occupancy: {
                     value: s.occupancyPresent === null ? null : (s.occupancyPresent ? 1 : 0),
@@ -139,42 +175,77 @@ export default {
                 },
                 temperature: {
                     value: s.temperature,
-                    delta: this.deltaLabel(s.temperature, envStatus),
-                    deltaStatus: envStatus,
+                    delta: this.deltaLabel(s.temperature, tempStatus),
+                    deltaStatus: tempStatus,
                 },
                 humidity: {
                     value: s.humidity,
-                    delta: this.deltaLabel(s.humidity, envStatus),
-                    deltaStatus: envStatus,
+                    delta: this.deltaLabel(s.humidity, humStatus),
+                    deltaStatus: humStatus,
                 },
             };
             return SENSOR_ORDER.map(key => ({ key, meta: meta[key], data: data[key] }));
         },
 
+        // Window anchored to "now" (refreshed on each load), so the selected
+        // range means real elapsed time: with little recent data most of the
+        // window renders empty instead of stretching the points to full width.
+        windowBounds() {
+            const to = Math.max(this.nowTick, Date.now());
+            return { from: to - this.activeRange, to };
+        },
+
         windowedHistory() {
             if (!this.selectedSpace?.history?.length) return [];
-            const history = this.selectedSpace.history.filter(p => p.recordedAt);
-            if (!history.length) return [];
-            // Anchor the window to the most recent reading so the latest data is
-            // always visible even if it is not "now".
-            const anchor = new Date(history[history.length - 1].recordedAt).getTime();
-            const from = anchor - this.activeRange;
-            return history.filter(p => new Date(p.recordedAt).getTime() >= from);
+            const { from, to } = this.windowBounds;
+            return this.selectedSpace.history
+                .filter(p => p.recordedAt)
+                .map(p => ({ ...p, _t: new Date(p.recordedAt).getTime() }))
+                .filter(p => p._t >= from && p._t <= to);
+        },
+
+        chartPoints() {
+            const points = this.windowedHistory;
+            if (!points.length) return [];
+            const tab = this.activeTab;
+            const bucketMs = Math.max(1000, Math.floor(this.activeRange / MAX_CHART_POINTS));
+            const buckets = new Map();
+            for (const p of points) {
+                const v = metricValue(tab, p);
+                if (v === null || v === undefined) continue;
+                const key = Math.floor(p._t / bucketMs);
+                const b = buckets.get(key);
+                if (b) { b.sum += v; b.count += 1; b.max = Math.max(b.max, v); }
+                else buckets.set(key, { t: key * bucketMs + bucketMs / 2, sum: v, count: 1, max: v });
+            }
+            const series = [...buckets.values()]
+                .sort((a, b) => a.t - b.t)
+                // Occupancy buckets report "was there presence", not an average.
+                .map(b => ({ x: b.t, y: tab === 'occupancy' ? b.max : b.sum / b.count }));
+            // Adjacent buckets sit bucketMs apart, so the break threshold must
+            // scale with the bucket size on wide windows.
+            const gapMs = Math.max(GAP_BREAK_MS, 2 * bucketMs);
+            const out = [];
+            for (let i = 0; i < series.length; i++) {
+                if (i > 0 && series[i].x - series[i - 1].x > gapMs) {
+                    out.push({ x: (series[i - 1].x + series[i].x) / 2, y: null });
+                }
+                out.push(series[i]);
+            }
+            return out;
         },
 
         chartData() {
-            const points = this.windowedHistory;
-            if (!points.length) return { labels: [], datasets: [] };
             const tab = this.activeTab;
             const tabObj = this.chartTabs.find(t => t.key === tab) || this.chartTabs[0];
             return {
-                labels: points.map(p => formatPointLabel(p.recordedAt, this.activeRange)),
                 datasets: [{
                     label: tabObj.label,
-                    data: points.map(p => metricValue(tab, p)),
+                    data: this.chartPoints,
                     borderColor: tabObj.color,
                     backgroundColor: tabObj.color + '22',
                     fill: true,
+                    spanGaps: false,
                     tension: tab === 'occupancy' ? 0 : 0.4,
                     stepped: tab === 'occupancy',
                     pointRadius: 0,
@@ -186,6 +257,9 @@ export default {
 
         chartOptions() {
             const tabObj = this.chartTabs.find(t => t.key === this.activeTab) || this.chartTabs[0];
+            const { from, to } = this.windowBounds;
+            const windowMs = this.activeRange;
+            const isOccupancy = this.activeTab === 'occupancy';
             return {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -193,16 +267,27 @@ export default {
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        mode: 'index',
+                        mode: 'nearest',
+                        axis: 'x',
                         intersect: false,
                         callbacks: {
-                            title: (items) => items[0]?.label || '',
-                            label: (item) => ` ${tabObj.label}: ${item.raw}`,
+                            title: (items) => items[0]
+                                ? new Date(items[0].parsed.x).toLocaleString('es-PE', { hour12: false })
+                                : '',
+                            label: (item) => item.parsed.y === null
+                                ? ''
+                                : ` ${tabObj.label}: ${Math.round(item.parsed.y * 10) / 10}`,
                         },
                     },
                 },
                 scales: {
                     x: {
+                        // Linear time axis pinned to the selected window, so
+                        // switching 1h/8h/24h/7d visibly rescales the chart and
+                        // stretches sparse data over the real elapsed time.
+                        type: 'linear',
+                        min: from,
+                        max: to,
                         grid: { color: '#f3f4f6' },
                         ticks: {
                             font: { family: 'monospace', size: 10 },
@@ -210,6 +295,7 @@ export default {
                             maxTicksLimit: 9,
                             maxRotation: 0,
                             autoSkip: true,
+                            callback: (value) => formatPointLabel(value, windowMs),
                         },
                     },
                     y: {
@@ -217,7 +303,9 @@ export default {
                         ticks: {
                             font: { family: 'monospace', size: 10 },
                             color: '#9ca3af',
+                            ...(isOccupancy ? { stepSize: 1 } : {}),
                         },
+                        ...(isOccupancy ? { min: 0, max: 1 } : {}),
                     },
                 },
             };
@@ -230,9 +318,10 @@ export default {
     },
 
     methods: {
-        async loadSpaces() {
-            this.loading = true;
+        async loadSpaces({ silent = false } = {}) {
+            if (!silent) this.loading = true;
             this.loadError = null;
+            this.nowTick = Date.now();
             try {
                 const response = await this.service.getSpaces();
                 this.spaces = (response.data || []).map(raw => new IotSpace(raw));
@@ -275,6 +364,15 @@ export default {
     async mounted() {
         this.service = new IotMonitoringService();
         await this.loadSpaces();
+        this.refreshTimer = setInterval(() => {
+            // Skip when the tab is hidden or a (manual) load is in flight.
+            if (document.hidden || this.loading) return;
+            this.loadSpaces({ silent: true });
+        }, REFRESH_INTERVAL_MS);
+    },
+
+    beforeUnmount() {
+        clearInterval(this.refreshTimer);
     },
 };
 </script>
@@ -407,7 +505,7 @@ export default {
           <!-- Gráfico interactivo (Chart.js via pv-chart) -->
           <div class="chart-area">
             <pv-chart
-              v-if="chartData.labels.length"
+              v-if="selectedSpace.history && selectedSpace.history.length"
               type="line"
               :data="chartData"
               :options="chartOptions"
