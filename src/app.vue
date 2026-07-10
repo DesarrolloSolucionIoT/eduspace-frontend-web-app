@@ -28,9 +28,6 @@
       }"
     >
       <div class="sidenav admin-sidenav">
-        <div class="sidenav-top-bar">
-          <language-switcher />
-        </div>
         <div class="user-info">
           <pv-avatar
             :image="DefaultAvatar"
@@ -67,6 +64,9 @@
         </div>
 
         <div class="footer-section">
+          <div class="sidenav-lang-switcher">
+            <language-switcher />
+          </div>
           <div class="logout-container">
             <pv-button
               class="pv-button log-out logout-hover"
@@ -262,10 +262,12 @@ export default {
   );
 }
 
-.sidenav-top-bar {
+.sidenav-lang-switcher {
   display: flex;
-  justify-content: flex-end;
-  padding-bottom: 8px;
+  justify-content: flex-start;
+  margin-bottom: 12px;
+  transform: scale(0.8);
+  transform-origin: left center;
 }
 
 .user-info {
@@ -307,6 +309,7 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   padding: 20px;
+  padding-top: 76px;
 }
 
 .drawer-content {
