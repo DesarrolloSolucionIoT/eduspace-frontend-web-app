@@ -3,11 +3,17 @@ export default {
   name: "register-form",
   props: ["onSubmit"],
   data() {
+    const today = new Date();
+    const defaultAdultBirthdate = new Date(
+      today.getFullYear() - 18,
+      today.getMonth(),
+      today.getDate()
+    );
     return {
       formData: {
         firstName: "",
         lastName: "",
-        birthdate: this.getDefaultAdultBirthdate(),
+        birthdate: defaultAdultBirthdate,
         phone: "",
         email: "",
         password: "",
@@ -24,14 +30,6 @@ export default {
     };
   },
   methods: {
-    getDefaultAdultBirthdate() {
-      const today = new Date();
-      return new Date(
-        today.getFullYear() - 18,
-        today.getMonth(),
-        today.getDate()
-      );
-    },
     validateEmail(email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email);
