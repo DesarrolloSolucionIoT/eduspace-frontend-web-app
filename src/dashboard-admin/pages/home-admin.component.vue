@@ -11,18 +11,17 @@ import {ClassroomService} from "../../shared/services/classroom.service.js";
 import {AdministratorsService} from "../../meeting-management/services/administrators.service.js";
 import {IotMonitoringService} from "../../iot-monitoring/services/iot-monitoring.service.js";
 
-const MOCK_BREAKDOWNS = [
-  { id: '#1487', space: 'A-206',   type: 'Proyector',   tech: 'J. Vega (T-3)',  status: 'danger', statusLabel: 'abierto',       sla: '02:18' },
-  { id: '#1486', space: 'LAB-22',  type: 'A/C',         tech: 'R. Salas (T-1)', status: 'warn',   statusLabel: 'en curso',       sla: '14:42' },
-  { id: '#1485', space: 'A-117',   type: 'Sensor IoT',  tech: '—',              status: 'info',   statusLabel: 'diagnosticando', sla: '08:11' },
-  { id: '#1484', space: 'Sala-J-2',type: 'Iluminación', tech: 'L. Pino (T-2)', status: 'ok',     statusLabel: 'resuelto',       sla: '06:54' },
-  { id: '#1483', space: 'A-209',   type: 'Cerradura',   tech: 'J. Vega (T-3)', status: 'ok',     statusLabel: 'resuelto',       sla: '04:02' },
-];
+const TELEMETRY_BUCKETS = 48;
 
-function makeSpark(n, lo, hi, phase) {
-  return Array.from({ length: n }, (_, i) =>
-    lo + (hi - lo) * (0.5 + 0.5 * Math.sin(i / (phase || 3)) + 0.15 * Math.sin(i / 1.7))
-  );
+const avg = (arr) => (arr.length ? arr.reduce((a, c) => a + c, 0) / arr.length : null);
+
+// Map a backend report status (free text) to one of our pill color buckets.
+function reportStatusToPill(status) {
+  const s = String(status || '').toLowerCase();
+  if (/(resol|cerr|clos|done|complet)/.test(s)) return 'ok';
+  if (/(proces|progres|curso|asign|atend)/.test(s)) return 'warn';
+  if (/(pend|abier|open|nuev|new)/.test(s)) return 'danger';
+  return 'info';
 }
 
 export default {
@@ -49,7 +48,6 @@ export default {
       iotSpaces: [],
       iotService: null,
       floorTypeFilter: 'all',
-      iotBreakdowns: MOCK_BREAKDOWNS,
     };
   },
   computed: {
@@ -67,100 +65,170 @@ export default {
     iotAlertCount() {
       return this.iotSpaces.filter(s => s.status === 'warn' || s.status === 'danger').length;
     },
+    // % of online spaces currently reporting presence (occupancyPresent === true).
     iotAvgOccupancy() {
       const online = this.iotSpaces.filter(
-        s => s.status !== 'off' && s.sensors?.occupancy?.capacity && s.sensors.occupancy.value !== null
+        s => s.status !== 'off' && s.occupancyPresent !== null && s.occupancyPresent !== undefined
       );
       if (!online.length) return '—';
-      const sum = online.reduce((acc, s) => {
-        const { value, capacity } = s.sensors.occupancy;
-        return acc + (value / capacity) * 100;
-      }, 0);
-      return (sum / online.length).toFixed(1);
+      const occupied = online.filter(s => s.occupancyPresent).length;
+      return ((occupied / online.length) * 100).toFixed(0);
+    },
+    // Average temperature (°C) across online spaces with a reading.
+    iotAvgTemp() {
+      const temps = this.iotSpaces
+        .filter(s => s.status !== 'off' && s.temperature !== null && s.temperature !== undefined)
+        .map(s => s.temperature);
+      return temps.length ? avg(temps).toFixed(1) : '—';
+    },
+    // Average humidity (%) across online spaces — shown as the temp KPI sub-metric.
+    iotAvgHumidity() {
+      const hums = this.iotSpaces
+        .filter(s => s.status !== 'off' && s.humidity !== null && s.humidity !== undefined)
+        .map(s => s.humidity);
+      return hums.length ? Math.round(avg(hums)) : null;
     },
     iotAlertsFeed() {
       return this.iotSpaces
         .filter(s => s.status === 'warn' || s.status === 'danger')
         .map(s => ({
-          id: s.id,
+          id: s.deviceId || s.id,
           name: s.name,
           status: s.status,
-          meta: s.meta,
-          event: s.events?.[0] || null,
+          meta: [
+            s.temperature !== null && s.temperature !== undefined ? `${s.temperature}°C` : null,
+            s.humidity !== null && s.humidity !== undefined ? `${Math.round(s.humidity)}%` : null,
+          ].filter(Boolean).join(' · ') || (s.zoneId || s.deviceId || ''),
+          time: s.recordedAt ? new Date(s.recordedAt).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: false }) : '—',
         }));
     },
     filteredFloorSpaces() {
       if (this.floorTypeFilter === 'all') return this.iotSpaces;
-      const prefixes = {
-        classrooms: ['A-'],
-        labs: ['LAB'],
-        common: ['Bib', 'Sala', 'POL', 'AUD'],
+      const needles = {
+        classrooms: ['aula', 'a-', 'classroom'],
+        labs: ['lab'],
+        common: ['bib', 'sala', 'pol', 'aud', 'common', 'comun'],
       }[this.floorTypeFilter] || [];
-      return this.iotSpaces.filter(s => prefixes.some(p => s.id.startsWith(p)));
+      return this.iotSpaces.filter(s => {
+        const hay = `${s.id} ${s.name}`.toLowerCase();
+        return needles.some(n => hay.includes(n));
+      });
     },
     buildingUtilization() {
       const groups = [
-        { name: 'Edif. A',     prefixes: ['A-'] },
-        { name: 'Laboratorios',prefixes: ['LAB'] },
-        { name: 'Biblioteca',  prefixes: ['Bib'] },
-        { name: 'Salas Junta', prefixes: ['Sala'] },
-        { name: 'Polideport.', prefixes: ['POL'] },
-        { name: 'Auditorio',   prefixes: ['AUD'] },
+        { name: 'Aulas',        needles: ['aula', 'a-', 'classroom'] },
+        { name: 'Laboratorios', needles: ['lab'] },
+        { name: 'Biblioteca',   needles: ['bib'] },
+        { name: 'Salas Junta',  needles: ['sala'] },
+        { name: 'Polideport.',  needles: ['pol'] },
+        { name: 'Auditorio',    needles: ['aud'] },
       ];
-      return groups.map(({ name, prefixes }) => {
-        const spaces = this.iotSpaces.filter(s => prefixes.some(p => s.id.startsWith(p)));
+      return groups.map(({ name, needles }) => {
+        const spaces = this.iotSpaces.filter(s => {
+          const hay = `${s.id} ${s.name}`.toLowerCase();
+          return needles.some(n => hay.includes(n));
+        });
         const online = spaces.filter(
-          s => s.status !== 'off' && s.sensors?.occupancy?.capacity && s.sensors.occupancy.value !== null
+          s => s.status !== 'off' && s.occupancyPresent !== null && s.occupancyPresent !== undefined
         );
         if (!online.length) return { name, pct: 0 };
-        const sum = online.reduce((acc, s) => {
-          const { value, capacity } = s.sensors.occupancy;
-          return acc + (value / capacity) * 100;
-        }, 0);
-        return { name, pct: Math.round(sum / online.length) };
-      });
+        const occupied = online.filter(s => s.occupancyPresent).length;
+        return { name, pct: Math.round((occupied / online.length) * 100) };
+      }).filter(g => this.iotSpaces.some(s => {
+        const hay = `${s.id} ${s.name}`.toLowerCase();
+        return groups.find(gr => gr.name === g.name).needles.some(n => hay.includes(n));
+      }));
     },
     iotSensorHealth() {
       return this.iotSpaces
-        .filter(s => s.deviceCode)
+        .filter(s => s.deviceId)
         .slice(0, 8)
         .map(s => ({
-          device: s.deviceCode,
-          space: s.id,
+          device: s.deviceId,
+          space: s.name,
           type: 'amb + occ',
-          reading: s.status === 'off' ? '—' : `hace ${s.lastReadingAgo}`,
-          uptime: s.status === 'off' ? '—' : (s.rssi >= -65 ? '99.6%' : s.rssi >= -70 ? '96.1%' : '93.2%'),
+          reading: s.status === 'off' || !s.recordedAt
+            ? '—'
+            : new Date(s.recordedAt).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: false }),
+          uptime: this.iotStatusLabel(s.status),
           status: s.status,
         }));
     },
+    // Real reports surfaced in the "recent reports" table (replaces the old mock).
+    iotBreakdownRows() {
+      return (this.reports || []).slice(0, 8).map((r, i) => ({
+        id: r.id != null ? `#${r.id}` : `#${i + 1}`,
+        resource: r.resourceId != null ? String(r.resourceId) : '—',
+        type: r.kindOfReport || '—',
+        status: reportStatusToPill(r.status),
+        statusLabel: r.status || '—',
+        date: r.createdAt ? this.formatDate(r.createdAt) : '—',
+      }));
+    },
+    // Aggregate every space's real history into evenly spaced time buckets so the
+    // campus-wide telemetry chart reflects actual readings, not synthetic curves.
+    iotAggregatedHistory() {
+      const pts = [];
+      for (const s of this.iotSpaces) {
+        for (const h of (s.history || [])) {
+          if (!h.recordedAt) continue;
+          const t = new Date(h.recordedAt).getTime();
+          if (Number.isNaN(t)) continue;
+          pts.push({
+            t,
+            temp: h.temperature ?? null,
+            hum: h.humidity ?? null,
+            occ: (h.occupancyPresent === null || h.occupancyPresent === undefined) ? null : (h.occupancyPresent ? 1 : 0),
+          });
+        }
+      }
+      if (!pts.length) return { labels: [], occ: [], temp: [], hum: [], hasData: false };
+
+      pts.sort((a, b) => a.t - b.t);
+      const min = pts[0].t;
+      const max = pts[pts.length - 1].t;
+      const span = Math.max(1, max - min);
+      const step = span / TELEMETRY_BUCKETS;
+      const buckets = Array.from({ length: TELEMETRY_BUCKETS }, () => ({ temp: [], hum: [], occ: [] }));
+
+      for (const p of pts) {
+        let idx = Math.floor((p.t - min) / step);
+        if (idx >= TELEMETRY_BUCKETS) idx = TELEMETRY_BUCKETS - 1;
+        if (p.temp !== null) buckets[idx].temp.push(p.temp);
+        if (p.hum !== null) buckets[idx].hum.push(p.hum);
+        if (p.occ !== null) buckets[idx].occ.push(p.occ);
+      }
+
+      const multiDay = span > 2 * 24 * 3600e3;
+      const labels = [], occ = [], temp = [], hum = [];
+      for (let i = 0; i < TELEMETRY_BUCKETS; i++) {
+        const mid = new Date(min + step * (i + 0.5));
+        labels.push(i % 8 === 0
+          ? (multiDay
+            ? mid.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit' })
+            : mid.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: false }))
+          : '');
+        const b = buckets[i];
+        const tAvg = avg(b.temp);
+        const hAvg = avg(b.hum);
+        const oAvg = avg(b.occ);
+        temp.push(tAvg === null ? null : +tAvg.toFixed(1));
+        hum.push(hAvg === null ? null : Math.round(hAvg));
+        occ.push(oAvg === null ? null : Math.round(oAvg * 100));
+      }
+      return { labels, occ, temp, hum, hasData: true };
+    },
+    iotHasTelemetry() {
+      return this.iotAggregatedHistory.hasData;
+    },
     iotTelemetryData() {
-      const N = 96;
-      const labels = Array.from({ length: N }, (_, i) => {
-        const h = Math.floor(i / 4);
-        const m = (i % 4) * 15;
-        return i % 16 === 0 ? `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}` : '';
-      });
-      const s1 = Array.from({ length: N }, (_, i) => {
-        const t = i / N;
-        let v = 0;
-        if (t >= 0.29 && t < 0.46) v += 80 * Math.sin((t - 0.29) / 0.17 * Math.PI);
-        if (t >= 0.54 && t < 0.71) v += 100 * Math.sin((t - 0.54) / 0.17 * Math.PI);
-        if (t >= 0.75 && t < 0.875) v += 68 * Math.sin((t - 0.75) / 0.125 * Math.PI);
-        v += 1.5 * Math.sin(i / 2.8);
-        return Math.max(0, Math.round(v));
-      });
-      const s2 = Array.from({ length: N }, (_, i) =>
-        +(19 + 6 * Math.sin(i / 10) + (i > 40 && i < 70 ? 4 : 0)).toFixed(1)
-      );
-      const s3 = Array.from({ length: N }, (_, i) =>
-        Math.round(500 + 600 * Math.max(0, Math.sin((i - 22) / 14)))
-      );
+      const { labels, occ, temp, hum } = this.iotAggregatedHistory;
       return {
         labels,
         datasets: [
-          { label: 'Ocupación (%)', data: s1, borderColor: '#6366f1', backgroundColor: '#6366f122', fill: true, tension: 0.4, pointRadius: 0, borderWidth: 1.8 },
-          { label: 'Temperatura (°C)', data: s2, borderColor: '#38bdf8', backgroundColor: 'transparent', fill: false, tension: 0.4, pointRadius: 0, borderWidth: 1.8 },
-          { label: 'CO₂ (ppm)', data: s3, borderColor: '#f59e0b', backgroundColor: 'transparent', fill: false, tension: 0.4, pointRadius: 0, borderWidth: 1.8 },
+          { label: 'Ocupación (%)', data: occ, borderColor: '#6366f1', backgroundColor: '#6366f122', fill: true, tension: 0.4, pointRadius: 0, borderWidth: 1.8, spanGaps: true },
+          { label: 'Temperatura (°C)', data: temp, borderColor: '#38bdf8', backgroundColor: 'transparent', fill: false, tension: 0.4, pointRadius: 0, borderWidth: 1.8, spanGaps: true },
+          { label: 'Humedad (%)', data: hum, borderColor: '#a78bfa', backgroundColor: 'transparent', fill: false, tension: 0.4, pointRadius: 0, borderWidth: 1.8, spanGaps: true },
         ],
       };
     },
@@ -203,14 +271,19 @@ export default {
       };
     },
     kpiSparkData() {
-      const makeDs = (values, color) => ({
-        labels: values.map((_, i) => i),
-        datasets: [{ data: values, borderColor: color, backgroundColor: 'transparent', tension: 0.4, borderWidth: 1.5 }],
-      });
+      const makeDs = (values, color) => {
+        const clean = values.filter(v => v !== null && v !== undefined);
+        return {
+          labels: clean.map((_, i) => i),
+          datasets: [{ data: clean, borderColor: color, backgroundColor: 'transparent', tension: 0.4, borderWidth: 1.5, spanGaps: true }],
+        };
+      };
+      const { occ, temp, hum } = this.iotAggregatedHistory;
       return [
-        makeDs(makeSpark(28, 50, 80, 4), '#6366f1'),
-        makeDs(makeSpark(28, 2, 9, 3), '#f59e0b'),
-        makeDs(makeSpark(28, 8, 18, 4).map((v, i) => v - i * 0.05), '#22c55e'),
+        makeDs(occ, '#6366f1'),
+        makeDs(temp, '#38bdf8'),
+        makeDs(hum, '#f59e0b'),
+        makeDs(temp, '#22c55e'),
       ];
     },
   },
@@ -479,25 +552,36 @@ export default {
       <div class="kpi-card">
         <div class="kpi-label">{{ $t('dashboardAdmin.iot.kpiAvgOccupancy') }}</div>
         <div class="kpi-value">{{ iotAvgOccupancy }}<span class="kpi-unit">%</span></div>
-        <div class="kpi-delta kpi-up">▲ 4.2 pp <span class="kpi-muted">{{ $t('dashboardAdmin.iot.vsLastWeek') }}</span></div>
+        <div class="kpi-delta kpi-muted">{{ $t('dashboardAdmin.iot.acrossOnline', { count: iotOnlineCount }) }}</div>
         <div class="kpi-spark">
           <pv-chart type="line" :data="kpiSparkData[0]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
         </div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">{{ $t('dashboardAdmin.iot.kpiOpenAlerts') }}</div>
-        <div class="kpi-value kpi-warn">{{ iotAlertCount }}<span class="kpi-unit">{{ $t('dashboardAdmin.iot.active') }}</span></div>
-        <div class="kpi-delta" style="color: #f59e0b;">▲ 2 <span class="kpi-muted">{{ $t('dashboardAdmin.iot.last24h') }}</span></div>
+        <div class="kpi-label">{{ $t('dashboardAdmin.iot.kpiAvgTemp') }}</div>
+        <div class="kpi-value">{{ iotAvgTemp }}<span class="kpi-unit">°C</span></div>
+        <div class="kpi-delta kpi-muted">
+          <template v-if="iotAvgHumidity !== null">{{ $t('dashboardAdmin.iot.avgHumidity', { value: iotAvgHumidity }) }}</template>
+          <template v-else>—</template>
+        </div>
         <div class="kpi-spark">
           <pv-chart type="line" :data="kpiSparkData[1]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
         </div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">{{ $t('dashboardAdmin.iot.kpiOnlineSensors') }}</div>
-        <div class="kpi-value">{{ iotOnlineCount }}<span class="kpi-unit">/ {{ iotSpaces.length }}</span></div>
-        <div class="kpi-delta kpi-up">▼ 3.1 min <span class="kpi-muted">{{ $t('dashboardAdmin.iot.mttr') }}</span></div>
+        <div class="kpi-label">{{ $t('dashboardAdmin.iot.kpiOpenAlerts') }}</div>
+        <div class="kpi-value kpi-warn">{{ iotAlertCount }}<span class="kpi-unit">{{ $t('dashboardAdmin.iot.active') }}</span></div>
+        <div class="kpi-delta kpi-muted">{{ $t('dashboardAdmin.iot.alertSpaces', { count: iotAlertCount }) }}</div>
         <div class="kpi-spark">
           <pv-chart type="line" :data="kpiSparkData[2]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">{{ $t('dashboardAdmin.iot.kpiOnlineSensors') }}</div>
+        <div class="kpi-value">{{ iotOnlineCount }}<span class="kpi-unit">/ {{ iotSpaces.length }}</span></div>
+        <div class="kpi-delta kpi-muted">{{ $t('dashboardAdmin.iot.totalSpaces', { count: iotSpaces.length }) }}</div>
+        <div class="kpi-spark">
+          <pv-chart type="line" :data="kpiSparkData[3]" :options="kpiSparkOptions" style="width:100%;height:32px;" />
         </div>
       </div>
     </div>
@@ -566,7 +650,7 @@ export default {
               <div class="alert-who">{{ alert.name }} — {{ alert.id }}</div>
               <div class="alert-meta">{{ alert.meta }}</div>
             </div>
-            <span class="alert-ts">{{ alert.event?.time || '—' }}</span>
+            <span class="alert-ts">{{ alert.time || '—' }}</span>
           </div>
           <div v-if="iotAlertsFeed.length === 0" class="alerts-empty">
             <i class="pi pi-check-circle" style="color: #22c55e;"></i>
@@ -584,11 +668,12 @@ export default {
         <div class="telemetry-legend">
           <span class="tleg-item"><span class="tleg-dot" style="background:#6366f1"></span>{{ $t('dashboardAdmin.iot.occupancy') }}</span>
           <span class="tleg-item"><span class="tleg-dot" style="background:#38bdf8"></span>{{ $t('dashboardAdmin.iot.temperature') }}</span>
-          <span class="tleg-item"><span class="tleg-dot" style="background:#f59e0b"></span>CO₂</span>
+          <span class="tleg-item"><span class="tleg-dot" style="background:#a78bfa"></span>{{ $t('dashboardAdmin.iot.humidity') }}</span>
         </div>
       </div>
       <div class="telemetry-chart">
-        <pv-chart type="line" :data="iotTelemetryData" :options="iotTelemetryOptions" style="width:100%;height:100%;" />
+        <pv-chart v-if="iotHasTelemetry" type="line" :data="iotTelemetryData" :options="iotTelemetryOptions" style="width:100%;height:100%;" />
+        <div v-else class="telemetry-empty">{{ $t('dashboardAdmin.iot.noTelemetry') }}</div>
       </div>
     </div>
 
@@ -651,37 +736,38 @@ export default {
       </div>
     </div>
 
-    <!-- Averías recientes -->
+    <!-- Reportes recientes (datos reales de /reports) -->
     <div class="iot-card breakdowns-card">
       <div class="iot-card-head">
-        <span class="iot-card-title">{{ $t('dashboardAdmin.iot.recentBreakdowns') }}</span>
-        <span class="iot-tag">// Breakdown Mgmt</span>
+        <span class="iot-card-title">{{ $t('dashboardAdmin.iot.recentReports') }}</span>
+        <span class="iot-tag">// Reports</span>
       </div>
       <div class="iot-table-wrap">
         <table class="iot-table">
           <thead>
             <tr>
               <th>#</th>
-              <th>{{ $t('dashboardAdmin.iot.colSpace') }}</th>
+              <th>{{ $t('dashboardAdmin.iot.colResource') }}</th>
               <th>{{ $t('dashboardAdmin.iot.colType') }}</th>
-              <th>{{ $t('dashboardAdmin.iot.colTechnician') }}</th>
               <th>{{ $t('dashboardAdmin.iot.colStatus') }}</th>
-              <th class="num">SLA</th>
+              <th class="num">{{ $t('dashboardAdmin.iot.colDate') }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="b in iotBreakdowns" :key="b.id">
+            <tr v-for="b in iotBreakdownRows" :key="b.id">
               <td class="code muted">{{ b.id }}</td>
-              <td>{{ b.space }}</td>
+              <td>{{ b.resource }}</td>
               <td>{{ b.type }}</td>
-              <td>{{ b.tech }}</td>
               <td>
                 <span class="tpill" :class="`tpill-${b.status}`">
                   <span class="led-sm" :class="`led-${b.status}`"></span>
                   {{ b.statusLabel }}
                 </span>
               </td>
-              <td class="num code">{{ b.sla }}</td>
+              <td class="num code">{{ b.date }}</td>
+            </tr>
+            <tr v-if="iotBreakdownRows.length === 0">
+              <td colspan="5" class="muted" style="text-align:center; padding:24px;">{{ $t('dashboardAdmin.iot.noReports') }}</td>
             </tr>
           </tbody>
         </table>
@@ -737,6 +823,10 @@ export default {
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  /* Reserve the scrollbar space on both sides so the inner cards stay
+     visually centered whether or not the card scrolls. */
+  scrollbar-gutter: stable both-edges;
+  scrollbar-width: thin;
 }
 .scrollable-card:hover { transform: translateY(-4px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); }
 .teachers-card { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); }
@@ -748,8 +838,10 @@ export default {
 .meet-card .header-icon     { color: #388e3c; }
 .reports-card .header-icon  { color: #7b1fa2; }
 .card-title { margin: 0; font-size: 20px; font-weight: 600; color: #333; }
-.teacher-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; padding: 16px; }
-.cards-grid   { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; padding: 16px; }
+/* min(Npx, 100%) keeps the tracks from overflowing the card when the
+   available width is below the ideal column size. */
+.teacher-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: 16px; padding: 16px; }
+.cards-grid   { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 16px; padding: 16px; }
 .empty-state  { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: #666; }
 .empty-icon   { font-size: 48px; color: #bbb; margin-bottom: 16px; }
 .empty-state p { font-size: 16px; margin: 0; }
@@ -818,6 +910,9 @@ export default {
   border-radius: 12px;
   padding: 18px 20px 12px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  /* Allow the card to shrink below the sparkline canvas' intrinsic 300px
+     width; otherwise the 4-column strip overflows the viewport. */
+  min-width: 0;
 }
 .kpi-label  { font-size: 12px; color: #6b7280; margin-bottom: 6px; }
 .kpi-value  { font-size: 28px; font-weight: 700; font-family: monospace; color: #111827; line-height: 1.1; }
@@ -827,7 +922,8 @@ export default {
 .kpi-up     { color: #16a34a; }
 .kpi-down   { color: #2563eb; }
 .kpi-muted  { color: #9ca3af; font-weight: 400; }
-.kpi-spark  { margin-top: 8px; }
+.kpi-spark  { margin-top: 8px; min-width: 0; overflow: hidden; }
+.kpi-spark :deep(canvas) { max-width: 100%; }
 
 /* Overview row: floor map + alerts */
 .overview-row {
@@ -1010,6 +1106,14 @@ export default {
 .tleg-item { display: inline-flex; align-items: center; gap: 6px; }
 .tleg-dot  { width: 8px; height: 8px; border-radius: 50%; }
 .telemetry-chart { height: 180px; padding: 12px 16px 4px; }
+.telemetry-empty {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: #9ca3af;
+  font-size: 12px;
+  font-family: monospace;
+}
 
 /* Bottom row */
 .bottom-row {

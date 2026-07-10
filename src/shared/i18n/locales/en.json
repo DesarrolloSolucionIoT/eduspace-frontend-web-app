@@ -71,7 +71,7 @@
         "address": "Address"
       },
       "errors": {
-        "email": "Enter a valid email (example: user@domain.com)",
+        "email": "Enter a valid email (example: user{'@'}domain.com)",
         "dni": "DNI must be exactly 8 digits",
         "phone": "Phone must have 9 digits and start with 9 (e.g. 987654321)",
         "birthdate": "You must be at least 18 years old"
@@ -256,10 +256,17 @@
     },
     "iot": {
       "sectionTitle": "IoT Monitoring — Campus",
-      "sectionSub": "simulated data · Sprint 1",
+      "sectionSub": "live data · Sprint 1",
       "detailedView": "Detailed view →",
       "kpiAvgOccupancy": "Average occupancy",
       "vsLastWeek": "vs last week",
+      "kpiEnergy": "Energy consumption",
+      "kpiAvgTemp": "Average temperature",
+      "avgHumidity": "Avg humidity {value}%",
+      "acrossOnline": "across {count} online spaces",
+      "alertSpaces": "{count} spaces in alert",
+      "totalSpaces": "{count} total spaces",
+      "vsLastQuarter": "vs last quarter",
       "kpiOpenAlerts": "Open alerts",
       "active": "active",
       "last24h": "last 24 h",
@@ -277,20 +284,26 @@
       "legendOff": "unused",
       "activeAlerts": "Active alerts",
       "noAlerts": "No active alerts",
-      "telemetryTitle": "Aggregated telemetry — last 24 h",
+      "telemetryTitle": "Aggregated telemetry — live",
+      "noTelemetry": "No readings to plot yet",
       "occupancy": "Occupancy",
       "temperature": "Temperature",
-      "buildingUsageTitle": "Building usage · last 7 days",
+      "humidity": "Humidity",
+      "buildingUsageTitle": "Building usage",
       "sensorHealthTitle": "Sensor health",
       "onlineOffline": "{online} online · {offline} offline",
       "colDevice": "Device",
       "colSpace": "Space",
       "colType": "Type",
       "colReading": "Reading",
-      "colUptime": "Uptime",
+      "colUptime": "Status",
       "colTechnician": "Technician",
       "colStatus": "Status",
-      "recentBreakdowns": "Recent breakdowns"
+      "colResource": "Resource",
+      "colDate": "Date",
+      "recentBreakdowns": "Recent breakdowns",
+      "recentReports": "Recent reports",
+      "noReports": "No reports"
     }
   },
   "classroomSpace": {
@@ -432,55 +445,40 @@
     "title": "IoT Monitoring",
     "devicesOnline": "{count} devices online",
     "activeAlerts": "{count} active alerts",
-    "simulatedData": "simulated data (Sprint 1)",
-    "liveMock": "live · mock",
-    "configureThresholds": "Configure thresholds",
-    "linkDevice": "+ Link device",
+    "refresh": "Refresh",
     "spaces": "Spaces",
     "totalCount": "{count} total",
-    "filterPlaceholder": "Filter A-203, LAB-22…",
+    "filterPlaceholder": "Filter by classroom or zone…",
     "noResults": "No results for \"{query}\"",
-    "history": "History",
+    "noSpaces": "No sensor readings recorded yet",
+    "noHistory": "No history in this range",
     "emptyState": "Select a space to view its sensor details",
     "noDataOffline": "no data · device offline",
-    "capacity": "capacity",
+    "loadError": "Could not load monitoring data",
     "sensors": {
       "occupancy": "Occupancy",
       "temperature": "Temperature",
       "humidity": "Humidity"
     },
+    "occupancy": {
+      "occupied": "Occupied",
+      "free": "Free"
+    },
+    "delta": {
+      "inRange": "in range",
+      "alert": "out of threshold",
+      "noData": "no data"
+    },
     "status": {
       "ok": "optimal",
       "warn": "attention",
-      "danger": "critical",
       "off": "offline"
-    },
-    "rssi": {
-      "none": "no signal",
-      "excellent": "excellent",
-      "good": "good",
-      "weak": "weak"
-    },
-    "weekdays": {
-      "mon": "Mon",
-      "tue": "Tue",
-      "wed": "Wed",
-      "thu": "Thu",
-      "fri": "Fri",
-      "sat": "Sat",
-      "sun": "Sun"
     },
     "device": {
       "device": "Device",
-      "firmware": "Firmware",
-      "rssi": "RSSI",
+      "zone": "Zone",
       "lastReading": "Last reading",
       "ago": "{value} ago"
-    },
-    "events": {
-      "title": "Recent events",
-      "window": "last 6 h",
-      "empty": "No events recorded"
     }
   },
   "personalData": {
@@ -492,7 +490,7 @@
       "lastName": "Last Name",
       "lastNamePlaceholder": "Enter last name",
       "email": "Email",
-      "emailPlaceholder": "example@domain.com",
+      "emailPlaceholder": "example{'@'}domain.com",
       "phone": "Phone",
       "phonePlaceholder": "987654321",
       "dni": "DNI",
@@ -507,7 +505,7 @@
       "updateTeacher": "Update Teacher"
     },
     "validation": {
-      "emailInvalid": "Enter a valid email (e.g.: user@domain.com)",
+      "emailInvalid": "Enter a valid email (e.g.: user{'@'}domain.com)",
       "dniInvalid": "DNI must be exactly 8 digits",
       "phoneInvalid": "Phone must be 9 digits and start with 9"
     },

@@ -1,198 +1,125 @@
 import http from '../../shared/services/http-common.js';
-import mockDb from './db.json';
+
+// A reading is considered "stale" (device offline) when its most recent
+// reading is older than this window.
+const STALE_MS = 10 * 60 * 1000; // 10 min
 
 /**
- * Combines Platform classrooms + latest sensor readings into the IotSpace shape.
+ * Parse a backend timestamp as UTC. ASP.NET may serialize DateTime without a
+ * timezone designator (e.g. "2026-06-20T14:31:44"); JS would otherwise read it
+ * as local time. We append 'Z' when no offset/zone is present.
+ */
+function parseUtc(value) {
+    if (!value) return null;
+    const hasZone = /[zZ]|[+-]\d{2}:?\d{2}$/.test(value);
+    const date = new Date(hasZone ? value : `${value}Z`);
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function deriveStatus(latest) {
+    if (!latest || !latest._recordedAt) return 'off';
+    if (Date.now() - latest._recordedAt.getTime() > STALE_MS) return 'off';
+    return latest.alertLedState >= 1 ? 'warn' : 'ok';
+}
+
+/**
+ * IoT monitoring data, sourced from the EduSpace platform backend
+ * (IoTMonitoring bounded context) and the Classrooms module for zone names.
  *
- * Strategy:
- *   1. GET /classrooms  — all classrooms (each may have a zoneId).
- *   2. GET /sensor-readings  — all readings; group by zoneId; pick latest per zone.
- *   3. For each classroom: if it has a zoneId and a matching latest reading, use
- *      real sensor data.  Otherwise fall through to mock data from db.json.
- *
- * This lets the page work immediately even before devices are online.
+ * Backend only exposes: temperature, humidity, occupancyPresent (bool) and
+ * alertLedState (0/1) per reading. Anything beyond that is intentionally absent.
  */
 export class IotMonitoringService {
-    async getSpaces() {
-        try {
-            const [classroomsResp, readingsResp] = await Promise.all([
-                http.get('/classrooms'),
-                http.get('/sensor-readings'),
-            ]);
+    readingsEndpoint = '/iot-monitoring/sensor-readings';
+    classroomsEndpoint = '/classrooms';
 
-            const classrooms = classroomsResp.data || [];
-            const readings   = readingsResp.data  || [];
-
-            // Build a map zone_id → latest reading
-            const latestByZone = _buildLatestByZone(readings);
-
-            const spaces = classrooms.map(c => _toIotSpace(c, latestByZone));
-            return { data: spaces };
-        } catch (err) {
-            console.warn('[IotMonitoringService] API unavailable, using mock data.', err.message);
-            return { data: mockDb.spaces };
-        }
+    getAllReadings() {
+        return http.get(this.readingsEndpoint);
     }
 
-    async getSpaceById(spaceId) {
-        try {
-            const [classroomResp, readingsResp] = await Promise.all([
-                http.get(`/classrooms/${spaceId}`),
-                http.get('/sensor-readings'),
-            ]);
-            const classroom = classroomResp.data;
-            const readings  = readingsResp.data || [];
-            const latestByZone = _buildLatestByZone(readings);
-            return { data: _toIotSpace(classroom, latestByZone) };
-        } catch (err) {
-            console.warn('[IotMonitoringService] API unavailable, using mock data.', err.message);
-            const space = mockDb.spaces.find(s => String(s.id) === String(spaceId));
-            return { data: space || null };
+    getClassrooms() {
+        return http.get(this.classroomsEndpoint);
+    }
+
+    getReadingsByZone(zoneId) {
+        return http.get(`${this.readingsEndpoint}/zone/${zoneId}`);
+    }
+
+    getLatestByZone(zoneId) {
+        return http.get(`${this.readingsEndpoint}/zone/${zoneId}/latest`);
+    }
+
+    /**
+     * Assemble the list of monitored spaces from all sensor readings, grouped by
+     * zone, enriched with the classroom name when a classroom is linked to that
+     * zone. Returns { data: [...] } to keep the previous service contract.
+     */
+    async getSpaces() {
+        const [readingsRes, classroomsRes] = await Promise.all([
+            this.getAllReadings(),
+            this.getClassrooms().catch(() => ({ data: [] })),
+        ]);
+
+        const readings = readingsRes.data || [];
+        const classrooms = classroomsRes.data || [];
+
+        const nameByZone = {};
+        classrooms.forEach(c => {
+            if (c.zoneId) nameByZone[c.zoneId] = c.name;
+        });
+
+        // Group readings by zoneId (falling back to deviceId when no zone).
+        const groups = new Map();
+        for (const r of readings) {
+            const key = r.zoneId || r.deviceId;
+            if (!key) continue;
+            const reading = { ...r, _recordedAt: parseUtc(r.recordedAt) };
+            if (!groups.has(key)) groups.set(key, []);
+            groups.get(key).push(reading);
         }
+
+        const spaces = [];
+        for (const [key, group] of groups) {
+            // Sort ascending by recorded time so the last item is the latest.
+            group.sort((a, b) => (a._recordedAt?.getTime() || 0) - (b._recordedAt?.getTime() || 0));
+            const latest = group[group.length - 1];
+
+            spaces.push({
+                id: key,
+                zoneId: latest.zoneId || null,
+                deviceId: latest.deviceId,
+                name: nameByZone[key] || latest.zoneId || latest.deviceId,
+                status: deriveStatus(latest),
+                temperature: latest.temperature ?? null,
+                humidity: latest.humidity ?? null,
+                occupancyPresent: latest.occupancyPresent ?? null,
+                alertLedState: latest.alertLedState ?? 0,
+                recordedAt: latest._recordedAt ? latest._recordedAt.toISOString() : null,
+                history: group.map(r => ({
+                    recordedAt: r._recordedAt ? r._recordedAt.toISOString() : null,
+                    temperature: r.temperature,
+                    humidity: r.humidity,
+                    occupancyPresent: r.occupancyPresent,
+                    alertLedState: r.alertLedState,
+                })),
+            });
+        }
+
+        // Active alerts first, then by name for a stable order.
+        spaces.sort((a, b) => {
+            const rank = s => (s.status === 'warn' ? 0 : s.status === 'off' ? 2 : 1);
+            return rank(a) - rank(b) || a.name.localeCompare(b.name);
+        });
+
+        return { data: spaces };
     }
 
     async getAlerts() {
-        try {
-            const { data: spaces } = await this.getSpaces();
-            const alerts = (spaces || [])
-                .filter(s => s.status === 'warn' || s.status === 'danger')
-                .map(s => ({
-                    spaceId: s.id,
-                    spaceName: s.name,
-                    status: s.status,
-                    meta: s.meta,
-                    lastEvent: s.events?.[0] || null,
-                }));
-            return { data: alerts };
-        } catch (err) {
-            console.error('[IotMonitoringService] getAlerts error', err);
-            return { data: [] };
-        }
-    }
-}
-
-// ── helpers ──────────────────────────────────────────────────────────────────
-
-function _buildLatestByZone(readings) {
-    const map = new Map();
-    for (const r of readings) {
-        const key = r.zoneId;
-        if (!key) continue;
-        const existing = map.get(key);
-        if (!existing || new Date(r.recordedAt) > new Date(existing.recordedAt)) {
-            map.set(key, r);
-        }
-    }
-    return map;
-}
-
-/**
- * Map a Platform Classroom + optional latest SensorReading to the IotSpace shape
- * that the rest of the component expects.
- */
-function _toIotSpace(classroom, latestByZone) {
-    const zoneId  = classroom.zoneId || null;
-    const reading = zoneId ? latestByZone.get(zoneId) : null;
-
-    if (!reading) {
-        // No live data — return offline representation
+        const { data } = await this.getSpaces();
         return {
-            id: String(classroom.id),
-            name: classroom.name,
-            status: 'off',
-            temperature: null,
-            meta: zoneId ? 'sin lecturas IoT' : 'sin dispositivo',
-            location: classroom.description || '',
-            session: null,
-            deviceCode: zoneId || '',
-            firmware: '',
-            rssi: null,
-            lastReadingTime: '',
-            lastReadingAgo: '',
-            sensors: {
-                occupancy:   { value: null, occupancyPresent: null, capacity: null, delta: 'sin datos', deltaStatus: 'warn' },
-                temperature: { value: null, delta: 'sin datos', deltaStatus: 'warn' },
-                humidity:    { value: null, delta: 'sin datos', deltaStatus: 'warn' },
-            },
-            events: [],
-            isLive: false,
+            data: data
+                .filter(s => s.status === 'warn')
+                .map(s => ({ spaceId: s.id, spaceName: s.name, status: s.status })),
         };
     }
-
-    // Derive status from alert_led_state: 0=ok, 1=warn, 2+=danger
-    const status = _ledStateToStatus(reading.alertLedState);
-
-    // Occupancy: PIR bool — Ocupado / Libre
-    const occPresent = reading.occupancyPresent;
-    const occMeta = occPresent ? 'Ocupado' : 'Libre';
-
-    const recordedAt = new Date(reading.recordedAt);
-    const lastReadingTime = recordedAt.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const secsAgo = Math.round((Date.now() - recordedAt.getTime()) / 1000);
-    const lastReadingAgo = secsAgo < 60 ? `${secsAgo}s` : `${Math.round(secsAgo / 60)}m`;
-
-    return {
-        id: String(classroom.id),
-        name: classroom.name,
-        status,
-        temperature: reading.temperature,
-        meta: `${occMeta} · T:${reading.temperature.toFixed(1)}°C · H:${reading.humidity.toFixed(0)}%`,
-        location: classroom.description || '',
-        session: null,
-        deviceCode: reading.deviceId,
-        firmware: '',
-        rssi: null,
-        lastReadingTime,
-        lastReadingAgo,
-        sensors: {
-            occupancy: {
-                value: occPresent ? 1 : 0,
-                occupancyPresent: occPresent,
-                capacity: null,
-                delta: occPresent ? 'Presencia detectada' : 'Sin presencia',
-                deltaStatus: 'neutral',
-            },
-            temperature: {
-                value: reading.temperature,
-                delta: _tempDelta(reading.temperature),
-                deltaStatus: _tempDeltaStatus(reading.temperature),
-            },
-            humidity: {
-                value: reading.humidity,
-                delta: _humidDelta(reading.humidity),
-                deltaStatus: _humidDeltaStatus(reading.humidity),
-            },
-        },
-        events: [],
-        isLive: true,
-    };
-}
-
-function _ledStateToStatus(ledState) {
-    if (ledState === 0) return 'ok';
-    if (ledState === 1) return 'warn';
-    return 'danger';
-}
-
-function _tempDelta(t) {
-    if (t < 18) return '▼ por debajo de rango';
-    if (t > 28) return `▲ ${(t - 28).toFixed(1)}°C sobre rango`;
-    return 'en rango';
-}
-
-function _tempDeltaStatus(t) {
-    if (t < 18 || t > 28) return 'warn';
-    if (t > 25) return 'warn';
-    return 'ok';
-}
-
-function _humidDelta(h) {
-    if (h < 30) return '▼ humedad baja';
-    if (h > 75) return `▲ humedad elevada`;
-    return 'en rango';
-}
-
-function _humidDeltaStatus(h) {
-    if (h < 30 || h > 75) return 'warn';
-    return 'ok';
 }
