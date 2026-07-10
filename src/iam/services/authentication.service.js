@@ -5,10 +5,6 @@ export class AuthenticationService {
         return http.post("/authentication/sign-in", signInRequest);
     }
 
-    activate(token) {
-        return http.post("/authentication/activate", { token });
-    }
-
     async signUp(signUpRequest) {
         const response = await http.post("/authentication/sign-up", signUpRequest);
         return response.data;

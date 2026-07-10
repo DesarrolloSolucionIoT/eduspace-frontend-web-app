@@ -76,36 +76,8 @@
         "birthdate": "Debe ser mayor de 18 años"
       },
       "toast": {
-        "checkEmailSummary": "Revisa tu correo",
-        "checkEmailDetail": "Te enviamos un correo a {email}. Haz clic en el link para activar tu cuenta."
-      }
-    },
-    "activate": {
-      "signIn": "Iniciar sesión",
-      "backToLogin": "Volver al inicio de sesión",
-      "loading": {
-        "title": "Activando tu cuenta...",
-        "description": "Por favor espera un momento."
-      },
-      "success": {
-        "title": "¡Cuenta activada!",
-        "description": "Ya puedes iniciar sesión con tus credenciales."
-      },
-      "errorMissingToken": {
-        "title": "Link inválido",
-        "description": "El link de activación es inválido o está incompleto."
-      },
-      "errorExpired": {
-        "title": "Link expirado",
-        "description": "El link expiró. Pídele a tu administrador que te envíe uno nuevo."
-      },
-      "errorUsed": {
-        "title": "Link ya utilizado",
-        "description": "Este link ya fue usado. Si ya activaste tu cuenta, puedes iniciar sesión."
-      },
-      "errorInvalid": {
-        "title": "Link inválido",
-        "description": "El link de activación es inválido."
+        "successSummary": "Cuenta creada",
+        "successDetail": "Ya podés iniciar sesión con tu usuario o correo."
       }
     },
     "auth": {
@@ -125,7 +97,7 @@
         "restrictedAccessSummary": "Acceso restringido",
         "restrictedAccessDetail": "Esta plataforma es solo para administradores. Inicia sesión desde EduSpace Mobile.",
         "notActivatedSummary": "Cuenta no activada",
-        "notActivatedDetail": "Tu cuenta no está activada. Revisa tu correo para activarla.",
+        "notActivatedDetail": "Tu cuenta no está activa. Contactá a un administrador.",
         "loginErrorSummary": "Error de acceso",
         "loginErrorDetail": "Credenciales incorrectas. Verifica tu usuario y contraseña."
       }

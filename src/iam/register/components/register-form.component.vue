@@ -128,12 +128,11 @@ export default {
       if (this.isFormValid()) {
         try {
           await this.onSubmit(this.formData);
-          const email = this.formData.email;
           this.$toast.add({
-            severity: 'info',
-            summary: this.$t('iam.register.toast.checkEmailSummary'),
-            detail: this.$t('iam.register.toast.checkEmailDetail', { email }),
-            life: 8000
+            severity: 'success',
+            summary: this.$t('iam.register.toast.successSummary'),
+            detail: this.$t('iam.register.toast.successDetail'),
+            life: 5000
           });
           this.$router.push({ name: 'login' });
         } catch (error) {

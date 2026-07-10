@@ -3,7 +3,6 @@ import store from "../store/index.js";
 
 const HomeComponent = () => import('../public/pages/home.component.vue');
 const AuthSplitScreen = () => import('../iam/shared/pages/auth-split-screen.component.vue');
-const ActivateComponent = () => import('../iam/login/pages/activate.component.vue');
 const NotFoundComponent = () => import('../shared/pages/not-found.component.vue');
 
 const MeetManagementComponent = () => import('../meeting-management/pages/meet-management.component.vue');
@@ -31,7 +30,6 @@ const router = createRouter({
         // Rutas Públicas y de Autenticación
         { path: '/', redirect: '/login' },
         { path: '/login', name: 'login', component: AuthSplitScreen, meta: { title: 'Login' } },
-        { path: '/activate', name: 'activate', component: ActivateComponent, meta: { title: 'Activar cuenta' } },
         { path: '/register', name: 'register', component: AuthSplitScreen, meta: { title: 'Register' } },
         { path: '/home', name: 'home', component: HomeComponent, meta: { title: 'Home' } },
 

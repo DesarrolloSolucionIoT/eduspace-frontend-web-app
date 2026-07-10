@@ -76,36 +76,8 @@
         "birthdate": "You must be at least 18 years old"
       },
       "toast": {
-        "checkEmailSummary": "Check your email",
-        "checkEmailDetail": "We sent an email to {email}. Click the link to activate your account."
-      }
-    },
-    "activate": {
-      "signIn": "Sign in",
-      "backToLogin": "Back to sign in",
-      "loading": {
-        "title": "Activating your account...",
-        "description": "Please wait a moment."
-      },
-      "success": {
-        "title": "Account activated!",
-        "description": "You can now sign in with your credentials."
-      },
-      "errorMissingToken": {
-        "title": "Invalid link",
-        "description": "The activation link is invalid or incomplete."
-      },
-      "errorExpired": {
-        "title": "Link expired",
-        "description": "The link has expired. Ask your administrator to send you a new one."
-      },
-      "errorUsed": {
-        "title": "Link already used",
-        "description": "This link has already been used. If you already activated your account, you can sign in."
-      },
-      "errorInvalid": {
-        "title": "Invalid link",
-        "description": "The activation link is invalid."
+        "successSummary": "Account created",
+        "successDetail": "You can now sign in with your username or email."
       }
     },
     "auth": {
@@ -125,7 +97,7 @@
         "restrictedAccessSummary": "Restricted access",
         "restrictedAccessDetail": "This platform is for administrators only. Sign in from EduSpace Mobile.",
         "notActivatedSummary": "Account not activated",
-        "notActivatedDetail": "Your account is not activated. Check your email to activate it.",
+        "notActivatedDetail": "Your account is not active. Contact an administrator.",
         "loginErrorSummary": "Sign-in error",
         "loginErrorDetail": "Incorrect credentials. Check your username and password."
       }

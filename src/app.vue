@@ -232,8 +232,7 @@ export default {
     }
     // No redirect for unauthenticated users — the router guard handles
     // protected routes via requiresAuth meta. A blanket push to /login here
-    // breaks public routes like /activate (which is reached from an email
-    // link by users who are, by definition, not logged in yet).
+    // would break other public routes (e.g. /register).
   },
   watch: {
     userRole() {
