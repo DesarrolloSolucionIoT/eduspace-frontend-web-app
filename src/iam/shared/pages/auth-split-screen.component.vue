@@ -38,7 +38,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("user", ["signIn"]),
+    ...mapActions("user", ["signIn", "signOut"]),
 
     goToSignUp() {
       this.$router.push({ name: 'register' });
@@ -61,6 +61,10 @@ export default {
         if (role === 'RoleAdmin') {
           this.$router.push({ name: 'home-admin' });
         } else {
+          // Web is admin-only: this role can't use this app, so undo the
+          // sign-in state signIn() just committed instead of leaving the
+          // user half-authenticated (sidebar showing over the login form).
+          await this.signOut();
           this.$toast.add({
             severity: 'warn',
             summary: this.$t('iam.auth.toast.restrictedAccessSummary'),
