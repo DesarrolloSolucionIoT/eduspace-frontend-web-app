@@ -7,7 +7,7 @@ export default {
       formData: {
         firstName: "",
         lastName: "",
-        birthdate: null,
+        birthdate: this.getDefaultAdultBirthdate(),
         phone: "",
         email: "",
         password: "",
@@ -24,6 +24,14 @@ export default {
     };
   },
   methods: {
+    getDefaultAdultBirthdate() {
+      const today = new Date();
+      return new Date(
+        today.getFullYear() - 18,
+        today.getMonth(),
+        today.getDate()
+      );
+    },
     validateEmail(email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email);
