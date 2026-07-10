@@ -31,7 +31,6 @@ export default {
       <pv-password v-model="password" :placeholder="$t('iam.login.passwordPlaceholder')" toggleMask required class="login-input" inputClass="w-full" autocomplete="current-password" />
       <div class="login-actions">
         <pv-button :loading="loading" class="sign-in-button" :label="$t('iam.login.signInButton')" type="submit"/>
-        <router-link to="/forgot-password" class="forgot-password-link">{{ $t('iam.login.forgotPassword') }}</router-link>
       </div>
     </form>
   </div>
@@ -77,18 +76,6 @@ export default {
   align-items: center;
   gap: 12px;
   margin-top: 6px;
-}
-
-.forgot-password-link {
-  font-size: 0.85rem;
-  color: #718096;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.forgot-password-link:hover {
-  color: #34a7c1;
-  text-decoration: underline;
 }
 
 .sign-in-button {

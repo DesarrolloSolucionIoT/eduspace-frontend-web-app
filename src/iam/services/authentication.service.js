@@ -9,14 +9,6 @@ export class AuthenticationService {
         return http.post("/authentication/activate", { token });
     }
 
-    forgotPassword(email) {
-        return http.post("/authentication/forgot-password", { email });
-    }
-
-    resetPassword(token, newPassword) {
-        return http.post("/authentication/reset-password", { token, newPassword });
-    }
-
     async signUp(signUpRequest) {
         const response = await http.post("/authentication/sign-up", signUpRequest);
         return response.data;
