@@ -73,9 +73,9 @@ function buildChartTabs(t) {
     ];
 }
 
-// Auto-refresh cadence. The edge pushes every ~5s, but each refresh re-fetches
-// the full (unpaginated) reading list, so 15s balances freshness and load.
-const REFRESH_INTERVAL_MS = 15e3;
+// Auto-refresh cadence. The edge pushes every ~5s, so we poll at the same
+// cadence; each refresh re-fetches the full (unpaginated) reading list.
+const REFRESH_INTERVAL_MS = 5e3;
 
 const RANGE_OPTIONS = [
     { label: '1h', value: 3600e3 },
